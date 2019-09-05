@@ -1,0 +1,20 @@
+digraph G {
+	prior_xml [shape=box, label="prior.xml"];
+	trace_log [shape=box, label="trace.log"];
+	tree_log [shape=box, label="tree.log"];
+	tracelogs [shape=box, label="trace.log"];
+	treelogs [shape=box, label="tree.log"];
+	beast_xml [shape=box, label="beast.xml"];
+	summary  [shape=box, label="summary"];
+	coverage_stats [shape=box, label="coverage.stats"];
+	prior_xml -> BEAST -> trace_log;
+	BEAST -> tree_log;
+	trace_log -> CoverageTestXMLGenerator;
+	tree_log -> CoverageTestXMLGenerator;
+	CoverageTestXMLGenerator -> beast_xml [style=bold,label=" N times"];
+	beast_xml -> BEAST2[style=bold,label=" N times"];
+	BEAST2 -> tracelogs[style=bold,label=" N times"];
+	BEAST2 -> treelogs[style=bold,label=" N times"];
+	tracelogs -> loganalyser -> summary -> CoverageCalculator -> coverage_stats;	
+	trace_log -> CoverageCalculator;
+ }
