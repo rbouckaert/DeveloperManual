@@ -1,48 +1,96 @@
 # Some guidance for developing new methods in BEAST 2
 
-New methods require usually require two parts: an implementation of a model, and MCMC operators for creating proposals for moving through state space (though sometimes just an operator is validated that is much more efficient than previously existing operators). This guide contains some procedures to make sure that the model and operators are correctly implemented. Ideally, we have an independent implementation of a simulator that allows (possibly inefficiently) to sample from the target distribution. If so, we also need to verify that the simulator is correctly implemented. In summary, we need to establish correctness of:
+Disclaimer: below some ramblings on methods development for BEAST 2 packages. This is a living document. Use at own risk.
 
-* the simulator implementation (if any)
-* the  model implementation
-* operator implementations
+## Testing new methods
+
+New methods require usually require two parts: an implementation $I(M)$ of a model $M$ and associated probability $p_I(\theta|M)$ of states $\theta$, and MCMC operators $R(\theta)\to\theta'$ for creating proposals $\theta'$ for moving through state space starting in state $\theta$ (though sometimes just an operator is validated that is much more efficient than previously existing operators). This guide contains some procedures to make sure that the model and operators are correctly implemented. Ideally, we have an independent implementation of a simulator $S(M)\to\theta$ that allows (possibly inefficiently) to sample from the target distribution $p_S(\theta|M)$. If so, we also need to verify that the simulator is correctly implemented. In summary, we need to establish correctness of:
+
+* the simulator implementation $S(M)\to\theta$ (if any)
+* the model implementation $I(M)$ 
+* operator implementations $R$
 
 
 ### Verify correctness of simulator implementation
-* simulator implementation -- distributions matches expected distribution (based on theory)
+
+To verify correctness of a simulator implementation $S$ for model $M$ directly, the distributions $p_S(\theta|M)$ should match expected distribution based on theory. We can verify this by drawing a large number of samples using $S$, calculate summary statistics on the sample and compare these with analytical estimates for these statistics. For example, ...
+
+When no analytical estimates of statistics are available, ...
+
+Examples of simulators: 
+
+* the [MASTER](http://tgvaughan.github.io/MASTER/) BEAST 2 package is a general purpose package for simulating stochastic population dynamics models which can be expressed in terms of a chemical master equation.
+* SimSnap for SNAPP is a custom build implementation in C++ for simulating alignments for a fixed tree and SNAPP parameters.
+* The `beast.app.seqgen.SequenceSimulator` can be used to simulate alignments for general site models using reversible substitution models. See [testSeqGen.xml](https://github.com/CompEvol/beast2/blob/master/examples/testSeqGen.xml) for an example.
+* The `beast.core.DirectSimulator` class in BEAST 2 can be used to draw samples from distributions in BEAST that extend `beast.core.distribution.Distribution` and implement the `sample(state, random)` method. You can set up an XML file and run it in BEAST. Here are a few examples: [testDirectSimulator.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator.xml),
+[testDirectSimulator2.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator2.xml), and
+[testDirectSimulatorHierarchical.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulatorHierarchical.xml).
 
 ### Verify correctness of model implementation
 
-* model -- inferred distributions matches simulator distribution
+In theory, the inferred distributions $p_I(\theta|M)$ should match the simulator distribution $p_S(\theta|M)$. However, drawing samples from $p_I(\theta|M)$ typically requires running an MCMC chain, which requires MCMC proposals $R$ to randomly walk through state space. If we do this, we need to rely on $R$ being correctly implemented. So, if we find that $p_I(\theta|M)$ and $p_S(\theta|M)$ so not match, it is not possible to tell whether problem is with an operator $R$ or with the model implementation $I(M)$.
+
+(Christiaan's technique to the rescue)
+
+
+
+Comparing two distributions can be done by
+
+* by eye balling the marginal likelihoods in Tracer and making sure they are close enough.
+* testing whether parameters are covered 95% of the time in the 95% HPD interval of parameter distributions.
+* using a statistical test, e.g. the Kolmogorov-Smirnov test, to verify the distributions $p_I(\theta|M)$ and $p_S(\theta|M)$ are the same.
+
+
+`TraceKSStats` calculate Kolmogorov-Smirnof statistic for comparing trace logs. TraceKSStats has the following inputs:
+
+* trace1 (LogFile): first trace file to compare (required)
+* trace2 (LogFile): second trace file to compare (required)
+* burnin (Integer): percentage of trace logs to used as burn-in (and will be ignored) (optional, default: 10)
+
+Sample output: 
+
+```
+Trace entry                                      p-value
+posterior                                        1.0
+likelihood                                       0.21107622404022763
+prior                                            0.036794035181748064
+treeLikelihood                                   0.04781117967724258
+TreeHeight                                       0.036794035181748064
+YuleModel                                        0.005399806065857771
+birthRate                                        0.2815361702146215
+kappa                                            0.62072545444263
+freqParameter.1                                  0.0
+freqParameter.2                                  8.930072172019798E-5
+freqParameter.3                                  1.0883734952171764E-6
+freqParameter.4                                  0.0
+```
+
+Though some values have very low p-values, meaning they differ significantly, it is recommended to verify this using Tracer to make sure that the test is not unduly influenced by outliers.
+
 
 ### Verify correctness of operator implementations
 
-* operators -- distributions matches simulator distribution
+Once simulator $S(M)$ and model implementation $I(M)$ are verified to be correct, next step is implementing efficient operators, running MCMCs to verify that parameters drawn from the prior are covered 95% of the time in the 95% HPD interval of parameter distributions.
+
+
+The BEAST 2 [Experimenter](https://github.com/rbouckaert/Experimenter) package can assist (see section "Using the Experimenter package" below).
+
+
+
+
+
+
+
 
 	
-Validation only covers cases in as far as the prior covers it -- no study will cover all possible cases. Usually, informative priors are required for validation to work, since broader priors (e.g. some of the default tree priors in BEAST) are not realistic. For instance, given we could create an alignment to analyse, the mutation rate \mu must have been such that the tree height cannot exceed 1/\mu, otherwise there would be saturation, and sequences could not possibly have sufficient information to align.
 
 
 
-# Comparing two distributions
+# Practical considerations
 
-Kolmogorov-Smirnov test -- see TraceKSStats in Experimenter package.
+Validation only covers cases in as far as the prior covers it -- most studies will not cover all possible cases, since the state space is just to large. Usually, informative priors are required for validation to work, since broader priors (e.g. some of the default tree priors in BEAST) lead to identifiability issues, for example, due to saturation of mutations along branches of a tree. Consequently, the mutation rate $\mu$ must have been such that the tree height $h_T$ cannot exceed $1/\mu$ (in other words, $\mu h_T\le 1$), otherwise there would be saturation, and sequences could not possibly have sufficient information to align. At the other end of the spectrum, where $\mu h_T$ close to zero, very long sequences are required to ensure there are enough mutations in order to be able to reconstruct the tree distribution.
 
-# Verify model/operator correctness
-
-BEAST 2 Experimenter package can assist https://github.com/rbouckaert/Experimenter
-
-To run a simulation study:
-
-* set up XML for desired model and sample from prior
-* generate (MCMC) analysis for each of the samples (say 100)
-* run the BEAST analyses
-* use loganalyser to summarise trace files
-* run CoverageCalculator to summarise coverage of parameters
-
-Should cover parameters in prior 95% of the time
-
-
-# Practical tricks of the trade
+TODO: forumlate in terms of $N_e$ instead of $h_T$?
 
 ## Height of trees
 
@@ -144,7 +192,7 @@ To run a simulation study:
 * run CoverageCalculator to summarise coverage of parameters
 
 
-![Summary of files involved in testing an operator](figures/operatorTest.png)
+![Summary of files involved in testing an operator. Rectangles represent files, ovals represent programs.](figures/operatorTest.png)
 
 Make sure to have the [Experimenter](https://github.com/rbouckaert/Experimenter) package installed (details at the end).
 

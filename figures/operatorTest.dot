@@ -6,15 +6,30 @@ digraph G {
 	treelogs [shape=box, label="tree.log"];
 	beast_xml [shape=box, label="beast.xml"];
 	summary  [shape=box, label="summary"];
+	
+	BEAST [label="1. BEAST"];
+	CoverageTestXMLGenerator [label="2. CoverageTestXMLGenerator"]
+	BEAST2 [label="3. BEAST"];
+	loganalyser [label="4. loganalyser"];
+	CoverageCalculator [label="5. CoverageCalculator"];
+	
+	
 	coverage_stats [shape=box, label="coverage.stats"];
 	prior_xml -> BEAST -> trace_log;
 	BEAST -> tree_log;
 	trace_log -> CoverageTestXMLGenerator;
 	tree_log -> CoverageTestXMLGenerator;
-	CoverageTestXMLGenerator -> beast_xml [style=bold,label=" N times"];
-	beast_xml -> BEAST2[style=bold,label=" N times"];
-	BEAST2 -> tracelogs[style=bold,label=" N times"];
-	BEAST2 -> treelogs[style=bold,label=" N times"];
+	CoverageTestXMLGenerator -> beast_xml
+	subgraph cluster0 {
+		beast_xml -> BEAST2;
+		BEAST2 -> tracelogs;
+		BEAST2 -> treelogs;
+		labeljust="r";
+		labelloc="b";
+	    label=" N times"; 
+		style=filled;
+		color=lightblue;
+			}
 	tracelogs -> loganalyser -> summary -> CoverageCalculator -> coverage_stats;	
 	trace_log -> CoverageCalculator;
  }
