@@ -1,6 +1,6 @@
 # Some guidance for developing new methods in BEAST 2
 
-Disclaimer: below some ramblings on methods development for BEAST 2 packages. This is a living document. Use at own risk.
+Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document. Use at own risk.
 
 ## Testing new methods
 
@@ -19,8 +19,8 @@ When no analytical estimates of statistics are available, ...
 
 Examples of simulators: 
 
-* the [MASTER](http://tgvaughan.github.io/MASTER/) BEAST 2 package is a general purpose package for simulating stochastic population dynamics models which can be expressed in terms of a chemical master equation.
-* SimSnap for SNAPP is a custom build implementation in C++ for simulating alignments for a fixed tree and SNAPP parameters.
+* the [MASTER](http://tgvaughan.github.io/MASTER/) [@vaughan2013stochastic] BEAST 2 package is a general purpose package for simulating stochastic population dynamics models which can be expressed in terms of a chemical master equation.
+* SimSnap for SNAPP [@bryant2012inferring] is a custom build implementation in C++ for simulating alignments for a fixed tree and SNAPP parameters.
 * The `beast.app.seqgen.SequenceSimulator` can be used to simulate alignments for general site models using reversible substitution models. See [testSeqGen.xml](https://github.com/CompEvol/beast2/blob/master/examples/testSeqGen.xml) for an example.
 * The `beast.core.DirectSimulator` class in BEAST 2 can be used to draw samples from distributions in BEAST that extend `beast.core.distribution.Distribution` and implement the `sample(state, random)` method. You can set up an XML file and run it in BEAST. Here are a few examples: [testDirectSimulator.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator.xml),
 [testDirectSimulator2.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator2.xml), and
@@ -117,7 +117,7 @@ Priors ideally should be set in realistic ranges, e.g. frequency priors not unif
 
 To generate N XML files, use `CoverageTestXMLGenerator` in Experimenter package
 
-The sequence length should be long enough that trees can be reasonably reliably recovered -- if the difference between longest and shorted tree is 2 orders of magnitude, nucleotide sequences of 10 thousand sites. When \mu*treeh-height approximate 0.5, sequences of length 1000 are sufficient.
+The sequence length should be long enough that trees can be reasonably reliably recovered -- if the difference between longest and shorted tree is 2 orders of magnitude, nucleotide sequences of 10 thousand sites. When $\mu$*treeh-height approximate 0.5, sequences of length 1000 are sufficient.
 
 ## Log file names
 
@@ -299,3 +299,4 @@ Experimenter (again, using `ant addon` in the Experimenter folder) packages.
 * install BEASTlabs (using the [package manager](www.beast2.org/managing-packages/#Server_machines), or via BEAUti's `File/Manage pacakges` menu).
 * install Experimenter package by creating `Experimenter` folder in your [BEAST package folder](http://www.beast2.org/managing-packages/#Installation_directories), and unzip the file `Experimenter/build/dist/Experimenter.addon.v0.0.1.zip` (assuming version 0.0.1).
 
+## References
