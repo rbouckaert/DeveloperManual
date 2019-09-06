@@ -36,7 +36,7 @@ In theory, the inferred distributions $p_I(\theta|M)$ should match the simulator
 
 Comparing two distributions can be done by
 
-* by eye balling the marginal likelihoods in Tracer and making sure they are close enough.
+* eye balling the marginal likelihoods in Tracer and making sure they are close enough.
 * testing whether parameters are covered 95% of the time in the 95% HPD interval of parameter distributions.
 * using a statistical test, e.g. the Kolmogorov-Smirnov test, to verify the distributions $p_I(\theta|M)$ and $p_S(\theta|M)$ are the same.
 
@@ -88,28 +88,47 @@ The BEAST 2 [Experimenter](https://github.com/rbouckaert/Experimenter) package c
 
 # Practical considerations
 
-Validation only covers cases in as far as the prior covers it -- most studies will not cover all possible cases, since the state space is just to large. Usually, informative priors are required for validation to work, since broader priors (e.g. some of the default tree priors in BEAST) lead to identifiability issues, for example, due to saturation of mutations along branches of a tree. Consequently, the mutation rate $\mu$ must have been such that the tree height $h_T$ cannot exceed $1/\mu$ (in other words, $\mu h_T\le 1$), otherwise there would be saturation, and sequences could not possibly have sufficient information to align. At the other end of the spectrum, where $\mu h_T$ close to zero, very long sequences are required to ensure there are enough mutations in order to be able to reconstruct the tree distribution.
+Validation only covers cases in as far as the prior covers it -- most studies will not cover all possible cases, since the state space is just to large. Usually, informative priors are required for validation to work, since broader priors (e.g. some of the default tree priors in BEAST) lead to identifiability issues, for example, due to saturation of mutations along branches of a tree. 
+
+# Setting priors
+
+## Trees & clock model parameters
+
+The mutation rate $\mu$ must have been such that the tree height $h_T$ cannot exceed $1/\mu$ (in other words, $\mu h_T\le 1$), otherwise there would be saturation, and sequences could not possibly have sufficient information to align. At the other end of the spectrum, where $\mu h_T$ close to zero, very long sequences are required to ensure there are enough mutations in order to be able to reconstruct the tree distribution.
 
 TODO: forumlate in terms of $N_e$ instead of $h_T$?
 
-## Height of trees
-
 * for reasonable computation times, trees should be about 0.5 substitutions high, OR
-* sequences should be very long to reliably reconstruct smaller trees
-* trees over 1 substitutions are saturated, cannot be reconstructed reliably
+* sequences should be very long to reliably reconstruct smaller trees.
 
 One way to enforce this is by 
 
-* a narrow prior on birth rates, or
-* putting an MRCA prior on the height of the tree, for coalescent models (this hampers simulator implementations though).
+* a narrow prior on birth rates (for birth/death type tree priors), or
+* putting an MRCA prior on the height of the tree, for coalescent models.
+Note that the latter hampers direct simulator implementations.
 
 For clock models with mean clock rate != 1, simulate trees with clock rates times tree height approximately 0.5.
 
-For releases, tree priors should be made less informative.
+Published mutation rates can range from $O(1e-2)$ substitutions per site per year for  viruses such as HIV [@cuevas2015extremely], to $O(1e-11)$ for conserved regions of nuclear DNA (e.g PyrE2 locus in Haloferax volcanii [@lynch2010evolution]).
 
-## Setting priors
+For releases, tree priors for clock and trees should be made less informative in order to cater for a wider range of tree heights and clock rates.
 
-Priors ideally should be set in realistic ranges, e.g. frequency priors not uniform(0,1) but Dirichlet(4,4,4,4)
+## Gamma rate heterogeneity
+
+To prevent saturation, adding categories with slow rates will go some way to allow covering a larger range of clock rates. Using gamma rate heterogeneity with shape values in the range 0.1 to 1 allows this, so adopt a gamma shape prior accordingly.
+
+## Proportion invariable sites
+
+Since each site evolves with non-zero rate, use of proportion invariable sites is modeling the process badly, and therefore not recommended.
+
+## Frequencies
+
+Priors ideally should be set in realistic ranges, e.g. frequency priors not uniform(0,1) but Dirichlet(4,4,4,4) is better.
+
+## Substitution model parameters
+
+Default priors seem OK for most substitution models.
+
 
 ## Sequence simulator
 
