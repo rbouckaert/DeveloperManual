@@ -2,6 +2,18 @@
 
 Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document. Use at own risk.
 
+This document is about testing validity of a BEAST method, not the programming aspects (like setting up dependencies, wrapping up files into a package, etc.), which can be found in the [tutorial for writing a BEAST 2 package](http://www.beast2.org/writing-a-beast-2-package) and [writing a package for a tree prior tutorial](https://github.com/BEAST2-Dev/beast-docs/blob/master/CreateNewTreePrior/CreateNewTreePrior.md).
+
+
+Levels of validation:
+
+* the model appears to produce reasonable results on a data set of interest.
+* the model produces more reasonable results on a data set of interest than other models.
+* a simulation study shows parameters simulated under the model can be recovered by inference from simulated data for a fixed tree and fixed other parameters for a small number of illustrative cases.
+* as previous but with sampled tree and sampled parameters, so the process is repeated $N$ times and tree and parameters sampled from a reasonable prior.
+* a simulation study shows the model can recover parameters (most of the time) even when there are model violations in simulating the parameters.
+
+
 ## Testing new methods
 
 New methods require usually require two parts: an implementation $I(M)$ of a model $M$ and associated probability $p_I(\theta|M)$ of states $\theta$, and MCMC operators $R(\theta)\to\theta'$ for creating proposals $\theta'$ for moving through state space starting in state $\theta$ (though sometimes just an operator is validated that is much more efficient than previously existing operators). This guide contains some procedures to make sure that the model and operators are correctly implemented. Ideally, we have an independent implementation of a simulator $S(M)\to\theta$ that allows (possibly inefficiently) to sample from the target distribution $p_S(\theta|M)$. If so, we also need to verify that the simulator is correctly implemented. In summary, we need to establish correctness of:
@@ -17,22 +29,91 @@ To verify correctness of a simulator implementation $S$ for model $M$ directly, 
 
 When no analytical estimates of statistics are available, ...
 
-Examples of simulators: 
+Examples of simulators (this list is far from exhaustive):
 
 * the [MASTER](http://tgvaughan.github.io/MASTER/) [@vaughan2013stochastic] BEAST 2 package is a general purpose package for simulating stochastic population dynamics models which can be expressed in terms of a chemical master equation.
 * SimSnap for SNAPP [@bryant2012inferring] is a custom build implementation in C++ for simulating alignments for a fixed tree and SNAPP parameters.
-* The `beast.app.seqgen.SequenceSimulator` can be used to simulate alignments for general site models using reversible substitution models. See [testSeqGen.xml](https://github.com/CompEvol/beast2/blob/master/examples/testSeqGen.xml) for an example.
+* The `beast.app.seqgen.SequenceSimulator` class in BEAST 2 can be used to simulate alignments for general site models using reversible substitution models. See [testSeqGen.xml](https://github.com/CompEvol/beast2/blob/master/examples/testSeqGen.xml) for an example.
+* Models implemented in other phylogenetic software packages, such a BEAS 1, MrBayes, RevBayes, allow sampling a distribution using MCMC.
 * The `beast.core.DirectSimulator` class in BEAST 2 can be used to draw samples from distributions in BEAST that extend `beast.core.distribution.Distribution` and implement the `sample(state, random)` method. You can set up an XML file and run it in BEAST. Here are a few examples: [testDirectSimulator.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator.xml),
 [testDirectSimulator2.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator2.xml), and
 [testDirectSimulatorHierarchical.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulatorHierarchical.xml).
 
+
+
 ### Verify correctness of model implementation
 
-In theory, the inferred distributions $p_I(\theta|M)$ should match the simulator distribution $p_S(\theta|M)$. However, drawing samples from $p_I(\theta|M)$ typically requires running an MCMC chain, which requires MCMC proposals $R$ to randomly walk through state space. If we do this, we need to rely on $R$ being correctly implemented. So, if we find that $p_I(\theta|M)$ and $p_S(\theta|M)$ so not match, it is not possible to tell whether problem is with an operator $R$ or with the model implementation $I(M)$.
+In theory, the inferred distributions $p_I(\theta|M)$ should match the simulator distribution $p_S(\theta|M)$. However, drawing samples from $p_I(\theta|M)$ typically requires running an MCMC chain, which requires MCMC proposals $R$ to randomly walk through state space. If we do this, we need to rely on $R$ being correctly implemented. So, if we find that $p_I(\theta|M)$ and $p_S(\theta|M)$ do not match, it is not possible to tell whether problem is with an operator $R$ or with the model implementation $I(M)$.
 
 (Christiaan's technique to the rescue)
 
+The Hastings ratio is $P(\theta)/P(\theta')$. Consequently, every proposal is accepted, whether $p_I(\theta|M)$ is correctly implemented or not.
 
+In BEAST, if the `sample` method is implemented in a class derived from `Distribution`, you can use  `beast.experimenter.DirectSimulatorOperator` in the Experimenter package to set up an MCMC analysis in XML. Here is an example that draws a birth rate from an exponential distribution with mean 1, and a Yule distribution to generate a tree. Note that the tree heigh statistic is logged, as well as an expression for a clock rate (being 0.5/tree-height) for evaluation purposes. The MCMC sample can be compared with the direct sample using the example file [testDirectSimulator.xml](https://github.com/rbouckaert/Experimenter/blob/master/examples/testDirectSimulator.xml).
+
+
+```
+<beast version="2.0" namespace="beast.core
+:beast.evolution.alignment
+:beast.evolution.tree
+:beast.math.distributions
+:beast.evolution.speciation
+:beast.core.util
+:beast.core.parameter">
+
+
+
+    <run spec="MCMC" chainLength="1000000">
+    	<state id="state">
+    		<stateNode idref="tree"/>
+    		<stateNode idref="birthDiffRateParam"/>
+    	</state>
+
+        <distribution spec="CompoundDistribution" id="fullModel">
+            <distribution spec="YuleModel" id="yuleModel">
+                <tree spec="Tree" id="tree">
+                    <taxonset spec="TaxonSet">
+                        <taxon spec="Taxon" id="t1"/>
+                        <taxon spec="Taxon" id="t2"/>
+                        <taxon spec="Taxon" id="t3"/>
+                        <taxon spec="Taxon" id="t4"/>
+                        <taxon spec="Taxon" id="t5"/>
+                    </taxonset>
+                </tree>
+                <birthDiffRate spec="RealParameter" id="birthDiffRateParam" value="1.0"/>
+            </distribution>
+
+            <distribution spec="beast.math.distributions.Prior" id="birthDiffRatePrior">
+                <distr spec="Exponential" id="xExpParamDist" mean="1"/>
+                <x idref="birthDiffRateParam"/>
+            </distribution>
+
+        </distribution>
+
+		<operator spec="beast.experimenter.DirectSimulatorOperator" weight="1" state="@state">
+			<simulator id="DirectSimulator" spec="beast.core.DirectSimulator" nSamples="1">
+				<distribution idref="fullModel"/>
+			</simulator>
+		</operator>
+
+        <logger id="tracelog" logEvery="1000" fileName="$(filebase).log">
+            <log idref="birthDiffRateParam"/>
+            <log id="clockRate" spec="beast.util.Script" expression="0.5/TreeHeight">
+            	<x id="TreeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
+            </log>
+            <log idref="TreeHeight"/>
+        </logger>
+
+        <logger id="treelog" logEvery="1000" fileName="$(filebase).trees">
+            <log idref="tree"/>
+        </logger>
+
+        <logger id="screenlog" logEvery="1000">
+            <log idref="birthDiffRateParam"/>
+        </logger>
+    </run>
+</beast>
+```
 
 Comparing two distributions can be done by
 
@@ -72,6 +153,7 @@ Though some values have very low p-values, meaning they differ significantly, it
 
 Once simulator $S(M)$ and model implementation $I(M)$ are verified to be correct, next step is implementing efficient operators, running MCMCs to verify that parameters drawn from the prior are covered 95% of the time in the 95% HPD interval of parameter distributions.
 
+The direct simulator operator (see `DirectSimulatorOperator` above) can be used as starting operator, and new operators added one by one to verify correctness.
 
 The BEAST 2 [Experimenter](https://github.com/rbouckaert/Experimenter) package can assist (see section "Using the Experimenter package" below).
 
@@ -80,9 +162,87 @@ The BEAST 2 [Experimenter](https://github.com/rbouckaert/Experimenter) package c
 
 
 
+## Setting up a direct simulation in BEAST
+
+Using the direct simulator can be done as follows
+
+* Set up `DirectSimulator` at top level
+* Add model to simulate from
+* Add loggers to register output
+
+### Set up `DirectSimulator` at top level
+
+Use the `nSamples` attribute to specify how many samples to draw.
+
+```
+<beast version="2.0" namespace="beast.core:beast.evolution.alignment:beast.evolution.tree:beast.math.distributions:beast.evolution.speciation:beast.core.util:beast.core.parameter">
+
+    <run spec="DirectSimulator" nSamples="100">
+
+		<!-- model goes here -->
+
+		<!-- loggers go here -->
+
+    </run>
+</beast>
+```
 
 
-	
+### Add model to simulate from
+
+Here, the model consists of a birthDiffRate parameter, drawn from an exponential distribution. This rate is used in a Yule model to draw trees over a set of 5 taxa, called `t1`, `t2`,...,`t4`. This is placed inside the run element above.
+
+```
+<distribution spec="CompoundDistribution" id="fullModel">
+    <distribution spec="YuleModel" id="yuleModel">
+        <tree spec="Tree" id="tree">
+            <taxonset spec="TaxonSet">
+                <taxon spec="Taxon" id="t1"/>
+                <taxon spec="Taxon" id="t2"/>
+                <taxon spec="Taxon" id="t3"/>
+                <taxon spec="Taxon" id="t4"/>
+                <taxon spec="Taxon" id="t5"/>
+            </taxonset>
+        </tree>
+        <birthDiffRate spec="RealParameter" id="birthDiffRateParam" value="1.0"/>
+    </distribution>
+
+    <distribution spec="beast.math.distributions.Prior" id="birthDiffRatePrior">
+        <distr spec="Exponential" id="xExpParamDist" mean="1"/>
+        <x idref="birthDiffRateParam"/>
+    </distribution>
+</distribution>
+```
+
+### Add loggers to register output
+
+Since we sample a parameter and a tree, we need a trace log and a tree log. Appart from state nodes, other statistics can be sampled as well. For example, here, we log the height of the tree using a `TreeHeightLogger`, and log a clock rate suitable for the tree using the expression `0.5/TreeHeight` using the `Script` class form the [BEASTLabs](https://github.com/BEAST2-Dev/BEASTLabs) package. The loggers should be placed inside the run element as well.
+
+```
+<logger logEvery="1" fileName="$(filebase).log">
+    <log idref="birthDiffRateParam"/>
+    <log id="TreeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
+    <log id="clockRate" spec="beast.util.Script" expression="0.5/TreeHeight">
+    	<x idref="TreeHeight"/>    
+    </log>    
+</logger>
+
+<logger logEvery="1" fileName="$(filebase).trees">
+    <log idref="tree"/>
+</logger>
+```
+
+The complete XML file can be found as [testDirectSimulatorByMCMC.xml](https://github.com/rbouckaert/Experimenter/blob/master/examples/testDirectSimulatorByMCMC.xml) in the Experimenter package.
+
+
+## Converting direct simulator XML to MCMC
+
+Conversion requires the following steps:
+
+* replace top level run element by MCMC
+* add state element and references to state nodes
+* add `DirectSimulatorOperator`
+* add screen logger (optional)
 
 
 
@@ -283,8 +443,7 @@ CoverageCalculator calculates how many times entries in log file are covered in 
 
 It produces a report like so:
 
-```
-                                                coverage Mean ESS Min ESS
+```                                                coverage Mean ESS Min ESS
 posterior                                       0	   2188.41  1363.02
 likelihood                                      0	   4333.99  3042.15
 prior                                           33	   1613.20  891.92

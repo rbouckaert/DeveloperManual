@@ -1,22 +1,25 @@
 
-all: DeveloperManual.pdf DeveloperManual.docx DeveloperManual.html
+all: output output/DeveloperManual.pdf output/DeveloperManual.docx output/DeveloperManual.html
 
 .PHONY: all install clean
 
 CSL=oxford-university-press-scimed-author-date.csl
 
-
-%.pdf: README.md
-	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o output/$@ $<
+output:
+	mkdir output
+	ln -s ../figures output/figures
+        
+%.pdf: README.md	
+	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o $@ $<
 
 %.docx: README.md
-	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o output/$@ $<
+	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o $@ $<
 
 %.html: README.md
-	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o output/$@ $<
+	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o $@ $<
 
 install:
 	pip install pandoc-eqnos
 
 clean:
-	rm output/*.pdf output/*.docx output/*.html
+	rm -r output
