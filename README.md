@@ -1,6 +1,6 @@
 # Some guidance for developing new methods in BEAST 2
 
-Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document. Use at own risk.
+Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document based on collected wisdom of BAEST developers. Use at own risk.
 
 This document is about testing validity of a BEAST method, not the programming aspects (like setting up dependencies, wrapping up files into a package, etc.), which can be found in the [tutorial for writing a BEAST 2 package](http://www.beast2.org/writing-a-beast-2-package) and [writing a package for a tree prior tutorial](https://github.com/BEAST2-Dev/beast-docs/blob/master/CreateNewTreePrior/CreateNewTreePrior.md).
 
@@ -9,6 +9,8 @@ Levels of validation:
 
 * the model appears to produce reasonable results on a data set of interest.
 * the model produces more reasonable results on a data set of interest than other models.
+* unit tests show correctness of direct simulator implementation, likelihood implementation and/or  operator implementation(s).
+* sampling from prior conforms to expectations.
 * a simulation study shows parameters simulated under the model can be recovered by inference from simulated data for a fixed tree and fixed other parameters for a small number of illustrative cases.
 * as previous but with sampled tree and sampled parameters, so the process is repeated $N$ times and tree and parameters sampled from a reasonable prior.
 * a simulation study shows the model can recover parameters (most of the time) even when there are model violations in simulating the parameters.
@@ -42,6 +44,32 @@ Examples of simulators (this list is far from exhaustive):
 
 
 ### Verify correctness of model implementation
+
+For small examples for which an analytical result can be calculated a unit test can be written to confirm the implementation behaves correctly for the expected result. For example, for a small tree ((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0) with birth rate 1 we can calculate the expected value of the Yule prior ($\log(P)=-6$), and write a unit test to make sure it matches:
+
+```
+package test;
+
+import org.junit.Test;
+
+import beast.evolution.speciation.YuleModel;
+import beast.util.TreeParser;
+import junit.framework.TestCase;
+
+public class YuleLikelihoodTest extends TestCase {
+
+	@Test
+	public void testYuleLikelihood() {
+        TreeParser tree = new TreeParser("((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);");
+        
+        YuleModel likelihood = new YuleModel();
+        likelihood.initByName("tree", tree, "birthDiffRate", "1.0");
+
+        assertEquals(-6.0, likelihood.calculateLogP());
+    }
+
+}
+```
 
 In theory, the inferred distributions $p_I(\theta|M)$ should match the simulator distribution $p_S(\theta|M)$. However, drawing samples from $p_I(\theta|M)$ typically requires running an MCMC chain, which requires MCMC proposals $R$ to randomly walk through state space. If we do this, we need to rely on $R$ being correctly implemented. So, if we find that $p_I(\theta|M)$ and $p_S(\theta|M)$ do not match, it is not possible to tell whether problem is with an operator $R$ or with the model implementation $I(M)$.
 
@@ -346,6 +374,13 @@ source [https://www.di-mgt.com.au/binomial-calculator.html](https://www.di-mgt.c
 
 * Priors should be made as uninformative as possible -- people will use defaults!
 * Make sure to consider a number of scenarios, e.g. for clock models, scenarios from [setting up rates](http://www.beast2.org/2015/06/23/help-beast-acts-weird-or-how-to-set-up-rates.html) page on [beast2.org](http://beast2.org).
+
+
+## Communicating results
+
+When publishing well calibrated studies, all XML files, log files and scripts for manipulating them should be made available, so the study can be replicated exactly as is. A practical way to do this is through a [github](http://github.com) repository.
+
+Version numbers of BEAST and packages used should be noted.
 
 
 
