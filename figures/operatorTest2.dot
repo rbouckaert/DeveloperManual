@@ -1,0 +1,35 @@
+digraph G {
+	prior_xml [shape=box, label="prior.xml"];
+	trace_log [shape=box, label="trace.log"];
+	tree_log [shape=box, label="tree.log"];
+	tracelogs [shape=box, label="trace.log"];
+	treelogs [shape=box, label="tree.log"];
+	beast_xml [shape=box, label="beast.xml"];
+	combined  [shape=box, label="combined.log"];
+	
+	BEAST [label="1. BEAST"];
+	CoverageTestXMLGenerator [label="2. CoverageTestXMLGenerator"]
+	BEAST2 [label="3. BEAST"];
+	logcombiner [label="4. LogCombiner"];
+	CoverageCalculator [label="5. SBCAnalyser"];
+	
+	
+	sbc_stats [shape=box, label="SBC.stats"];
+	prior_xml -> BEAST -> trace_log;
+	BEAST -> tree_log;
+	trace_log -> CoverageTestXMLGenerator;
+	tree_log -> CoverageTestXMLGenerator;
+	CoverageTestXMLGenerator -> beast_xml
+	subgraph cluster0 {
+		beast_xml -> BEAST2;
+		BEAST2 -> tracelogs;
+		BEAST2 -> treelogs;
+		labeljust="r";
+		labelloc="b";
+	    label=" N times"; 
+		style=filled;
+		color=lightblue;
+			}
+	tracelogs -> logcombiner -> combined -> CoverageCalculator -> sbc_stats;	
+	trace_log -> CoverageCalculator;
+ }
