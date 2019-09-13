@@ -6,12 +6,15 @@ digraph G {
 	treelogs [shape=box, label="tree.log"];
 	beast_xml [shape=box, label="beast.xml"];
 	combined  [shape=box, label="combined.log"];
+	template  [shape=box, label="XML template"];
+	minESS  [shape=box, label="minimum ESS"];
 	
 	BEAST [label="1. BEAST"];
 	CoverageTestXMLGenerator [label="2. CoverageTestXMLGenerator"]
 	BEAST2 [label="3. BEAST"];
-	logcombiner [label="4. LogCombiner"];
-	CoverageCalculator [label="5. SBCAnalyser"];
+	loganalyser [label="4. LogAnalyser"];
+	logcombiner [label="5. LogCombiner"];
+	SBCAnalyser [label="6. SBCAnalyser"];
 	
 	
 	sbc_stats [shape=box, label="SBC.stats"];
@@ -19,6 +22,7 @@ digraph G {
 	BEAST -> tree_log;
 	trace_log -> CoverageTestXMLGenerator;
 	tree_log -> CoverageTestXMLGenerator;
+	template -> CoverageTestXMLGenerator;
 	CoverageTestXMLGenerator -> beast_xml
 	subgraph cluster0 {
 		beast_xml -> BEAST2;
@@ -30,6 +34,9 @@ digraph G {
 		style=filled;
 		color=lightblue;
 			}
-	tracelogs -> logcombiner -> combined -> CoverageCalculator -> sbc_stats;	
-	trace_log -> CoverageCalculator;
+	tracelogs -> logcombiner -> combined -> SBCAnalyser -> sbc_stats;	
+	trace_log -> SBCAnalyser;
+	tracelogs -> loganalyser -> minESS;
+#	minESS ->  logcombiner [headlabel="sub sample\nfrequency", labeldistance=5, labelangle=45];
+	minESS ->  logcombiner [label="sub sample\nfrequency"];
  }

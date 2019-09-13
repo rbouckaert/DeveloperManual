@@ -6,12 +6,14 @@ digraph G {
 	treelogs [shape=box, label="tree.log"];
 	beast_xml [shape=box, label="beast.xml"];
 	summary  [shape=box, label="summary"];
+	template  [shape=box, label="XML template"];
 	
 	BEAST [label="1. BEAST"];
 	CoverageTestXMLGenerator [label="2. CoverageTestXMLGenerator"]
 	BEAST2 [label="3. BEAST"];
 	loganalyser [label="4. loganalyser"];
 	CoverageCalculator [label="5. CoverageCalculator"];
+	template -> CoverageTestXMLGenerator;
 	
 	
 	coverage_stats [shape=box, label="coverage.stats"];
