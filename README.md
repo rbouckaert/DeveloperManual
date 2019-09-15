@@ -500,6 +500,92 @@ Coverage should be around 95%. One reason coverage can be lower is if the ESSs a
 The values for posterior, prior and treelikelihood can be ignored: it compares results from sampling from the prior with that of sampling from the posterior so they can be expected to be different.
 
 
+## Simulation Based Calibration
+
+Simulation Based Calibration (SBC) [@talts2018validating] is a way to validate how well true values used to generate data rank inside the inferred distributions. Ranks are binned, and the resulting bins should be uniformly distributed if all is well. Deviation from uniform distributions indicate
+
+* if shaped like a U the posterior is too narrow.
+* if shape like inverted U, the posterior is too wide.
+* if shaped sloping upwards, the posterior is biased towards lower estimates.
+* if shaped sloping downwards, the posterior is biased towards higher estimates.
+
+![Simulation based calibration output for kappa parameter with 20 intervals. Light grey band indicates 99% coverage interval and darker grey the 95% coverage interval.](figures/sbc-kappa.png)
+
+To run a simulated based calibration study (steps 1-3 as for a coverage study):
+
+* set up XML for desired model and sample from prior
+* generate (MCMC) analysis for each of the samples (say 100)
+* run the analyses
+* use `LogAnalyser` to find minimum ESS
+* run `LogCombiner` to sub sample log files and accumulate logs
+* run `SBCAnalyser` to summarise coverage of parameters
+
+![Summary of files involved in running a simulation based calibration study. Rectangles represent files, ovals represent programs.](figures/operatorTest2.png)
+
+For steps 1-3, see coverage study.
+
+## 4. Find minimum ESS
+
+Use `LogAnalyser` to find minimum ESS -- or run coverage study and minimum ESS will be printed as part of the analysis.
+
+## 5. Combine logs
+
+First, we need to determine how much to resample log files. Since samples must be independent for the method to work, we can resample with frequency equal to the chain length divided by minimum ESS.
+
+Run `LogCombiner` to sub sample log files and accumulate logs. To run from command line, use
+
+```
+/path/to/beast/bin/logcombiner -resample <resample> -log <name>-?.log <name>-??.log <name>-???.log -o combined.log
+```
+
+where `<resample>` is the resample frequency (= chain length/minium ESS), and `<name>-` the name of the log file. Note that if you numbered the log files 0,...,9,10,...,99,100,...,999 using `<name>-*.log` will put entries in an alphabetic order, which is probably *not* what you want.
+
+## run `SBCAnalyser` to summarise coverage of parameters
+
+`SBCAnalyser` can be run with the BEAST app launcher, and outputs a report and (if an output directory is specified). It has the following arguments:
+
+* SBCAnalyser has the following inputs:
+* log (File): log file containing actual values (required)
+* skip (Integer): numer of log file lines to skip (optional, default: 1)
+* logAnalyser (File): file produced by loganalyser tool using the -oneline option, containing estimated values (required)
+* bins (Integer): number of bins to represent prior distribution (optional, default: 21)
+* outputDir (OutFile): output directory for SVG bar charts (optional, default: [[none]])
+* useRankedBins (Boolean): if true use ranking wrt prior to find bins.if false, use empirical bins based on prior. (optional, default: true)
+
+
+Note that it compares entries from the prior to posterior, so items like likelihood, posterior, treeLikelihood and clockRate seem very wrong, but that can be ignored, since these were not part of the prior or (for clockRate) we know beforehand the prior differs substantially from the posterior.
+
+```
+99%lo << mean << 99%up = -1 << 5 << 10
+                                                	missed	bin0	bin1	bin2	bin3	bin4	bin5	bin6	bin7	bin8	bin9	bin10	bin11	bin12	bin13	bin14	bin15	bin16	bin17	bin18	bin19	
+posterior                                       	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+likelihood                                      	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+prior                                           	0	8	5	6	6	4	3	7	5	1	7	3	9	8	4	3	6	3	6	4	2	
+treeLikelihood.dna                              	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+TreeHeight                                      	1	3	5	3	3	2	4	5	3	4	6	7	6	5	3	17	5	6	7	2	4	
+kappa                                           	0	8	3	5	5	5	4	4	6	3	7	7	4	6	3	6	4	8	3	5	4	
+gammaShape                                      	0	6	6	2	4	3	2	2	6	6	5	7	6	3	4	4	7	7	6	9	5	
+popSize                                         	1	1	3	1	3	2	6	1	3	1	5	9	5	4	5	11	10	9	5	10	6	
+CoalescentConstant                              	0	7	5	0	7	9	5	5	4	5	9	6	3	7	5	7	5	4	5	1	1	
+parameter.hyperInverseGamma-beta-PopSizePrior   	0	6	3	2	6	3	3	3	7	3	8	10	5	6	6	2	7	2	5	6	7	
+HyperPrior.hyperInverseGamma-beta-PopSizePrior  	1	11	2	5	4	5	3	5	10	1	10	10	2	8	1	3	6	3	2	5	4	
+monophyletic(root)                              	1	0	0	0	0	0	0	0	0	0	100	0	0	0	0	0	0	0	0	0	0	
+logP(mrca(root))                                	0	5	5	1	4	2	4	6	5	4	4	7	5	8	5	6	7	8	4	5	5	
+mrca.age(root)                                  	1	3	5	3	3	2	4	5	3	4	6	7	6	5	3	17	5	6	7	2	4	
+clockRate                                       	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+freqParameter.1                                 	1	4	4	7	3	6	7	4	6	1	6	6	6	2	2	6	4	5	2	5	14	
+freqParameter.2                                 	0	6	9	3	5	4	7	4	4	1	8	7	8	2	4	6	5	8	2	4	3	
+freqParameter.3                                 	0	6	4	6	8	8	5	4	5	4	6	4	2	4	8	1	7	7	3	3	5	
+freqParameter.4                                 	0	9	1	2	5	4	3	4	6	3	2	8	7	4	6	6	7	6	6	7	4	
+Done!
+```
+
+
+
+
+
+
+
 ## Installing Experimenter package
 
 Currently, you need to build from source (which depends on [BEAST 2](https://github.com/CompEvol/beast2) and [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/) code) and install by hand (see "install by hand" section in [managing packages](http://www.beast2.org/managing-packages/).
