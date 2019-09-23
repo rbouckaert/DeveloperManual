@@ -473,7 +473,7 @@ CoverageCalculator calculates how many times entries in log file are covered in 
 - log <filename>	log file containing actual values
 - skip <integer>	numer of log file lines to skip (default: 1)
 - logAnalyser <filename>	file produced by loganalyser tool using the -oneline option, containing estimated values
-- out 	output file for trace log with truth and mean estimates. Not produced if not specified
+- out 	output file for trace log with truth and mean estimates. Not produced if not specified -- directory containing file is used to generate svg bargraphs and html report
 - help	 show arguments
 
 It produces a report like so:
@@ -499,6 +499,17 @@ Coverage should be around 95%. One reason coverage can be lower is if the ESSs a
 
 The values for posterior, prior and treelikelihood can be ignored: it compares results from sampling from the prior with that of sampling from the posterior so they can be expected to be different.
 
+If an output file is specified, `CoverageCalcaulator` also generates an HTML file with bar graphs showing how well each item in the log file covers the true value, as well as tab separated (tsv) files containing the data, so you can import them in for example R to produce customised graphs. Below some examples with good coverage, and strong, medium and weak ability to learn the parameter, followed by over estimated and under estimated parameters.
+
+
+![Strong coverage](figures/bargraph-ok-strong.png)
+![Medium coverage](figures/bargraph-ok-medium.png)
+![Weak coverage](figures/bargraph-ok-weak.png)
+
+![Over estimated](figures/bargraph-over.png)
+![Under estimated](figures/bargraph-under.png)
+
+
 
 ## Simulation Based Calibration
 
@@ -520,6 +531,8 @@ To run a simulated based calibration study (steps 1-3 as for a coverage study):
 * run `LogCombiner` to sub sample log files and accumulate logs
 * run `SBCAnalyser` to summarise coverage of parameters
 
+A correct implementation is uniformly distributed, like so:
+
 ![Summary of files involved in running a simulation based calibration study. Rectangles represent files, ovals represent programs.](figures/operatorTest2.png)
 
 For steps 1-3, see coverage study.
@@ -540,7 +553,7 @@ Run `LogCombiner` to sub sample log files and accumulate logs. To run from comma
 
 where `<resample>` is the resample frequency (= chain length/minium ESS), and `<name>-` the name of the log file. Note that if you numbered the log files 0,...,9,10,...,99,100,...,999 using `<name>-*.log` will put entries in an alphabetic order, which is probably *not* what you want.
 
-## run `SBCAnalyser` to summarise coverage of parameters
+## 6. Run `SBCAnalyser` to summarise coverage of parameters
 
 `SBCAnalyser` can be run with the BEAST app launcher, and outputs a report and (if an output directory is specified). It has the following arguments:
 
@@ -548,7 +561,7 @@ where `<resample>` is the resample frequency (= chain length/minium ESS), and `<
 * log (File): log file containing actual values (required)
 * skip (Integer): numer of log file lines to skip (optional, default: 1)
 * logAnalyser (File): file produced by loganalyser tool using the -oneline option, containing estimated values (required)
-* bins (Integer): number of bins to represent prior distribution (optional, default: 21)
+* bins (Integer): number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
 * outputDir (OutFile): output directory for SVG bar charts (optional, default: [[none]])
 * useRankedBins (Boolean): if true use ranking wrt prior to find bins.if false, use empirical bins based on prior. (optional, default: true)
 
