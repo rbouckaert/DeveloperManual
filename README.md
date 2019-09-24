@@ -473,7 +473,7 @@ CoverageCalculator calculates how many times entries in log file are covered in 
 - log <filename>	log file containing actual values
 - skip <integer>	numer of log file lines to skip (default: 1)
 - logAnalyser <filename>	file produced by loganalyser tool using the -oneline option, containing estimated values
-- out 	output file for trace log with truth and mean estimates. Not produced if not specified -- directory containing file is used to generate svg bargraphs and html report
+- out 	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
 - help	 show arguments
 
 It produces a report like so:
@@ -499,15 +499,21 @@ Coverage should be around 95%. One reason coverage can be lower is if the ESSs a
 
 The values for posterior, prior and treelikelihood can be ignored: it compares results from sampling from the prior with that of sampling from the posterior so they can be expected to be different.
 
-If an output file is specified, `CoverageCalcaulator` also generates an HTML file with bar graphs showing how well each item in the log file covers the true value, as well as tab separated (tsv) files containing the data, so you can import them in for example R to produce customised graphs. Below some examples with good coverage, and strong, medium and weak ability to learn the parameter, followed by over estimated and under estimated parameters.
+If an output file is specified, `CoverageCalcaulator` also generates an HTML file with bar graphs (in svg	) showing how well each item in the log file covers the true value, as well as tab separated (tsv) files containing the data, so you can import them in for example R to produce customised graphs. Below some examples with good coverage, and strong, medium and weak ability to learn the parameter, followed by over estimated and under estimated parameters.
 
 
-![Strong coverage](figures/bargraph-ok-strong.png)
-![Medium coverage](figures/bargraph-ok-medium.png)
-![Weak coverage](figures/bargraph-ok-weak.png)
+![Strong coverage: true parameter can be inferred accurately.](figures/bargraph-ok-strong.png)
 
-![Over estimated](figures/bargraph-over.png)
-![Under estimated](figures/bargraph-under.png)
+![Medium coverage: true parameter can be inferred, but with high uncertainty.](figures/bargraph-ok-medium.png)
+
+![Weak coverage: true parameter cannot be inferred, even though 95% HPD covers the true value sufficiently often.](figures/bargraph-ok-weak.png)
+
+![True parameter is over estimated](figures/bargraph-over.png)
+
+![True parameter is under estimated](figures/bargraph-under.png)
+
+Graphs show true value on x-axis and estimates on y-axis. Black line shows where x equals y axis, and where ideally most of the probability mass is concentrated. Black dots are means of estimates. Bars indicate 95% HPDs where blue bars cover the true value and red ones do not. Ideally 95 out of 100 bars should be blue.
+
 
 
 
@@ -601,12 +607,12 @@ Done!
 
 ## Installing Experimenter package
 
-Currently, you need to build from source (which depends on [BEAST 2](https://github.com/CompEvol/beast2) and [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/) code) and install by hand (see "install by hand" section in [managing packages](http://www.beast2.org/managing-packages/).
+Currently, you need to build from source (which depends on [BEAST 2](https://github.com/CompEvol/beast2), [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/) and [MASTER](https://github.com/tgvaughan/MASTER/) code) and install by hand (see "install by hand" section in [managing packages](http://www.beast2.org/managing-packages/).
 
 Quick guide
 
-* clone [BEAST 2](https://github.com/CompEvol/beast2), [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/) and [Experimenter](https://github.com/rbouckaert/Experimenter/) all in same directory.
-* build BEAST 2 (using `ant Linux` in the beast2 folder), then BEASTLabs (using `ant addon` in the BEASTLabs folder), then 
+* clone [BEAST 2](https://github.com/CompEvol/beast2), [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/), [MASTER](https://github.com/tgvaughan/MASTER/), and [Experimenter](https://github.com/christiaanjs/beast-validation/) all in same directory.
+* build BEAST 2 (using `ant Linux` in the beast2 folder), then BEASTLabs (using `ant addon` in the BEASTLabs folder), and MASTER (using `ant` in the MASTER folder) then 
 Experimenter (again, using `ant addon` in the Experimenter folder) packages.
 * install BEASTlabs (using the [package manager](www.beast2.org/managing-packages/#Server_machines), or via BEAUti's `File/Manage pacakges` menu).
 * install Experimenter package by creating `Experimenter` folder in your [BEAST package folder](http://www.beast2.org/managing-packages/#Installation_directories), and unzip the file `Experimenter/build/dist/Experimenter.addon.v0.0.1.zip` (assuming version 0.0.1).

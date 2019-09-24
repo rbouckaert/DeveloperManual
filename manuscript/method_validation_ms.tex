@@ -281,6 +281,23 @@ quantities can be promptly computed or simulated and compared against.
 
 \noindent [Coverage]
 
+\begin{figure}
+\includegraphics[width=0.19\textwidth]{../figures/bargraph-ok-strong}
+\includegraphics[width=0.19\textwidth]{../figures/bargraph-ok-medium}
+\includegraphics[width=0.19\textwidth]{../figures/bargraph-ok-weak}
+\includegraphics[width=0.19\textwidth]{../figures/bargraph-under}
+\includegraphics[width=0.19\textwidth]{../figures/bargraph-over}
+\caption{\label{fig:coverage}
+Graphs show true value on x-axis and estimates on y-axis. Black line shows where x equals y axis, and where ideally most of the probability mass is concentrated. Black dots are means of estimates. Bars indicate 95\% HPDs where blue bars cover the true value and red ones do not. Ideally 95 out of 100 bars should be blue.
+a) Strong coverage: true parameter can be inferred accurately.
+b) Medium coverage: true parameter can be inferred, but with high uncertainty.
+c) Weak coverage: true parameter cannot be inferred, even though 95\% HPD covers the true value sufficiently often.
+d) True parameter is over estimated.
+e) True parameter is under estimated.
+}
+\end{figure}
+
+
 \vspace{1cm}
 
 \noindent [Well-calibrated validation: coverage, correlation between truth and
