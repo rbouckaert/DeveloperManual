@@ -473,7 +473,7 @@ CoverageCalculator calculates how many times entries in log file are covered in 
 - log <filename>	log file containing actual values
 - skip <integer>	numer of log file lines to skip (default: 1)
 - logAnalyser <filename>	file produced by loganalyser tool using the -oneline option, containing estimated values
-- out 	output file for trace log with truth and mean estimates. Not produced if not specified
+- out 	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
 - help	 show arguments
 
 It produces a report like so:
@@ -499,15 +499,120 @@ Coverage should be around 95%. One reason coverage can be lower is if the ESSs a
 
 The values for posterior, prior and treelikelihood can be ignored: it compares results from sampling from the prior with that of sampling from the posterior so they can be expected to be different.
 
+If an output file is specified, `CoverageCalcaulator` also generates an HTML file with bar graphs (in svg	) showing how well each item in the log file covers the true value, as well as tab separated (tsv) files containing the data, so you can import them in for example R to produce customised graphs. Below some examples with good coverage, and strong, medium and weak ability to learn the parameter, followed by over estimated and under estimated parameters.
+
+
+![Strong coverage: true parameter can be inferred accurately.](figures/bargraph-ok-strong.png)
+
+![Medium coverage: true parameter can be inferred, but with high uncertainty.](figures/bargraph-ok-medium.png)
+
+![Weak coverage: true parameter cannot be inferred, even though 95% HPD covers the true value sufficiently often.](figures/bargraph-ok-weak.png)
+
+![True parameter is over estimated](figures/bargraph-over.png)
+
+![True parameter is under estimated](figures/bargraph-under.png)
+
+Graphs show true value on x-axis and estimates on y-axis. Black line shows where x equals y axis, and where ideally most of the probability mass is concentrated. Black dots are means of estimates. Bars indicate 95% HPDs where blue bars cover the true value and red ones do not. Ideally 95 out of 100 bars should be blue.
+
+
+
+
+## Simulation Based Calibration
+
+Simulation Based Calibration (SBC) [@talts2018validating] is a way to validate how well true values used to generate data rank inside the inferred distributions. Ranks are binned, and the resulting bins should be uniformly distributed if all is well. Deviation from uniform distributions indicate
+
+* if shaped like a U the posterior is too narrow.
+* if shape like inverted U, the posterior is too wide.
+* if shaped sloping upwards, the posterior is biased towards lower estimates.
+* if shaped sloping downwards, the posterior is biased towards higher estimates.
+
+![Simulation based calibration output for kappa parameter with 20 intervals. Light grey band indicates 99% coverage interval and darker grey the 95% coverage interval.](figures/sbc-kappa.png)
+
+To run a simulated based calibration study (steps 1-3 as for a coverage study):
+
+* set up XML for desired model and sample from prior
+* generate (MCMC) analysis for each of the samples (say 100)
+* run the analyses
+* use `LogAnalyser` to find minimum ESS
+* run `LogCombiner` to sub sample log files and accumulate logs
+* run `SBCAnalyser` to summarise coverage of parameters
+
+A correct implementation is uniformly distributed, like so:
+
+![Summary of files involved in running a simulation based calibration study. Rectangles represent files, ovals represent programs.](figures/operatorTest2.png)
+
+For steps 1-3, see coverage study.
+
+## 4. Find minimum ESS
+
+Use `LogAnalyser` to find minimum ESS -- or run coverage study and minimum ESS will be printed as part of the analysis.
+
+## 5. Combine logs
+
+First, we need to determine how much to resample log files. Since samples must be independent for the method to work, we can resample with frequency equal to the chain length divided by minimum ESS.
+
+Run `LogCombiner` to sub sample log files and accumulate logs. To run from command line, use
+
+```
+/path/to/beast/bin/logcombiner -resample <resample> -log <name>-?.log <name>-??.log <name>-???.log -o combined.log
+```
+
+where `<resample>` is the resample frequency (= chain length/minium ESS), and `<name>-` the name of the log file. Note that if you numbered the log files 0,...,9,10,...,99,100,...,999 using `<name>-*.log` will put entries in an alphabetic order, which is probably *not* what you want.
+
+## 6. Run `SBCAnalyser` to summarise coverage of parameters
+
+`SBCAnalyser` can be run with the BEAST app launcher, and outputs a report and (if an output directory is specified). It has the following arguments:
+
+* SBCAnalyser has the following inputs:
+* log (File): log file containing actual values (required)
+* skip (Integer): numer of log file lines to skip (optional, default: 1)
+* logAnalyser (File): file produced by loganalyser tool using the -oneline option, containing estimated values (required)
+* bins (Integer): number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
+* outputDir (OutFile): output directory for SVG bar charts (optional, default: [[none]])
+* useRankedBins (Boolean): if true use ranking wrt prior to find bins.if false, use empirical bins based on prior. (optional, default: true)
+
+
+Note that it compares entries from the prior to posterior, so items like likelihood, posterior, treeLikelihood and clockRate seem very wrong, but that can be ignored, since these were not part of the prior or (for clockRate) we know beforehand the prior differs substantially from the posterior.
+
+```
+99%lo << mean << 99%up = -1 << 5 << 10
+                                                	missed	bin0	bin1	bin2	bin3	bin4	bin5	bin6	bin7	bin8	bin9	bin10	bin11	bin12	bin13	bin14	bin15	bin16	bin17	bin18	bin19	
+posterior                                       	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+likelihood                                      	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+prior                                           	0	8	5	6	6	4	3	7	5	1	7	3	9	8	4	3	6	3	6	4	2	
+treeLikelihood.dna                              	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+TreeHeight                                      	1	3	5	3	3	2	4	5	3	4	6	7	6	5	3	17	5	6	7	2	4	
+kappa                                           	0	8	3	5	5	5	4	4	6	3	7	7	4	6	3	6	4	8	3	5	4	
+gammaShape                                      	0	6	6	2	4	3	2	2	6	6	5	7	6	3	4	4	7	7	6	9	5	
+popSize                                         	1	1	3	1	3	2	6	1	3	1	5	9	5	4	5	11	10	9	5	10	6	
+CoalescentConstant                              	0	7	5	0	7	9	5	5	4	5	9	6	3	7	5	7	5	4	5	1	1	
+parameter.hyperInverseGamma-beta-PopSizePrior   	0	6	3	2	6	3	3	3	7	3	8	10	5	6	6	2	7	2	5	6	7	
+HyperPrior.hyperInverseGamma-beta-PopSizePrior  	1	11	2	5	4	5	3	5	10	1	10	10	2	8	1	3	6	3	2	5	4	
+monophyletic(root)                              	1	0	0	0	0	0	0	0	0	0	100	0	0	0	0	0	0	0	0	0	0	
+logP(mrca(root))                                	0	5	5	1	4	2	4	6	5	4	4	7	5	8	5	6	7	8	4	5	5	
+mrca.age(root)                                  	1	3	5	3	3	2	4	5	3	4	6	7	6	5	3	17	5	6	7	2	4	
+clockRate                                       	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	100	
+freqParameter.1                                 	1	4	4	7	3	6	7	4	6	1	6	6	6	2	2	6	4	5	2	5	14	
+freqParameter.2                                 	0	6	9	3	5	4	7	4	4	1	8	7	8	2	4	6	5	8	2	4	3	
+freqParameter.3                                 	0	6	4	6	8	8	5	4	5	4	6	4	2	4	8	1	7	7	3	3	5	
+freqParameter.4                                 	0	9	1	2	5	4	3	4	6	3	2	8	7	4	6	6	7	6	6	7	4	
+Done!
+```
+
+
+
+
+
+
 
 ## Installing Experimenter package
 
-Currently, you need to build from source (which depends on [BEAST 2](https://github.com/CompEvol/beast2) and [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/) code) and install by hand (see "install by hand" section in [managing packages](http://www.beast2.org/managing-packages/).
+Currently, you need to build from source (which depends on [BEAST 2](https://github.com/CompEvol/beast2), [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/) and [MASTER](https://github.com/tgvaughan/MASTER/) code) and install by hand (see "install by hand" section in [managing packages](http://www.beast2.org/managing-packages/).
 
 Quick guide
 
-* clone [BEAST 2](https://github.com/CompEvol/beast2), [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/) and [Experimenter](https://github.com/rbouckaert/Experimenter/) all in same directory.
-* build BEAST 2 (using `ant Linux` in the beast2 folder), then BEASTLabs (using `ant addon` in the BEASTLabs folder), then 
+* clone [BEAST 2](https://github.com/CompEvol/beast2), [BEASTlabs](https://github.com/BEAST2-Dev/BEASTLabs/), [MASTER](https://github.com/tgvaughan/MASTER/), and [Experimenter](https://github.com/christiaanjs/beast-validation/) all in same directory.
+* build BEAST 2 (using `ant Linux` in the beast2 folder), then BEASTLabs (using `ant addon` in the BEASTLabs folder), and MASTER (using `ant` in the MASTER folder) then 
 Experimenter (again, using `ant addon` in the Experimenter folder) packages.
 * install BEASTlabs (using the [package manager](www.beast2.org/managing-packages/#Server_machines), or via BEAUti's `File/Manage pacakges` menu).
 * install Experimenter package by creating `Experimenter` folder in your [BEAST package folder](http://www.beast2.org/managing-packages/#Installation_directories), and unzip the file `Experimenter/build/dist/Experimenter.addon.v0.0.1.zip` (assuming version 0.0.1).
