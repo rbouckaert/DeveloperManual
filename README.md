@@ -5,7 +5,7 @@ Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @be
 This document is about testing validity of a BEAST method, not the programming aspects (like setting up dependencies, wrapping up files into a package, etc.), which can be found in the [tutorial for writing a BEAST 2 package](http://www.beast2.org/writing-a-beast-2-package) and [writing a package for a tree prior tutorial](https://github.com/BEAST2-Dev/beast-docs/blob/master/CreateNewTreePrior/CreateNewTreePrior.md).
 
 
-Levels of validation:
+There are several lLevels of validation:
 
 * the model appears to produce reasonable results on a data set of interest.
 * the model produces more reasonable results on a data set of interest than other models.
@@ -18,7 +18,7 @@ Levels of validation:
 
 ## Testing new methods
 
-New methods require usually require two parts: an implementation $I(M)$ of a model $M$ and associated probability $p_I(\theta|M)$ of states $\theta$, and MCMC operators $R(\theta)\to\theta'$ for creating proposals $\theta'$ for moving through state space starting in state $\theta$ (though sometimes just an operator is validated that is much more efficient than previously existing operators). This guide contains some procedures to make sure that the model and operators are correctly implemented. Ideally, we have an independent implementation of a simulator $S(M)\to\theta$ that allows (possibly inefficiently) to sample from the target distribution $p_S(\theta|M)$. If so, we also need to verify that the simulator is correctly implemented. In summary, we need to establish correctness of:
+New methods require usually require two parts: an implementation $I(M)$ of a model $M$ and associated probability $p_I(\theta|M)$ of states $\theta$, and MCMC operators $R(\theta)\to\theta'$ for creating proposals $\theta'$ for moving through state space starting in state $\theta$ (though sometimes just an operator is validated that is much more efficient than previously existing operators). This guide contains some procedures to get some confidence that the model and operators are correctly implemented. Ideally, we have an independent implementation of a simulator $S(M)\to\theta$ that allows (possibly inefficiently) to sample from the target distribution $p_S(\theta|M)$. If so, we also need to verify that the simulator is correctly implemented. In summary, we need to establish correctness of:
 
 * the simulator implementation $S(M)\to\theta$ (if any)
 * the model implementation $I(M)$ 
@@ -72,8 +72,6 @@ public class YuleLikelihoodTest extends TestCase {
 ```
 
 In theory, the inferred distributions $p_I(\theta|M)$ should match the simulator distribution $p_S(\theta|M)$. However, drawing samples from $p_I(\theta|M)$ typically requires running an MCMC chain, which requires MCMC proposals $R$ to randomly walk through state space. If we do this, we need to rely on $R$ being correctly implemented. So, if we find that $p_I(\theta|M)$ and $p_S(\theta|M)$ do not match, it is not possible to tell whether problem is with an operator $R$ or with the model implementation $I(M)$.
-
-(Christiaan's technique to the rescue)
 
 The Hastings ratio is $P(\theta)/P(\theta')$. Consequently, every proposal is accepted, whether $p_I(\theta|M)$ is correctly implemented or not.
 
@@ -177,6 +175,65 @@ freqParameter.4                                  0.0
 Though some values have very low p-values, meaning they differ significantly, it is recommended to verify this using Tracer to make sure that the test is not unduly influenced by outliers.
 
 
+## Score based model validation
+
+For a density $p$ on data $x$ (this could be a scalar, vector, or a tree) parameterised by the vector $\theta$, the expected value of the score function $U(\theta,x)=\frac{\partial}{\partial\theta}\log p(x;\theta)$ is 0:
+
+$$
+E(U(\theta,x)) = \int U(\theta,x)p(x;\theta)dx = 0
+$$ {#eq:scorefunction}
+
+(this is the expected value over the data $x$ at the true parameters $\theta$)
+
+Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
+
+$$
+E\left(U(\theta, x)U(\theta, x)^T + \frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)=0 
+$${#eq:variancestatistic}
+
+
+These properties can be used in conjunction with a direct simulator as a necessary but not sufficient check that the likelihood is implemented correctly. The score function (+@eq:scorefunction) and Hessian (+@eq:variancestatistic) statistics can be calculated on samples from the simulator and a hypothesis test used to check that their mean is 0. In the multivariate case a potentially useful test is the likelihood ratio test for a multivariate normal with zero mean ([implemented here](https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/tests/MultivariateNormalZeroMeanTest.java)). If there are non-identifiable parameters there may be issues with performing this test as colinearity will lead to a singular sample covariance matrix.
+
+In practice it is appropriate to compute the score function by calculating derivatives using finite differences ([implemented here](https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/statistics/NumericalScoreFunctionStatistics.java)).
+
+### Writing a test
+
+The BEAST validation package is designed around three core object types: it performs a *test* on *statistics* drawn from *samplers*.
+BEAST validation tests are implemented within the BEAST 2 XML parser framework. The main Runnable class is [`beast.validation.StochasticValidationTest`](https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/StochasticValidationTest.java). `StochasticValidationTest` has inputs for each of the core object types: `samplers`, `statistics` and a `test`. Note that some tests may be designed for one, two or many sampler/statistic pairs.
+
+`StochasticValidationTest` has some additional parameters:
+* `alpha`: The significant level to use in the test
+* `nSamples`: The number of samples to draw from each sampler
+* `printEvery`: How often to report sampling progress
+* `sampleLoggers`: Loggers to run for every sample (usually the statistics)
+* `resultLoggers`: Loggers to run after testing
+
+There are currently two useful combinations of samplers, statistics and test implemented by BEAST validation.
+
+### Score function validation
+
+This test validates a combination of likelihood and direct simulator using a known property of probability density functions: that the expectation of the gradient of the log-likelihood at the true parameter values is zero (see [`stats-tricks.md`]). The core components of this test are (with a single sampler-statistic pair):
+
+* a simulator: This could be a custom simulator, or make use of one of the generic simulation tools available, such as `beast.simulation.TreeSamplerFromMaster`
+* `beast.validation.statistics.NumericalScoreFunctionStatistics`: a statistic that uses a finite differences to calculate the gradient of a likelihood with respect to some parameters 
+    - Note that the `RealParameter` objects included in the `parameter` input should be the same provided to the `Distribution` in the `likelihood` input
+* `beast.validation.tests.MultivariateNormalZeroMeanTest`: a likelihood ratio test that uses a multivariate normal fit to the gradients to test for zero mean
+
+An important note is that there are some regularity conditions on the parameters you can use in this test. Roughly, they must not affect the support of the data, which excludes the origin time parameter in tree priors. See [`stats-tricks.md`] for further details.
+
+[An example XML for this test on the birth-death-sampling tree prior](https://github.com/christiaanjs/beast-validation/blob/master/examples/birth-death-sampling-score-function-test.xml) can be found in the BEAST validation examples.
+
+### Running a test
+
+Once you have created an XML and installed the BEAST validation package (pending inclusion in the package repository) using the standard BEAST 2 launcher. Once your test has run, it will provide the result on the console:
+```
+Performing test...
+Test PASSED
+p value: 0.284784
+```
+
+
+
 ### Verify correctness of operator implementations
 
 Once simulator $S(M)$ and model implementation $I(M)$ are verified to be correct, next step is implementing efficient operators, running MCMCs to verify that parameters drawn from the prior are covered 95% of the time in the 95% HPD interval of parameter distributions.
@@ -186,7 +243,22 @@ The direct simulator operator (see `DirectSimulatorOperator` above) can be used 
 The BEAST 2 [Experimenter](https://github.com/rbouckaert/Experimenter) package can assist (see section "Using the Experimenter package" below).
 
 
+### MCMC sampling to verify correctness of operator implementations
 
+A useful test for an MCMC sampler for a model (likelihood + operators) is if it can produce the same distribution as direct simulation. For phylogenetic models, this would usually be the tree prior. The core components of this test:
+
+* Two samplers
+    - a simulator (see the previous test for details)
+    - `beast.core.SamplerFromMCMC`
+        - extends the normal BEAST MCMC class
+        - needs a model/likelihood and operators
+        - To test a single, potentially non-ergodic operator, a separate simulator could be used as a global operator with the `beast.simulation.OperatorFromSampler` class
+* A multivariate statistic
+    - `beast.validation.statistics.UltrametricTreeStatistics` provides some basic statistics on BEAST time trees 
+    - For an example of statistics on more complex tree-like objects, see [`bacter.util.ConversionGraphStatsLogger`](https://github.com/tgvaughan/bacter/blob/master/src/bacter/util/ConversionGraphStatsLogger.java)
+* `beast.validation.tests.BootstrapMultivariateDistributionTest`: a test that bootstraps a multivariate generalisation of the Kolmogorov-Smirnov (KS) statistic to compare distributions (see [`stats-tricks.md`] for further details)
+
+[An example XML for this test on the birth-death-sampling tree prior](https://github.com/christiaanjs/beast-validation/blob/master/examples/birth-death-sampling-prior-sampling-test.xml) can be found in the BEAST validation examples.
 
 
 
@@ -364,6 +436,7 @@ source [https://www.di-mgt.com.au/binomial-calculator.html](https://www.di-mgt.c
 
 ## Common causes of low coverage
 
+* ESS too low
 * trees cannot be reconstructed reliably (height should not be too small or large).
 * Hastings ratio in operators incorrectly implemented
 * bug in model likelihood
