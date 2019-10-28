@@ -5,7 +5,7 @@ Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @be
 This document is about testing validity of a BEAST method, not the programming aspects (like setting up dependencies, wrapping up files into a package, etc.), which can be found in the [tutorial for writing a BEAST 2 package](http://www.beast2.org/writing-a-beast-2-package) and [writing a package for a tree prior tutorial](https://github.com/BEAST2-Dev/beast-docs/blob/master/CreateNewTreePrior/CreateNewTreePrior.md).
 
 
-There are several lLevels of validation:
+There are several levels of validation:
 
 * the model appears to produce reasonable results on a data set of interest.
 * the model produces more reasonable results on a data set of interest than other models.
@@ -27,9 +27,11 @@ New methods require usually require two parts: an implementation $I(M)$ of a mod
 
 ### Verify correctness of simulator implementation
 
-To verify correctness of a simulator implementation $S$ for model $M$ directly, the distributions $p_S(\theta|M)$ should match expected distribution based on theory. We can verify this by drawing a large number of samples using $S$, calculate summary statistics on the sample and compare these with analytical estimates for these statistics. For example, ...
+To verify correctness of a simulator implementation $S$ for model $M$ directly, the distributions $p_S(\theta|M)$ should match expected distribution based on theory. We can verify this by drawing a large number of samples using $S$, calculate summary statistics on the sample and compare these with analytical estimates for these statistics. For example, for tree priors, expected tree heights can often be determined, and for parametric distributions we often know mean and variance values. Simulating values and making sure the expected value is in the expected range is easy to verify in Tracer: the expected values should be within the mean value logged plus/minus 2 times stderr of mean (as shown in the summary statistics panel).
 
-When no analytical estimates of statistics are available, ...
+When no analytical estimates of statistics are available, it may be possible to find a simplified case
+
+
 
 Examples of simulators (this list is far from exhaustive):
 
@@ -356,7 +358,7 @@ Validation only covers cases in as far as the prior covers it -- most studies wi
 
 The mutation rate $\mu$ must have been such that the tree height $h_T$ cannot exceed $1/\mu$ (in other words, $\mu h_T\le 1$), otherwise there would be saturation, and sequences could not possibly have sufficient information to align. At the other end of the spectrum, where $\mu h_T$ close to zero, very long sequences are required to ensure there are enough mutations in order to be able to reconstruct the tree distribution.
 
-TODO: forumlate in terms of $N_e$ instead of $h_T$?
+TODO: formulate in terms of $N_e$ instead of $h_T$?
 
 * for reasonable computation times, trees should be about 0.5 substitutions high, OR
 * sequences should be very long to reliably reconstruct smaller trees.
@@ -379,7 +381,7 @@ To prevent saturation, adding categories with slow rates will go some way to all
 
 ## Proportion invariable sites
 
-Since each site evolves with non-zero rate, use of proportion invariable sites is modeling the process badly, and therefore not recommended.
+Since each site evolves with non-zero rate, use of proportion invariable sites is modelling the process badly, and therefore not recommended.
 
 ## Frequencies
 
@@ -396,7 +398,7 @@ Default priors seem OK for most substitution models.
 
 To generate N XML files, use `CoverageTestXMLGenerator` in Experimenter package
 
-The sequence length should be long enough that trees can be reasonably reliably recovered -- if the difference between longest and shorted tree is 2 orders of magnitude, nucleotide sequences of 10 thousand sites. When $\mu$*treeh-height approximate 0.5, sequences of length 1000 are sufficient.
+The sequence length should be long enough that trees can be reasonably reliably recovered -- if the difference between longest and shorted tree is 2 orders of magnitude, nucleotide sequences of 10 thousand sites. When $\mu$*tree-height approximate 0.5, sequences of length 1000 are sufficient.
 
 ## Log file names
 
@@ -445,7 +447,8 @@ source [https://www.di-mgt.com.au/binomial-calculator.html](https://www.di-mgt.c
 
 ## Setting priors in BEAUti template
 
-* Priors should be made as uninformative as possible -- people will use defaults!
+* For released software, default priors should be made as uninformative as 
+possible and/or provide some guidance on how to set them -- users will use defaults.
 * Make sure to consider a number of scenarios, e.g. for clock models, scenarios from [setting up rates](http://www.beast2.org/2015/06/23/help-beast-acts-weird-or-how-to-set-up-rates.html) page on [beast2.org](http://beast2.org).
 
 

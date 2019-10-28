@@ -19,7 +19,8 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[oneside,twocolumn]{article}
+%\documentclass[oneside,twocolumn]{article}
+\documentclass[oneside]{article}
 
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
 
@@ -155,7 +156,92 @@ importantly, correctly implemented.
 %------------------------------------------------
 
 \section*{Probabilistic model validation}
-\subsection*{Verifying the correctness of a model's likelihood}
+
+There are several levels of validation:
+
+\begin{itemize}
+\item the model appears to produce reasonable results on a data set of interest.
+\item the model produces more reasonable results on a data set of interest than other models.
+\item unit tests show correctness of direct simulator implementation, likelihood implementation and/or  
+operator implementation(s).
+\item sampling from prior conforms to expectations.
+\item a simulation study shows parameters simulated under the model can be recovered by inference 
+from simulated data for a fixed tree and fixed other parameters for a small number of illustrative cases.
+\item as previous but with sampled tree and sampled parameters, so the process is repeated $N$ times 
+and tree and parameters sampled from a reasonable prior.
+\item a simulation study shows the model can recover parameters (most of the time) even when there 
+are model violations in simulating the parameters.
+\end{itemize}
+
+	
+New methods require usually require two parts: an implementation
+\(I(M)\) of a model \(M\) and associated probability \(p_I(\theta|M)\)
+of states \(\theta\), and MCMC operators \(R(\theta)\to\theta'\) for
+creating proposals \(\theta'\) for moving through state space starting
+in state \(\theta\) (though sometimes just an operator is validated that
+is much more efficient than previously existing operators). This guide
+contains some procedures to get some confidence that the model and
+operators are correctly implemented. Ideally, we have an independent
+implementation of a simulator \(S(M)\to\theta\) that allows (possibly
+inefficiently) to sample from the target distribution \(p_S(\theta|M)\).
+If so, we also need to verify that the simulator is correctly
+implemented. In summary, we need to establish correctness of:
+
+\begin{itemize}
+\item
+  the simulator implementation \(S(M)\to\theta\) (if any)
+\item
+  the model implementation \(I(M)\)
+\item
+  operator implementations \(R\)
+\end{itemize}
+
+\subsubsection{Verify correctness of simulator implementation}\label{verify-correctness-of-simulator-implementation}
+
+To verify correctness of a simulator implementation \(S\) for model
+\(M\) directly, the distributions \(p_S(\theta|M)\) should match
+expected distribution based on theory. We can verify this by drawing a
+large number of samples using \(S\), calculate summary statistics on the
+sample and compare these with analytical estimates for these statistics.
+For example, for tree priors, expected tree heights can often be determined, and for parametric distributions we often know mean and variance values. Simulating values and making sure the expected value is in the expected range is easy to verify in Tracer: the expected values should be within the mean value logged plus/minus 2 times stderr of mean (as shown in the summary statistics panel).
+
+When no analytical estimates of statistics are available, it may be possible to find a simplified case (e.g. by leaving out any trees) which can be done analytically.
+
+Some examples of direct simulators (this list is far from exhaustive):
+
+\begin{itemize}
+\item
+  the \href{http://tgvaughan.github.io/MASTER/}{MASTER} (\cite{vaughan2013stochastic}) 
+  BEAST 2 package is a general purpose package for
+  simulating stochastic population dynamics models which can be
+  expressed in terms of a chemical master equation.
+\item
+  SimSnap for SNAPP (\cite{bryant2012inferring}) is a custom build
+  implementation in C++ for simulating alignments for a fixed tree and
+  SNAPP parameters.
+\item
+  The \texttt{beast.app.seqgen.SequenceSimulator} class in BEAST 2 can
+  be used to simulate alignments for general site models using
+  reversible substitution models. See
+  \href{https://github.com/CompEvol/beast2/blob/master/examples/testSeqGen.xml}{testSeqGen.xml}
+  for an example.
+\item
+  Models implemented in other phylogenetic software packages, such a
+  BEAS 1, MrBayes, RevBayes, allow sampling a distribution using MCMC.
+\item
+  The \texttt{beast.core.DirectSimulator} class in BEAST 2 can be used
+  to draw samples from distributions in BEAST that extend
+  \texttt{beast.core.distribution.Distribution} and implement the
+  \texttt{sample(state,\ random)} method. You can set up an XML file and
+  run it in BEAST. Here are a few examples:
+  \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator.xml}{testDirectSimulator.xml},
+  \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator2.xml}{testDirectSimulator2.xml},
+  and
+  \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulatorHierarchical.xml}{testDirectSimulatorHierarchical.xml}.
+\end{itemize}
+
+
+\subsection*{Verifying the correctness of a model implementation}
 
 The central component of a probabilistic model is its likelihood
 function, $P(D|\theta)$, which establishes the
@@ -273,13 +359,96 @@ derived, one can generate expectations from independent (validated) model implem
 If such implementations are available, likelihood values or other
 quantities can be promptly computed or simulated and compared against.
 
-\subsection*{Bayesian model validation}
 
-[Validating operators]
 
-\vspace{1cm}
 
-\noindent [Coverage]
+
+
+
+
+If the model has a simulator built in, samples can be generated and compared with an 
+independent direct simulator, producing two samples from the distribution. Comparing 
+two distributions can be done by
+
+\begin{itemize}
+\item
+  eye balling the marginal likelihoods in Tracer and making sure they
+  are close enough.
+\item
+  testing whether parameters are covered 95\% of the time in the 95\%
+  HPD interval of parameter distributions.
+\item
+  using a statistical test, e.g.~the Kolmogorov-Smirnov test, to verify
+  the distributions \(p_I(\theta|M)\) and \(p_S(\theta|M)\) are the
+  same.
+\end{itemize}
+
+
+\subsection{Validating operators}
+
+Once simulator \(S(M)\) and model implementation \(I(M)\) are verified
+to be correct, next step is implementing efficient operators, running
+MCMCs to verify that parameters drawn from the prior are covered 95\% of
+the time in the 95\% HPD interval of parameter distributions.
+
+The direct simulator operator (see \texttt{DirectSimulatorOperator}
+above) can be used as starting operator, and new operators added one by
+one to verify correctness.
+
+The BEAST 2
+\href{https://github.com/rbouckaert/Experimenter}{Experimenter} package
+can assist (see section ``Using the Experimenter package'' below).
+
+\subsubsection{MCMC sampling to verify correctness of operator
+implementations}\label{mcmc-sampling-to-verify-correctness-of-operator-implementations}
+
+A useful test for an MCMC sampler for a model (likelihood + operators)
+is if it can produce the same distribution as direct simulation. For
+phylogenetic models, this would usually be the tree prior. The core
+components of this test:
+
+\begin{itemize}
+\item
+  Two samplers
+
+  \begin{itemize}
+  \item
+    a simulator (see the previous test for details)
+  \item
+    \texttt{beast.core.SamplerFromMCMC}
+
+    \begin{itemize}
+    \item
+      extends the normal BEAST MCMC class
+    \item
+      needs a model/likelihood and operators
+    \item
+      To test a single, potentially non-ergodic operator, a separate
+      simulator could be used as a global operator with the
+      \texttt{beast.simulation.OperatorFromSampler} class
+    \end{itemize}
+  \end{itemize}
+\item
+  A multivariate statistic
+
+  \begin{itemize}
+  \item
+    \texttt{beast.validation.statistics.UltrametricTreeStatistics}
+    provides some basic statistics on BEAST time trees
+  \item
+    For an example of statistics on more complex tree-like objects, see
+    \href{https://github.com/tgvaughan/bacter/blob/master/src/bacter/util/ConversionGraphStatsLogger.java}{\texttt{bacter.util.ConversionGraphStatsLogger}}
+  \end{itemize}
+\item
+  \texttt{beast.validation.tests.BootstrapMultivariateDistributionTest}:
+  a test that bootstraps a multivariate generalisation of the
+  Kolmogorov-Smirnov (KS) statistic to compare distributions (see
+  {[}\texttt{stats-tricks.md}{]} for further details)
+\end{itemize}
+
+\href{https://github.com/christiaanjs/beast-validation/blob/master/examples/birth-death-sampling-prior-sampling-test.xml}{An
+example XML for this test on the birth-death-sampling tree prior} can be
+found in the BEAST validation examples.
 
 \begin{figure}
 \includegraphics[width=0.19\textwidth]{../figures/bargraph-ok-strong}
@@ -296,6 +465,119 @@ d) True parameter is over estimated.
 e) True parameter is under estimated.
 }
 \end{figure}
+
+
+\section{Setting priors}\label{setting-priors}
+
+For a well calibrated test, priors need to be selected. Ideally, these priors should 
+cover the widest range of possible applications. However, in many software implementations,
+the priors are set so wide that when used in a well calibrated test, many parameters cannot
+be recovered. Here, we provide some guidelines on how to set priors for some parameters
+that are frequently occurring in phylogenetic models.
+
+\subsection{Trees \& clock model
+parameters}\label{trees-clock-model-parameters}
+
+The mutation rate \(\mu\) must have been such that the tree height
+\(h_T\) cannot exceed \(1/\mu\) (in other words, \(\mu h_T\le 1\)),
+otherwise there would be saturation, and sequences could not possibly
+have sufficient information to align. At the other end of the spectrum,
+where \(\mu h_T\) close to zero, very long sequences are required to
+ensure there are enough mutations in order to be able to reconstruct the
+tree distribution.
+
+% TODO: formulate in terms of \(N_e\) instead of \(h_T\)?
+
+For reasonable computation times, trees should never be over 1 substitutions high
+to prevent unreliable reconstruction of the phylogeny. Ideally, they should
+be about 0.5 substitutions high and sequences of about 1000 base pairs long will be
+sufficient. If a wider range is chose,  sequences may need to be much longer to reliably 
+reconstruct smaller trees. Adding gamma rate heterogeneity to the model can alleviate 
+the requirement for longer sequences somewhat, but having trees fairly close 
+
+One way to enforce a range on the tree height is to have
+ a narrow prior on birth rates (for birth/death type tree priors), or enforcing 
+ it directly by  putting an MRCA prior on the height of the tree, for coalescent
+ models. Note that the latter hampers direct simulator implementations.
+
+For clock models with mean clock rate not equal to 1, simulate trees with clock
+rates times tree height approximately 0.5.
+
+Published mutation rates can range from \(O(1e-2)\) substitutions per
+site per year for viruses such as HIV (\cite{cuevas2015extremely}), to
+\(O(1e-11)\) for conserved regions of nuclear DNA (e.g PyrE2 locus in
+Haloferax volcanii (\cite{lynch2010evolution})). So, for releases, tree priors for clock
+and trees should be made less informative in order to cater for a wider 
+range of tree heights and clock rates.
+
+{\bf Gamma rate heterogeneity}\label{gamma-rate-heterogeneity}:
+To prevent saturation, adding categories with slow rates will go some
+way to allow covering a larger range of clock rates. Using gamma rate
+heterogeneity with shape values in the range 0.1 to 1 allows this, so
+adopt a gamma shape prior accordingly.
+
+{\bf Proportion invariable sites}\label{proportion-invariable-sites}:
+Since each site evolves with non-zero rate, use of proportion invariable
+sites is modelling the process badly, and therefore not recommended.
+
+{\bf Frequencies}\label{frequencies}:
+Priors ideally should be set in realistic ranges, e.g.~frequency priors
+not uniform(0,1) but Dirichlet(4,4,4,4) is better.
+
+{\bf Substitution model parameters}\label{substitution-model-parameters}:
+Default priors seem OK for most substitution models.
+
+
+
+\section{Coverage trouble shooting}\label{trouble-shooting}
+
+With 100 trials, the occasional 91 is acceptable (the 95\% HPD = 90 to 98 probability the
+implementation is correct -- see Table \ref{tab:coverage}) but coverage below 90 almost surely indicate
+an issue with the model or operator implementation. Also, coverage of 99
+or 100 should be looked at with suspicion -- it may indicate overly wide
+uncertainty intervals.
+
+
+\begin{table}
+\begin{center}
+\begin{tabular}{rlll}
+\hline
+k & $p(x=k)$ & $p(x\le k)$ & $p(x\ge k)$\\
+\hline
+90 & 0.0167 & 0.0282 & 0.9718\\
+91 & 0.0349 & 0.0631 & 0.9369\\
+92 & 0.0649 & 0.1280 & 0.8720\\
+93 & 0.1060 & 0.2340 & 0.7660\\
+94 & 0.1500 & 0.3840 & 0.6160\\
+95 & 0.1800 & 0.5640 & 0.4360\\
+96 & 0.1781 & 0.7422 & 0.2578\\
+97 & 0.1396 & 0.8817 & 0.1183\\
+98 & 0.0812 & 0.9629 & 0.0371\\
+99 & 0.0312 & 0.9941 & 0.0059\\
+100 & 0.0059 & 1.0000 & 0.0000\\
+\hline
+\end{tabular}
+\end{center}
+\caption{If correctly implemented, the number of items covered is distributed binomial with p=0.95, N=100.
+Source \url{https://www.di-mgt.com.au/binomial-calculator.html}.
+\label{tab:coverage}}
+\end{table}
+
+
+
+Common causes of low coverage are ESS too low,
+trees cannot be reconstructed reliably (height should not be too small or large),
+Hastings ratio in operators incorrectly implemented, and
+bugs in model likelihood implementation.
+So, the first thing to check when coverage is too low, is the ESS used for
+estimates.
+One reason coverage can be lower is if the ESSs are too small, which can
+be easily checked by looking at the minimum ESS for the log entry. If
+these values are much below 200 the chain length should be increased to
+be sure any low coverage is not due to insufficient convergence of the
+MCMC chain.
+
+
 
 
 \vspace{1cm}
@@ -347,7 +629,17 @@ Often we want to evaluate whether two multivariate samples are drawn from the sa
 We can extend this test to multivariate distributions using multivariate ECDFs\footnote{\url{https://en.wikipedia.org/wiki/Cumulative_distribution_function\#Multivariate_case}}. However, the asymptotic distribution of this statistic is not known. One approach would be to generate a sampling distribution of the statistic under the null hypothesis (distributions being the same) with the non-parameteric bootstrap, pooling samples from both distributions. Calculating the ECDF for each bootstrap sample is expensive but can be made more efficient by pre-computing indicators of pairwise 'less than's between samples\footnote{Implemented here: \url{https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/tests/BootstrapMultivariateDistributionTest.java}}.
 
 \section*{Concluding remarks}
-Blabla
+
+When publishing well calibrated studies, all XML files, log files and
+scripts for manipulating them should be made available, so the study can
+be replicated exactly as is. A practical way to do this is through a
+\href{http://github.com}{github} repository.
+
+Version numbers of BEAST and packages used should be noted.
+
+For released software, default priors should be made as uninformative as 
+possible and/or provide some guidance on how to set them -- users will use defaults.
+
 
 \subsection*{Authors' contributions}
 Blabla

@@ -1,5 +1,5 @@
 
-all: output output/DeveloperManual.pdf output/DeveloperManual.docx output/DeveloperManual.html
+all: output output/DeveloperManual.pdf output/DeveloperManual.tex output/DeveloperManual.html
 
 .PHONY: all install clean
 
@@ -12,7 +12,7 @@ output:
 %.pdf: README.md	
 	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o $@ $<
 
-%.docx: README.md
+%.tex: README.md
 	pandoc -f markdown --number-sections --filter pandoc-eqnos --filter pandoc-citeproc --bibliography references.bib --csl=$(CSL) -o $@ $<
 
 %.html: README.md
