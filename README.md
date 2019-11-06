@@ -1,6 +1,23 @@
+<head>
+<link rel="stylesheet" id="dashicons-css" href="http://www.beast2.org/css/dashicons.css" type="text/css" media="all">
+<link rel="stylesheet" id="admin-bar-css" href="http://www.beast2.org/css/admin-bar.css" type="text/css" media="all">
+<link rel="stylesheet" id="lean-captcha-css-css" href="http://www.beast2.org/css/lean-captcha.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentyfourteen-lato-css" href="http://www.beast2.org/css/css.css" type="text/css" media="all">
+<link rel="stylesheet" id="genericons-css" href="http://www.beast2.org/css/genericons.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentyfourteen-style-css" href="http://www.beast2.org/css/style.css" type="text/css" media="all">
+
+<style id="simpler-css-style" type="text/css">
+body { 
+    background-color: inherit; 
+    }
+	html { margin-top: 32px !important; margin-left:5cm; margin-right:5cm;max-width: 70%;}
+</style>
+</head>
+<body>
+
 # Some guidance for developing new methods in BEAST 2
 
-Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document based on collected wisdom of BEAST developers. Use at own risk.
+Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document based on collected wisdom of BEAST developers, which keeps evolving.
 
 This document is about testing validity of a BEAST method, not the programming aspects (like setting up dependencies, wrapping up files into a package, etc.), which can be found in the [tutorial for writing a BEAST 2 package](http://www.beast2.org/writing-a-beast-2-package) and [writing a package for a tree prior tutorial](https://github.com/BEAST2-Dev/beast-docs/blob/master/CreateNewTreePrior/CreateNewTreePrior.md).
 
@@ -183,13 +200,11 @@ $$
 E(U(\theta,x)) = \int U(\theta,x)p(x;\theta)dx = 0
 $$ {#eq:scorefunction}
 
-(this is the expected value over the data $x$ at the true parameters $\theta$)
-
-Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
+(this is the expected value over the data $x$ at the true parameters $\theta$.) Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
 
 $$
-E\left(U(\theta, x)U(\theta, x)^T + \frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)=0 
-$${#eq:variancestatistic}
+E\left(U(\theta, x)U(\theta, x)^T + {\partial^2}/{\partial\theta^2}\ \log p(x;\theta)\right)  = 0
+$$ {#eq:variancestatistic}
 
 
 These properties can be used in conjunction with a direct simulator as a necessary but not sufficient check that the likelihood is implemented correctly. The score function (+@eq:scorefunction) and Hessian (+@eq:variancestatistic) statistics can be calculated on samples from the simulator and a hypothesis test used to check that their mean is 0. In the multivariate case a potentially useful test is the likelihood ratio test for a multivariate normal with zero mean ([implemented here](https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/tests/MultivariateNormalZeroMeanTest.java)). If there are non-identifiable parameters there may be issues with performing this test as colinearity will lead to a singular sample covariance matrix.
@@ -691,3 +706,5 @@ Experimenter (again, using `ant addon` in the Experimenter folder) packages.
 * install Experimenter package by creating `Experimenter` folder in your [BEAST package folder](http://www.beast2.org/managing-packages/#Installation_directories), and unzip the file `Experimenter/build/dist/Experimenter.addon.v0.0.1.zip` (assuming version 0.0.1).
 
 ## References
+
+</body>
