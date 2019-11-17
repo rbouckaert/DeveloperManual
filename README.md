@@ -158,6 +158,8 @@ In BEAST, if the `sample` method is implemented in a class derived from `Distrib
 </beast>
 ```
 
+Make sure when sampling from the prior through MCMC that the chain length is sufficiently large and log frequency large enough to ensure that each sample is independent of the previous sample. The ESSs shown in Tracer should be close to N when there are N samples in the trace log, for most of the items in the log. There may be a few items with an ESS that is a bit lower, and inspection of the trace plot should tell you whether lower log frequencies should be used.
+
 Comparing two distributions can be done by
 
 * eye balling the marginal likelihoods in Tracer and making sure they are close enough.
@@ -451,6 +453,8 @@ source [https://www.di-mgt.com.au/binomial-calculator.html](https://www.di-mgt.c
 ## Common causes of low coverage
 
 * ESS too low
+* improper priors used: all priors should be proper, that is integrate to 1. Examples of improper priors are the 1/X and uniform prior with infinite upper and/or lower bounds.
+* priors are outside the range usually used in applying the model, especially the next case:
 * trees cannot be reconstructed reliably (height should not be too small or large).
 * Hastings ratio in operators incorrectly implemented
 * bug in model likelihood
