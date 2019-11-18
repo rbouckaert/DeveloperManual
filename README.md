@@ -408,7 +408,11 @@ Default priors seem OK for most substitution models.
 
 ## Sequence simulator
 
-`SequenceSimulator` can help generate individual alignments.
+`SequenceSimulator` (alternatively `SimulatedAlignment`) can help generate individual alignments. 
+
+- `SequenceSimulator` can be used to generate a static alignment that can be merged into existing XML (e.g. with the help of `beast.app.seqgen.MergeDataWith`).
+- `SimulatedAlignment` can be used as replacement of an alignment in the XML and will generate a new alignment every time BEAST is started on the XML.
+
 
 To generate N XML files, use `CoverageTestXMLGenerator` in Experimenter package
 
@@ -506,22 +510,22 @@ Make sure to have the [Experimenter](https://github.com/rbouckaert/Experimenter)
 
 First, you set up a BEAST analysis in an XML file in the configuration that you want to test. Set the `sampleFromPrior="true"` flag on the element with MCMC in it, and sample from the prior. Make sure that the number of samples in the trace log and tree log is the same and that they are sampled at a frequency such that there will be N useful samples (say N=100).
 
-## Step 2. Generate (MCMC) analysis for each of the samples 
+## Step 2. Generate (MCMC) analysis for each of the samples (with single alignment)
 
-You can use CoverageTestXMLGenerator to generate BEAST XML files from a template XML file. The XML file used to sample from the prior can be used for this (when setting the sampleFromPrior flag to false). You can run CoverageTestXMLGenerator using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti).
+You can use `CoverageTestXMLGenerator` to generate BEAST XML files using HKY with or without gamma rate heterogeneity from a template XML file (If you require another model for generting sequence data, you might want to craft your own class based on the `CoverageTestXMLGenerator` class). The XML file used to sample from the prior can be used for this (when setting the sampleFromPrior flag to false). You can run `CoverageTestXMLGenerator` using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti). 
 
 
-CoverageTestXMLGenerator generates XML for performing coverage test (using CoverageCalculator) and has the following arguments:
+`CoverageTestXMLGenerator` generates XML for performing coverage test (using `CoverageCalculator`) and has the following arguments:
 
--workingDir <filename>	working directory where input files live and output directory is created
--outDir <string>	output directory where generated XML goes (as sub dir of working dir) (default: mcmc)
--logFile 	trace log file containing model paramter values to use for generating sequence data
--treeFile 	tree log file containing trees to generate sequence data on
--xmlFile 	XML template file containing analysis to be merged with generated sequence data
--skip <integer>	numer of log file lines to skip (default: 1)
--burnin <integer>	percentage of trees to used as burn-in (and will be ignored) (default: 1)
--useGamma [true|false]	use gamma rate heterogeneity (default: true)
--help	 show arguments
+- workingDir `<directory>`	working directory where input files live and output directory is created
+- outDir `<directory>`	output directory where generated XML goes (as sub dir of working dir) (default: mcmc)
+- logFile `<filename>`	trace log file containing model parameter values to use for generating sequence data
+- treeFile `<filename>`	tree log file containing trees to generate sequence data on
+- xmlFile `<filename>`	XML template file containing analysis to be merged with generated sequence data
+- skip `<integer>`	numer of log file lines to skip (default: 1)
+- burnin `<integer>`	percentage of trees to used as burn-in (and will be ignored) (default: 1)
+- useGamma [true|false]	use gamma rate heterogeneity (default: true)
+- help	 show arguments
 
 
 ```
@@ -533,6 +537,13 @@ NB: to ensure unique file name, add a parameter to logFileName, e.g.
 logFileName="out$(N).log"
 ```
 With this setting, when you run BEAST with `-D N=1` the log file will `be out1.log`.
+
+
+## Alternative Step 2. Generate (MCMC) analysis for each of the samples (support for multiple alignments)
+
+Instead of generating complete BEAST XML files, including alignments, XML files can be generated where the state is initialised by start values from the trace log and the tree is initialised with trees from the tree log in Newick format through `TreeParser`. The alignment can then be generated on the fly with the help of `beast.app.seqgen.SimulatedAlignment`. Note that every time BEAST is started on the XML a new alignment will be generated, and unless the same seed is used, these alignments will be unique (almost surely).
+
+
 
 
 ## Step 3. Run the analyses
@@ -562,10 +573,10 @@ You can run CoverageCalculator using the BEAST applauncher utility (or via the `
 
 CoverageCalculator calculates how many times entries in log file are covered in an estimated 95% HPD interval and has the following arguments:
 
-- log <filename>	log file containing actual values
-- skip <integer>	numer of log file lines to skip (default: 1)
-- logAnalyser <filename>	file produced by loganalyser tool using the -oneline option, containing estimated values
-- out 	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
+- log `<filename>`	log file containing actual values
+- skip `<integer>`	numer of log file lines to skip (default: 1)
+- logAnalyser `<filename>`	file produced by loganalyser tool using the -oneline option, containing estimated values
+- out `<directory>`	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
 - help	 show arguments
 
 It produces a report like so:
@@ -656,12 +667,12 @@ where `<resample>` is the resample frequency (= chain length/minium ESS), and `<
 `SBCAnalyser` can be run with the BEAST app launcher, and outputs a report and (if an output directory is specified). It has the following arguments:
 
 * SBCAnalyser has the following inputs:
-* log (File): log file containing actual values (required)
-* skip (Integer): numer of log file lines to skip (optional, default: 1)
-* logAnalyser (File): file produced by loganalyser tool using the -oneline option, containing estimated values (required)
-* bins (Integer): number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
-* outputDir (OutFile): output directory for SVG bar charts (optional, default: [[none]])
-* useRankedBins (Boolean): if true use ranking wrt prior to find bins.if false, use empirical bins based on prior. (optional, default: true)
+* log `<filename>`: log file containing actual values (required)
+* skip `<integer>`: numer of log file lines to skip (optional, default: 1)
+* logAnalyser `<filename>`: file produced by loganalyser tool using the -oneline option, containing estimated values (required)
+* bins `<integer>`: number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
+* outputDir `<directory>`: output directory for SVG bar charts (optional, default: [[none]])
+* useRankedBins `<boolean>`: if true use ranking wrt prior to find bins. If false, use empirical bins based on prior. (optional, default: true)
 
 
 Note that it compares entries from the prior to posterior, so items like likelihood, posterior, treeLikelihood and clockRate seem very wrong, but that can be ignored, since these were not part of the prior or (for clockRate) we know beforehand the prior differs substantially from the posterior.
