@@ -432,6 +432,13 @@ Use `logFileName="out$(N).log` and start BEAST with
 
 One reason coverage can be lower is if the ESSs are too small, which can be easily checked by looking at the minimum ESS for the log entry. If these values are much below 200 the chain length should be increased to be sure any low coverage is not due to insufficient convergence of the MCMC chain. 
 
+## Model misspecification by using empirical estimates (e.g. frequencies)
+
+When using empirical frequencies, these frequencies can bias estimates of other parameters (like gamma shape for gamma rate heterogeneity), causing low coverage for these parameters. Especially for short sequences, empirical estimates can be far away from the frequencies used to generate the data. For that reason, empirical frequencies should be avoided, and estimated frequencies used instead.
+
+Another argument against empirical frequencies is that it is double dipping: using the data to both estimate frequencies and ....
+
+
 ## Low coverage
 
 The occasional 91 is acceptable (the 95% HPD = 90 to 98 probability the implementation is correct) but coverage below 90 almost surely indicate an issue with the model or operator implementation. Also, coverage of 99 or 100 should be looked at with suspicion -- it may indicate overly wide uncertainty intervals.
@@ -499,7 +506,7 @@ To run a simulation study:
 * generate (MCMC) analysis for each of the samples (say 100)
 * run the analyses
 * use loganalyser to summarise trace files
-* run CoverageCalculator to summarise coverage of parameters
+* run `CoverageCalculator` to summarise coverage of parameters
 
 
 ![Summary of files involved in testing an operator. Rectangles represent files, ovals represent programs.](figures/operatorTest.png)
@@ -569,19 +576,31 @@ where `out` the base name of your output log file.
 
 ## Step 5. Run `CoverageCalculator` to summarise coverage of parameters
 
-You can run CoverageCalculator using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti).
+You can run `CoverageCalculator` using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti).
 
-CoverageCalculator calculates how many times entries in log file are covered in an estimated 95% HPD interval and has the following arguments:
+`CoverageCalculator` calculates how many times entries in log file are covered in an estimated 95% HPD interval and has the following arguments:
 
 - log `<filename>`	log file containing actual values
 - skip `<integer>`	numer of log file lines to skip (default: 1)
 - logAnalyser `<filename>`	file produced by loganalyser tool using the -oneline option, containing estimated values
 - out `<directory>`	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
-- help	 show arguments
+- typeFile (File): if specified, the type file is a tab delimited file with first column containing entry names as they appear in the trace log file, and second column variable type, d for double, b for binary, c for categorical, for example:
+```
+variable		type
+birthRate		d
+kappa			d
+hasGamma		b
+modelIndicator	c
+```
+Items that are not specified are considered to be of type double.
+
+
+
 
 It produces a report like so:
 
-```                                                coverage Mean ESS Min ESS
+```
+                                                coverage Mean ESS Min ESS
 posterior                                       0	   2188.41  1363.02
 likelihood                                      0	   4333.99  3042.15
 prior                                           33	   1613.20  891.92
