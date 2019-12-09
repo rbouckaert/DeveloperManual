@@ -33,6 +33,21 @@ There are several levels of validation:
 * a simulation study shows the model can recover parameters (most of the time) even when there are model violations in simulating the parameters.
 
 
+Automate the experiment -- you *will* do it again, in about 6 months time, when you least expect it.
+
+Document the experiment -- "It is like cleaning toilets: nobody want to do it, but it is more pleasant for visitors. You will probably be one of those visitors in 6 months time..."
+
+http://videolectures.net/cancerbioinformatics2010_baggerly_irrh/
+
+Reproducibility with docker:  
+Steps to run the attached BEAST 2 analysis:
+1. Install Docker (www.docker.com)
+2. From a terminal window, run the following from the directory containing the XML file:
+```  docker run -v$PWD:/data tgvaughan/beast2_bacter beast ecoli.xml ```
+That's it! (Under Windows the $PWD would have to be replaced with the path of the current directory.)  These instructions are impervious to most things we worry about: core and package API changes, Java version changes and OS dependencies.
+
+
+
 ## Testing new methods
 
 New methods require usually require two parts: an implementation $I(M)$ of a model $M$ and associated probability $p_I(\theta|M)$ of states $\theta$, and MCMC operators $R(\theta)\to\theta'$ for creating proposals $\theta'$ for moving through state space starting in state $\theta$ (though sometimes just an operator is validated that is much more efficient than previously existing operators). This guide contains some procedures to get some confidence that the model and operators are correctly implemented. Ideally, we have an independent implementation of a simulator $S(M)\to\theta$ that allows (possibly inefficiently) to sample from the target distribution $p_S(\theta|M)$. If so, we also need to verify that the simulator is correctly implemented. In summary, we need to establish correctness of:
