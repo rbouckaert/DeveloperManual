@@ -1,6 +1,23 @@
+<head>
+<link rel="stylesheet" id="dashicons-css" href="http://www.beast2.org/css/dashicons.css" type="text/css" media="all">
+<link rel="stylesheet" id="admin-bar-css" href="http://www.beast2.org/css/admin-bar.css" type="text/css" media="all">
+<link rel="stylesheet" id="lean-captcha-css-css" href="http://www.beast2.org/css/lean-captcha.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentyfourteen-lato-css" href="http://www.beast2.org/css/css.css" type="text/css" media="all">
+<link rel="stylesheet" id="genericons-css" href="http://www.beast2.org/css/genericons.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentyfourteen-style-css" href="http://www.beast2.org/css/style.css" type="text/css" media="all">
+
+<style id="simpler-css-style" type="text/css">
+body { 
+    background-color: inherit; 
+    }
+	html { margin-top: 32px !important; margin-left:5cm; margin-right:5cm;max-width: 70%;}
+</style>
+</head>
+<body>
+
 # Some guidance for developing new methods in BEAST 2
 
-Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document based on collected wisdom of BAEST developers. Use at own risk.
+Disclaimer: below some ramblings on methods development for BEAST 2 [@beast, @beastbook, @bouckaert2019beast] packages. This is a living document based on collected wisdom of BEAST developers, which keeps evolving.
 
 This document is about testing validity of a BEAST method, not the programming aspects (like setting up dependencies, wrapping up files into a package, etc.), which can be found in the [tutorial for writing a BEAST 2 package](http://www.beast2.org/writing-a-beast-2-package) and [writing a package for a tree prior tutorial](https://github.com/BEAST2-Dev/beast-docs/blob/master/CreateNewTreePrior/CreateNewTreePrior.md).
 
@@ -16,6 +33,21 @@ There are several levels of validation:
 * a simulation study shows the model can recover parameters (most of the time) even when there are model violations in simulating the parameters.
 
 
+Automate the experiment -- you *will* do it again, in about 6 months time, when you least expect it.
+
+Document the experiment -- "It is like cleaning toilets: nobody want to do it, but it is more pleasant for visitors. You will probably be one of those visitors in 6 months time..."
+
+http://videolectures.net/cancerbioinformatics2010_baggerly_irrh/
+
+Reproducibility with docker:  
+Steps to run the attached BEAST 2 analysis:
+1. Install Docker (www.docker.com)
+2. From a terminal window, run the following from the directory containing the XML file:
+```  docker run -v$PWD:/data tgvaughan/beast2_bacter beast ecoli.xml ```
+That's it! (Under Windows the $PWD would have to be replaced with the path of the current directory.)  These instructions are impervious to most things we worry about: core and package API changes, Java version changes and OS dependencies.
+
+
+
 ## Testing new methods
 
 New methods require usually require two parts: an implementation $I(M)$ of a model $M$ and associated probability $p_I(\theta|M)$ of states $\theta$, and MCMC operators $R(\theta)\to\theta'$ for creating proposals $\theta'$ for moving through state space starting in state $\theta$ (though sometimes just an operator is validated that is much more efficient than previously existing operators). This guide contains some procedures to get some confidence that the model and operators are correctly implemented. Ideally, we have an independent implementation of a simulator $S(M)\to\theta$ that allows (possibly inefficiently) to sample from the target distribution $p_S(\theta|M)$. If so, we also need to verify that the simulator is correctly implemented. In summary, we need to establish correctness of:
@@ -25,13 +57,11 @@ New methods require usually require two parts: an implementation $I(M)$ of a mod
 * operator implementations $R$
 
 
-### Verify correctness of simulator implementation
+# Verify correctness of simulator implementation
 
 To verify correctness of a simulator implementation $S$ for model $M$ directly, the distributions $p_S(\theta|M)$ should match expected distribution based on theory. We can verify this by drawing a large number of samples using $S$, calculate summary statistics on the sample and compare these with analytical estimates for these statistics. For example, for tree priors, expected tree heights can often be determined, and for parametric distributions we often know mean and variance values. Simulating values and making sure the expected value is in the expected range is easy to verify in Tracer: the expected values should be within the mean value logged plus/minus 2 times stderr of mean (as shown in the summary statistics panel).
 
-When no analytical estimates of statistics are available, it may be possible to find a simplified case
-
-
+When no analytical estimates of statistics are available, it may be possible to find a simplified case for which an analytical solution exists, for example when the tree only has two taxa.
 
 Examples of simulators (this list is far from exhaustive):
 
@@ -45,7 +75,7 @@ Examples of simulators (this list is far from exhaustive):
 
 
 
-### Verify correctness of model implementation
+# Verify correctness of model implementation
 
 For small examples for which an analytical result can be calculated a unit test can be written to confirm the implementation behaves correctly for the expected result. For example, for a small tree ((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0) with birth rate 1 we can calculate the expected value of the Yule prior ($\log(P)=-6$), and write a unit test to make sure it matches:
 
@@ -75,7 +105,7 @@ public class YuleLikelihoodTest extends TestCase {
 
 In theory, the inferred distributions $p_I(\theta|M)$ should match the simulator distribution $p_S(\theta|M)$. However, drawing samples from $p_I(\theta|M)$ typically requires running an MCMC chain, which requires MCMC proposals $R$ to randomly walk through state space. If we do this, we need to rely on $R$ being correctly implemented. So, if we find that $p_I(\theta|M)$ and $p_S(\theta|M)$ do not match, it is not possible to tell whether problem is with an operator $R$ or with the model implementation $I(M)$.
 
-The Hastings ratio is $P(\theta)/P(\theta')$. Consequently, every proposal is accepted, whether $p_I(\theta|M)$ is correctly implemented or not.
+The Hastings ratio for this operator is $P(\theta)/P(\theta')$. Consequently, every proposal is accepted, whether $p_I(\theta|M)$ is correctly implemented or not.
 
 In BEAST, if the `sample` method is implemented in a class derived from `Distribution`, you can use  `beast.experimenter.DirectSimulatorOperator` in the Experimenter package to set up an MCMC analysis in XML. Here is an example that draws a birth rate from an exponential distribution with mean 1, and a Yule distribution to generate a tree. Note that the tree heigh statistic is logged, as well as an expression for a clock rate (being 0.5/tree-height) for evaluation purposes. The MCMC sample can be compared with the direct sample using the example file [testDirectSimulator.xml](https://github.com/rbouckaert/Experimenter/blob/master/examples/testDirectSimulator.xml).
 
@@ -143,6 +173,8 @@ In BEAST, if the `sample` method is implemented in a class derived from `Distrib
 </beast>
 ```
 
+Make sure when sampling from the prior through MCMC that the chain length is sufficiently large and log frequency large enough to ensure that each sample is independent of the previous sample. The ESSs shown in Tracer should be close to N when there are N samples in the trace log, for most of the items in the log. There may be a few items with an ESS that is a bit lower, and inspection of the trace plot should tell you whether lower log frequencies should be used.
+
 Comparing two distributions can be done by
 
 * eye balling the marginal likelihoods in Tracer and making sure they are close enough.
@@ -185,13 +217,11 @@ $$
 E(U(\theta,x)) = \int U(\theta,x)p(x;\theta)dx = 0
 $$ {#eq:scorefunction}
 
-(this is the expected value over the data $x$ at the true parameters $\theta$)
-
-Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
+(this is the expected value over the data $x$ at the true parameters $\theta$.) Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
 
 $$
-E\left(U(\theta, x)U(\theta, x)^T + \frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)=0 
-$${#eq:variancestatistic}
+E\left(U(\theta, x)U(\theta, x)^T + {\partial^2}/{\partial\theta^2}\ \log p(x;\theta)\right)  = 0
+$$ {#eq:variancestatistic}
 
 
 These properties can be used in conjunction with a direct simulator as a necessary but not sufficient check that the likelihood is implemented correctly. The score function (+@eq:scorefunction) and Hessian (+@eq:variancestatistic) statistics can be calculated on samples from the simulator and a hypothesis test used to check that their mean is 0. In the multivariate case a potentially useful test is the likelihood ratio test for a multivariate normal with zero mean ([implemented here](https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/tests/MultivariateNormalZeroMeanTest.java)). If there are non-identifiable parameters there may be issues with performing this test as colinearity will lead to a singular sample covariance matrix.
@@ -204,6 +234,7 @@ The BEAST validation package is designed around three core object types: it perf
 BEAST validation tests are implemented within the BEAST 2 XML parser framework. The main Runnable class is [`beast.validation.StochasticValidationTest`](https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/StochasticValidationTest.java). `StochasticValidationTest` has inputs for each of the core object types: `samplers`, `statistics` and a `test`. Note that some tests may be designed for one, two or many sampler/statistic pairs.
 
 `StochasticValidationTest` has some additional parameters:
+
 * `alpha`: The significant level to use in the test
 * `nSamples`: The number of samples to draw from each sampler
 * `printEvery`: How often to report sampling progress
@@ -214,14 +245,14 @@ There are currently two useful combinations of samplers, statistics and test imp
 
 ### Score function validation
 
-This test validates a combination of likelihood and direct simulator using a known property of probability density functions: that the expectation of the gradient of the log-likelihood at the true parameter values is zero (see [`stats-tricks.md`]). The core components of this test are (with a single sampler-statistic pair):
+This test validates a combination of likelihood and direct simulator using a known property of probability density functions: that the expectation of the gradient of the log-likelihood at the true parameter values is zero (see [`stats-tricks.md`](stats-tricks.md)). The core components of this test are (with a single sampler-statistic pair):
 
 * a simulator: This could be a custom simulator, or make use of one of the generic simulation tools available, such as `beast.simulation.TreeSamplerFromMaster`
 * `beast.validation.statistics.NumericalScoreFunctionStatistics`: a statistic that uses a finite differences to calculate the gradient of a likelihood with respect to some parameters 
     - Note that the `RealParameter` objects included in the `parameter` input should be the same provided to the `Distribution` in the `likelihood` input
 * `beast.validation.tests.MultivariateNormalZeroMeanTest`: a likelihood ratio test that uses a multivariate normal fit to the gradients to test for zero mean
 
-An important note is that there are some regularity conditions on the parameters you can use in this test. Roughly, they must not affect the support of the data, which excludes the origin time parameter in tree priors. See [`stats-tricks.md`] for further details.
+An important note is that there are some regularity conditions on the parameters you can use in this test. Roughly, they must not affect the support of the data, which excludes the origin time parameter in tree priors. See [`stats-tricks.md`](stats-tricks.md) for further details.
 
 [An example XML for this test on the birth-death-sampling tree prior](https://github.com/christiaanjs/beast-validation/blob/master/examples/birth-death-sampling-score-function-test.xml) can be found in the BEAST validation examples.
 
@@ -236,7 +267,7 @@ p value: 0.284784
 
 
 
-### Verify correctness of operator implementations
+# Verify correctness of operator implementations
 
 Once simulator $S(M)$ and model implementation $I(M)$ are verified to be correct, next step is implementing efficient operators, running MCMCs to verify that parameters drawn from the prior are covered 95% of the time in the 95% HPD interval of parameter distributions.
 
@@ -245,7 +276,7 @@ The direct simulator operator (see `DirectSimulatorOperator` above) can be used 
 The BEAST 2 [Experimenter](https://github.com/rbouckaert/Experimenter) package can assist (see section "Using the Experimenter package" below).
 
 
-### MCMC sampling to verify correctness of operator implementations
+## MCMC sampling to verify correctness of operator implementations
 
 A useful test for an MCMC sampler for a model (likelihood + operators) is if it can produce the same distribution as direct simulation. For phylogenetic models, this would usually be the tree prior. The core components of this test:
 
@@ -352,13 +383,11 @@ Conversion requires the following steps:
 
 Validation only covers cases in as far as the prior covers it -- most studies will not cover all possible cases, since the state space is just to large. Usually, informative priors are required for validation to work, since broader priors (e.g. some of the default tree priors in BEAST) lead to identifiability issues, for example, due to saturation of mutations along branches of a tree. 
 
-# Setting priors
+## Setting priors
 
-## Trees & clock model parameters
+### Trees & clock model parameters
 
 The mutation rate $\mu$ must have been such that the tree height $h_T$ cannot exceed $1/\mu$ (in other words, $\mu h_T\le 1$), otherwise there would be saturation, and sequences could not possibly have sufficient information to align. At the other end of the spectrum, where $\mu h_T$ close to zero, very long sequences are required to ensure there are enough mutations in order to be able to reconstruct the tree distribution.
-
-TODO: formulate in terms of $N_e$ instead of $h_T$?
 
 * for reasonable computation times, trees should be about 0.5 substitutions high, OR
 * sequences should be very long to reliably reconstruct smaller trees.
@@ -375,26 +404,30 @@ Published mutation rates can range from $O(1e-2)$ substitutions per site per yea
 
 For releases, tree priors for clock and trees should be made less informative in order to cater for a wider range of tree heights and clock rates.
 
-## Gamma rate heterogeneity
+### Gamma rate heterogeneity
 
 To prevent saturation, adding categories with slow rates will go some way to allow covering a larger range of clock rates. Using gamma rate heterogeneity with shape values in the range 0.1 to 1 allows this, so adopt a gamma shape prior accordingly.
 
-## Proportion invariable sites
+### Proportion invariable sites
 
 Since each site evolves with non-zero rate, use of proportion invariable sites is modelling the process badly, and therefore not recommended.
 
-## Frequencies
+### Frequencies
 
 Priors ideally should be set in realistic ranges, e.g. frequency priors not uniform(0,1) but Dirichlet(4,4,4,4) is better.
 
-## Substitution model parameters
+### Substitution model parameters
 
 Default priors seem OK for most substitution models.
 
 
 ## Sequence simulator
 
-`SequenceSimulator` can help generate individual alignments.
+`SequenceSimulator` (alternatively `SimulatedAlignment`) can help generate individual alignments. 
+
+- `SequenceSimulator` can be used to generate a static alignment that can be merged into existing XML (e.g. with the help of `beast.app.seqgen.MergeDataWith`).
+- `SimulatedAlignment` can be used as replacement of an alignment in the XML and will generate a new alignment every time BEAST is started on the XML.
+
 
 To generate N XML files, use `CoverageTestXMLGenerator` in Experimenter package
 
@@ -413,6 +446,13 @@ Use `logFileName="out$(N).log` and start BEAST with
 ## Coverage gone wrong
 
 One reason coverage can be lower is if the ESSs are too small, which can be easily checked by looking at the minimum ESS for the log entry. If these values are much below 200 the chain length should be increased to be sure any low coverage is not due to insufficient convergence of the MCMC chain. 
+
+## Model misspecification by using empirical estimates (e.g. frequencies)
+
+When using empirical frequencies, these frequencies can bias estimates of other parameters (like gamma shape for gamma rate heterogeneity), causing low coverage for these parameters. Especially for short sequences, empirical estimates can be far away from the frequencies used to generate the data. For that reason, empirical frequencies should be avoided, and estimated frequencies used instead.
+
+Another argument against empirical frequencies is that it is double dipping: using the data to both estimate frequencies and ....
+
 
 ## Low coverage
 
@@ -439,6 +479,8 @@ source [https://www.di-mgt.com.au/binomial-calculator.html](https://www.di-mgt.c
 ## Common causes of low coverage
 
 * ESS too low
+* improper priors used: all priors should be proper, that is integrate to 1. Examples of improper priors are the 1/X and uniform prior with infinite upper and/or lower bounds.
+* priors are outside the range usually used in applying the model, especially the next case:
 * trees cannot be reconstructed reliably (height should not be too small or large).
 * Hastings ratio in operators incorrectly implemented
 * bug in model likelihood
@@ -479,33 +521,33 @@ To run a simulation study:
 * generate (MCMC) analysis for each of the samples (say 100)
 * run the analyses
 * use loganalyser to summarise trace files
-* run CoverageCalculator to summarise coverage of parameters
+* run `CoverageCalculator` to summarise coverage of parameters
 
 
 ![Summary of files involved in testing an operator. Rectangles represent files, ovals represent programs.](figures/operatorTest.png)
 
 Make sure to have the [Experimenter](https://github.com/rbouckaert/Experimenter) package installed (details at the end).
 
-## 1. Set up XML for desired model and sample from prior
+## Step 1. Set up XML for desired model and sample from prior
 
 First, you set up a BEAST analysis in an XML file in the configuration that you want to test. Set the `sampleFromPrior="true"` flag on the element with MCMC in it, and sample from the prior. Make sure that the number of samples in the trace log and tree log is the same and that they are sampled at a frequency such that there will be N useful samples (say N=100).
 
-## 2. Generate (MCMC) analysis for each of the samples 
+## Step 2. Generate (MCMC) analysis for each of the samples (with single alignment)
 
-You can use CoverageTestXMLGenerator to generate BEAST XML files from a template XML file. The XML file used to sample from the prior can be used for this (when setting the sampleFromPrior flag to false). You can run CoverageTestXMLGenerator using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti).
+You can use `CoverageTestXMLGenerator` to generate BEAST XML files using HKY with or without gamma rate heterogeneity from a template XML file (If you require another model for generting sequence data, you might want to craft your own class based on the `CoverageTestXMLGenerator` class). The XML file used to sample from the prior can be used for this (when setting the sampleFromPrior flag to false). You can run `CoverageTestXMLGenerator` using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti). 
 
 
-CoverageTestXMLGenerator generates XML for performing coverage test (using CoverageCalculator) and has the following arguments:
+`CoverageTestXMLGenerator` generates XML for performing coverage test (using `CoverageCalculator`) and has the following arguments:
 
--workingDir <filename>	working directory where input files live and output directory is created
--outDir <string>	output directory where generated XML goes (as sub dir of working dir) (default: mcmc)
--logFile 	trace log file containing model paramter values to use for generating sequence data
--treeFile 	tree log file containing trees to generate sequence data on
--xmlFile 	XML template file containing analysis to be merged with generated sequence data
--skip <integer>	numer of log file lines to skip (default: 1)
--burnin <integer>	percentage of trees to used as burn-in (and will be ignored) (default: 1)
--useGamma [true|false]	use gamma rate heterogeneity (default: true)
--help	 show arguments
+- workingDir `<directory>`	working directory where input files live and output directory is created
+- outDir `<directory>`	output directory where generated XML goes (as sub dir of working dir) (default: mcmc)
+- logFile `<filename>`	trace log file containing model parameter values to use for generating sequence data
+- treeFile `<filename>`	tree log file containing trees to generate sequence data on
+- xmlFile `<filename>`	XML template file containing analysis to be merged with generated sequence data
+- skip `<integer>`	numer of log file lines to skip (default: 1)
+- burnin `<integer>`	percentage of trees to used as burn-in (and will be ignored) (default: 1)
+- useGamma [true|false]	use gamma rate heterogeneity (default: true)
+- help	 show arguments
 
 
 ```
@@ -519,7 +561,14 @@ logFileName="out$(N).log"
 With this setting, when you run BEAST with `-D N=1` the log file will `be out1.log`.
 
 
-## 3. Run the analyses
+## Alternative Step 2. Generate (MCMC) analysis for each of the samples (support for multiple alignments)
+
+Instead of generating complete BEAST XML files, including alignments, XML files can be generated where the state is initialised by start values from the trace log and the tree is initialised with trees from the tree log in Newick format through `TreeParser`. The alignment can then be generated on the fly with the help of `beast.app.seqgen.SimulatedAlignment`. Note that every time BEAST is started on the XML a new alignment will be generated, and unless the same seed is used, these alignments will be unique (almost surely).
+
+
+
+
+## Step 3. Run the analyses
 
 Use your favourite method to run the N analyses, for example with a shell script
 
@@ -530,7 +579,7 @@ for i in {0..99} do /path/to/beast/bin/beast -D N=$i beast$i.xml; done
 
 where `/path/to/beast` the path to where BEAST is installed.
 
-## 4. Use loganalyser to summarise trace files
+## Step 4. Use loganalyser to summarise trace files
 
 Use the loganalyser utility that comes with BEAST in the bin directory. It is important to use the `-oneline` argument so that each log line gets summarised on a single line, which is what `CoverageCalculator` expects. Also, it is important that the log lines are in the same order as the log lines in the sample from the prior, so put the results for single digits before those of double digits, e.g. like so:
 
@@ -540,21 +589,33 @@ Use the loganalyser utility that comes with BEAST in the bin directory. It is im
 
 where `out` the base name of your output log file.
 
-## 5. Run `CoverageCalculator` to summarise coverage of parameters
+## Step 5. Run `CoverageCalculator` to summarise coverage of parameters
 
-You can run CoverageCalculator using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti).
+You can run `CoverageCalculator` using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti).
 
-CoverageCalculator calculates how many times entries in log file are covered in an estimated 95% HPD interval and has the following arguments:
+`CoverageCalculator` calculates how many times entries in log file are covered in an estimated 95% HPD interval and has the following arguments:
 
-- log <filename>	log file containing actual values
-- skip <integer>	numer of log file lines to skip (default: 1)
-- logAnalyser <filename>	file produced by loganalyser tool using the -oneline option, containing estimated values
-- out 	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
-- help	 show arguments
+- log `<filename>`	log file containing actual values
+- skip `<integer>`	numer of log file lines to skip (default: 1)
+- logAnalyser `<filename>`	file produced by loganalyser tool using the -oneline option, containing estimated values
+- out `<directory>`	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
+- typeFile (File): if specified, the type file is a tab delimited file with first column containing entry names as they appear in the trace log file, and second column variable type, d for double, b for binary, c for categorical, for example:
+```
+variable		type
+birthRate		d
+kappa			d
+hasGamma		b
+modelIndicator	c
+```
+Items that are not specified are considered to be of type double.
+
+
+
 
 It produces a report like so:
 
-```                                                coverage Mean ESS Min ESS
+```
+                                                coverage Mean ESS Min ESS
 posterior                                       0	   2188.41  1363.02
 likelihood                                      0	   4333.99  3042.15
 prior                                           33	   1613.20  891.92
@@ -619,11 +680,11 @@ A correct implementation is uniformly distributed, like so:
 
 For steps 1-3, see coverage study.
 
-## 4. Find minimum ESS
+## Step 4. Find minimum ESS
 
 Use `LogAnalyser` to find minimum ESS -- or run coverage study and minimum ESS will be printed as part of the analysis.
 
-## 5. Combine logs
+## Step 5. Combine logs
 
 First, we need to determine how much to resample log files. Since samples must be independent for the method to work, we can resample with frequency equal to the chain length divided by minimum ESS.
 
@@ -635,17 +696,17 @@ Run `LogCombiner` to sub sample log files and accumulate logs. To run from comma
 
 where `<resample>` is the resample frequency (= chain length/minium ESS), and `<name>-` the name of the log file. Note that if you numbered the log files 0,...,9,10,...,99,100,...,999 using `<name>-*.log` will put entries in an alphabetic order, which is probably *not* what you want.
 
-## 6. Run `SBCAnalyser` to summarise coverage of parameters
+## Step 6. Run `SBCAnalyser` to summarise coverage of parameters
 
 `SBCAnalyser` can be run with the BEAST app launcher, and outputs a report and (if an output directory is specified). It has the following arguments:
 
 * SBCAnalyser has the following inputs:
-* log (File): log file containing actual values (required)
-* skip (Integer): numer of log file lines to skip (optional, default: 1)
-* logAnalyser (File): file produced by loganalyser tool using the -oneline option, containing estimated values (required)
-* bins (Integer): number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
-* outputDir (OutFile): output directory for SVG bar charts (optional, default: [[none]])
-* useRankedBins (Boolean): if true use ranking wrt prior to find bins.if false, use empirical bins based on prior. (optional, default: true)
+* log `<filename>`: log file containing actual values (required)
+* skip `<integer>`: numer of log file lines to skip (optional, default: 1)
+* logAnalyser `<filename>`: file produced by loganalyser tool using the -oneline option, containing estimated values (required)
+* bins `<integer>`: number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
+* outputDir `<directory>`: output directory for SVG bar charts (optional, default: [[none]])
+* useRankedBins `<boolean>`: if true use ranking wrt prior to find bins. If false, use empirical bins based on prior. (optional, default: true)
 
 
 Note that it compares entries from the prior to posterior, so items like likelihood, posterior, treeLikelihood and clockRate seem very wrong, but that can be ignored, since these were not part of the prior or (for clockRate) we know beforehand the prior differs substantially from the posterior.
@@ -694,3 +755,5 @@ Experimenter (again, using `ant addon` in the Experimenter folder) packages.
 * install Experimenter package by creating `Experimenter` folder in your [BEAST package folder](http://www.beast2.org/managing-packages/#Installation_directories), and unzip the file `Experimenter/build/dist/Experimenter.addon.v0.0.1.zip` (assuming version 0.0.1).
 
 ## References
+
+</body>
