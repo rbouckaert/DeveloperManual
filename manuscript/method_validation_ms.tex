@@ -71,7 +71,7 @@
 
 \pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 \posttitle{\end{center}} % Article title closing formatting
-\title{How you should validate your probabilistic model implementation} % Article title
+\title{How to validate your probabilistic model implementation} % Article title
 \author{\textsc{An author here$^{1*}$}, \textsc{Another author
     here$^{1*}$}, \\ \textsc{Yet another author here$^{1*}$},
   \textsc{Last author here$^{1*}$} \\
@@ -301,6 +301,7 @@ the validation of $S(M)$ (see below).
 
 \begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
   break at=11cm/0cm, title=Box 1: Models with well-known parametric \emph{pdf}'s, fonttitle=\bfseries]
+  \small 
   One commonly used model in macroevolution, specifically in the study
 of continuous traits, is a diffusion model known as
 Brownian motion (BM; \citealt{felsenstein73}).
@@ -311,12 +312,12 @@ normal (MVN) probability density function:
   \begin{split}
     \text{log P}(\mathbf{y} \mid \mathbf{y_0}, r, \mathbf{T}) = -\frac{1}{2} \Big[ n\text{log}(2\pi) + \text{log}|r \mathbf{T}| \Big] & \\
     -\frac{1}{2} \Big[ (\mathbf{y} - \mathbf{y_0})^T (r \mathbf{T})^{-1} (\mathbf{y} - \mathbf{y_0}) \Big],
-  \label{eq:1}
+  \label{eq:bm}
   \end{split}
 \end{equation}
 
 \noindent where $\mathbf{y}$ corresponds to the mean trait values in $n$ species,
-$y_0$ is the trait value at the root of the species tree, $r$ is the variance of the process
+$\mathbf{y_0}$ is the trait value at the root of the species tree, $r$ is the variance of the process
 (also known as the evolutionary rate, and sometimes represented by $\sigma^2$), and $r\mathbf{T}$ is the
 variance-covariance matrix ($\mathbf{T}$ is a matrix whose elements
 come from the species tree branch lengths; see Fig. 1 below).
@@ -325,17 +326,17 @@ come from the species tree branch lengths; see Fig. 1 below).
 The MVN density function describes the distribution that would result from an infinite
 number of BM process ``experiments'' (each experiment being non-mean-reverting, and
 representing an independent evolutionary trajectory).
-Under this model $\theta = \{y_0,
+Under this model $\theta = \{\mathbf{y_0},
 r\}$ and $D = \{\mathbf{y, \mathbf{T}} \}$ (but note that $\mathbf{T}$ can
 be a parameter elsewhere in a hierarchical model of which BM is just a
 component).
 
 
 \includegraphics[width=10cm]{../figures/bmsim.pdf}
-\label{fig:1}
-\captionof{figure}{A sample of 150 draws from a MVN distribution, each
+\label{fig:bmsim}
+\captionof{figure}{A sample of 200 draws from a MVN distribution, each
   representing the evolutionary trajectory of one continuous trait along
-  the species tree on the left. The root trait value, $y_0$, and the
+  the species tree on the left. The root trait value, $\mathbf{y_0}$, and the
   evolutionary rate of the process, $r$, were set to 0.0 and 0.1, respectively. The panel on the right shows
   histograms of trait values sampled from the MVN for each species, as
 well as their covariation.}
@@ -344,25 +345,42 @@ well as their covariation.}
 \emph{Validating a BM simulator}
 
 Because the MVN is a \textbf{known parametric
-  distribution}, it is somewhat trivial to verify the correctness of a
+  distribution}, it is trivial to verify the correctness of a
 BM model simulator, $S(BM)$.
+Figure 1 shows the result of 200 simulations under the MVN
+with $\mathbf{y_0} = [0.0, 0.0, 0.0]$, $r = 0.1$, along the tree shown on
+the left, which determines the variance-covariance matrix:
 
+\begin{equation}
+  r\mathbf{T} = 0.1
+  \begin{bmatrix}
+    6 & 5 & 0\\
+    5 & 6 & 0\\
+    0 & 0 & 6
+  \end{bmatrix}
+  \label{eq:mat}
+\end{equation}
+
+One can then see that the simulated variances for the three species
+and the covariances between them closely match their true counterparts
+(Eq. 3 and the right panel in Fig. 1).
+Additionally, the simulated mean trait values in each species fall
+within $\pm 2$
+standard errors of the mean (see main text).
 
 \vspace{.25cm}
 \emph{Validating a BM likelihood implementation}
 
-For a small tree (Fig. 1, left panel) the likelihood of a given set
-of parameter values $\theta$ can be computed manually and compared to
+For a small tree, the likelihood of a set
+of parameter values $\theta$ given some observed data is
+straightforward to compute (following Eq. \ref{eq:bm}) and can be compared to
 the output of a focal implementation.
-
-While this is a very trivial validation procedure, it is a crucial first
-step for more complex tests, and of particular use to likelihood functions that can be
-implemented with different algorithms.
-The likelihood of the BM model, for example, can be computed using a
+Interestingly, the likelihood of the BM model can also be computed using a
 dynamic-programming algorithm known in the phylogenetics literature
 as the ``pruning'' or ``peeling'' algorithm \citep{felsenstein73}.
-If a BM model is implemented correctly, the likelihood of any specific
-$\theta$ should match the solution of equation \ref{eq:1} no matter which algorithm is used.
+Thus, if a BM model is implemented correctly, the resulting likelihood
+of $\theta$ should match the solution of equation 2 no matter
+which algorithm is used.
 
 \end{tcolorbox}
 
@@ -410,21 +428,41 @@ $\theta$ should match the solution of equation \ref{eq:1} no matter which algori
 
 \subsubsection*{Validating the inferential engine, $I(M)$}
 
-There are several levels of validation:
+There is a wide variation on the validation stringencies different
+methods and models are subjected to in the course of their
+development \citep{darriba18}.
+From a short literature review on Bayesian methods applied to
+phylogenetics {\color{red}{(Table X)}}, we summarize {\color{red}{four [could be more
+    after literature review]}} main validation categories,
+in increasing order of stringency and comprehensiveness,
+that model implementations can adhere to: (i) the model appears to
+produce reasonable results (perhaps more reasonable than other models)
+on a data set of interest, (ii) the likelihood function a model
+implements evaluates to some value expected from theory or from a
+second independent implementation (``unit testing'', see
+below), (iii) the model correctly estimates a small set of parameter
+values -- for one or more parameters (i.e., a small ``grid'' of
+values) -- used in simulated data sets from $S(M)$, and (iv) the model
+correctly estimates parameter values from data sets simulated from
+parameter priors, as indicated by the estimated posterior coverage of parameters
+and their correlation with true values (``calibrated validation'', see
+below). {\color{red}{If we want to talk about the next level, from
+    those two other guys, we can add it as the 5th possibility and
+    expand on it below}}
 
-\begin{itemize}
-\item the model appears to produce reasonable results on a data set of interest.
-\item the model produces more reasonable results on a data set of interest than other models.
-\item unit tests show correctness of direct simulator implementation, likelihood implementation and/or  
-operator implementation(s).
-\item sampling from prior conforms to expectations.
-\item a simulation study shows parameters simulated under the model can be recovered by inference 
-from simulated data for a fixed tree and fixed other parameters for a small number of illustrative cases.
-\item as previous but with sampled tree and sampled parameters, so the process is repeated $N$ times 
-and tree and parameters sampled from a reasonable prior.
-\item a simulation study shows the model can recover parameters (most of the time) even when there 
-are model violations in simulating the parameters.
-\end{itemize}
+% \begin{itemize}
+% \item the model appears to produce reasonable results on a data set of interest.
+% \item the model produces more reasonable results on a data set of interest than other models.
+% \item unit tests show correctness of direct simulator implementation, likelihood implementation and/or  
+% operator implementation(s).
+% \item sampling from prior conforms to expectations.
+% \item a simulation study shows parameters simulated under the model can be recovered by inference 
+% from simulated data for a fixed tree and fixed other parameters for a small number of illustrative cases.
+% \item as previous but with sampled tree and sampled parameters, so the process is repeated $N$ times 
+% and tree and parameters sampled from a reasonable prior.
+% \item a simulation study shows the model can recover parameters (most of the time) even when there 
+% are model violations in simulating the parameters.
+% \end{itemize}
 
 % New methods require usually require two parts: an implementation
 % \(I(M)\) of a model \(M\) and associated probability \(p_I(\theta|M)\)
@@ -448,7 +486,7 @@ are model violations in simulating the parameters.
 %   operator implementations \(R\)
 % \end{itemize}
 
-\subsection*{Verifying the correctness of a model implementation}
+% \subsection*{Verifying the correctness of a model implementation}
 
 A good starting point when validating the implementation of a probabilistic
 model is the comparison between the value of its likelihood function given
@@ -456,8 +494,7 @@ specific parameter values ($P(D|\theta)$) to some expected result.
 When models are sufficiently simple, or by focusing
 on a subcase of a complex model, it is often straightforward to derive
 what this expected result should be (see Box 1).
-
-Again using the Yule model as an example, the probability of observing
+Using the Yule model again as an example, the probability of observing
 a phylogenetic tree $T$ given $n$ internal nodes and birth-rate
 $\lambda$ (i.e., the Yule's model likelihood function;
 \citealp{nee01}) is:
