@@ -27,6 +27,8 @@
 \usepackage{graphicx} % FKM: for figures
 \usepackage{color} % FKM: for colored text
 \usepackage{float} % FKM: for forcing figure placement
+\usepackage[breakable]{tcolorbox} % FKM: for text box
+\usepackage{microtype}
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
@@ -57,6 +59,7 @@
 \usepackage[hidelinks]{hyperref} % For hyperlinks in the PDF
 
 \usepackage{natbib}
+\bibliographystyle{apalike}
 
 \setlength\columnsep{20pt}
 
@@ -70,10 +73,10 @@
 \posttitle{\end{center}} % Article title closing formatting
 \title{How you should validate your probabilistic model implementation} % Article title
 \author{\textsc{An author here$^{1*}$}, \textsc{Another author
-    here$^{1*}$}, \textsc{Yet another author here$^{1*}$}, \\
+    here$^{1*}$}, \\ \textsc{Yet another author here$^{1*}$},
   \textsc{Last author here$^{1*}$} \\
 \small $^1$School of Computer Science, The University of Auckland\\
-\small $^2$Department of Biology, The University of Auckland\\
+\small $^2$School of Biological Sciences, The University of Auckland\\
 \small \href{mailto:@aucklanduni.ac.nz}{$^*$@aucklanduni.ac.nz}
 %\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
 %\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
@@ -83,7 +86,22 @@
 \date{\today} % Leave empty to omit a date
 \renewcommand{\maketitlehookd}{%
 \begin{abstract}
-  \noindent \blindtext
+  \noindent Biology has become a highly mathematical discipline in
+  which probabilistic models play a central role,
+  and as a result its research is now dependent on computational tools
+  capable of carrying out complex analyses.
+  These tools must be not only efficient, but also correctly
+  implemented.
+  Both goals are difficult to achieve for several reasons, such as the
+  multidisciplinary nature of method development, and a still
+  embrionary literature on good software development and statistical
+  practices aimed at professionals from disparate fields.
+  Here we provide guidelines for the validation of probabilistic model
+  implementations, focusing on Bayesian approaches.
+  This manuscript summarizes good practices for assessing the correctness of
+  simulation and inference procedures under a model, and is
+  accompanied by a living document with examples to aid researchers
+  developing Bayesian methods.
 \end{abstract}
 }
 
@@ -103,7 +121,7 @@ The last two decades have seen the biological sciences undergo a major revolutio
 Critical technological innovations such as the advent of massive parallel sequencing and the accompanying improvements in computational power and storage have flooded biology with unprecedented amounts of data ripe for analysis.
 Not only has intraspecific data from multiple individuals allowed
 progress in disparate fields like medicine and epidemiology
-\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{Martin_Genome_2013,brawand14,jarvis14,novikova16,Pease2016}.
+\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{martin13,brawand14,jarvis14,novikova16,pease2016,upham19}.
 However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care with which to analyze it.
 Almost at par with with data accumulation is the rate at which new computational tools are being proposed, as evidenced by journals entirely dedicated to method advances, methodological sections in biological journals, and computational biology degrees being offered by institutions around the world.
 
@@ -113,7 +131,7 @@ in evolutionary biology have aged well and stood up the test of time
 (e.g., the Red Queen hypothesis,
 \citealt{vanvalen73,lively87,morran11,gibson15}; the
 Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis
-practices have changed drastically in recent years (Fig. 1), to the
+practices have changed drastically in recent years, to the
 point they would likely seem obscure to an evolutionary biologist last active 40 years ago.
 In particular, evolutionary biology has become highly statistical, with the development and utilization of models now being commonplace.
 
@@ -127,18 +145,18 @@ evolutionary biology, there has been a sharp surge in instances of the
 latter cases (i.e., probabilistic models) in conjunction with computational tools implementing them
 (Fig. 1).
 
-\vspace{.5cm}
-
-\noindent [Say something about how validation is overlooked/underappreciated; by
-users, who use packages blindly; by developers, who don't make their
-unit tests readily available or visible, despite open source code; by reviewers, who don't
-demand stringent tests]
+Despite the increasing pervasiveness of probabilistic models in the
+biological sciences, tools implementing such models show large
+variation not only with respect to code quality (from a software engineering
+perspective), but also correctness \citep{darriba18}.
+This is unsurprising given the multidisciplinary nature of model and method
+development, and the challenges inherent to software research funding
+\citep{siepel19}.
+The bioinformatics community is thus in dire need of resources that
+provide guidance for code improvement and validation.
 
 Here, we summarize best practices in probabilistic  model validation for method
 developers, with an emphasis on Bayesian methods.
-We also introduce a new BEAST 2 package, \texttt{THE SWANEPOEL}, which
-provides tests that newly implemented likelihood classes can
-be subjected to.
 We hope our guidelines can help raise the standards for software
 package releases required by users, developers and reviewers alike,
 and consequently lead to computational tools that are more efficient, better documented, and most
@@ -157,6 +175,241 @@ importantly, correctly implemented.
 
 \section*{Probabilistic model validation}
 
+\subsection*{Introductory remarks}
+
+The central component of a probabilistic model is its likelihood
+function, $P(D|\theta)$, which establishes the
+interface between an abstract representation of reality (defined by parameters $\theta$), and the
+empirical world (from which data $D$ is obtained).
+In a frequentist statistical framework, the likelihood function is the sole
+component of a probabilistic model.
+Here, tasks like parameter estimation and model comparison are conducted
+by maximizing the likelihood function across parameter
+space.
+
+In Bayesian inference, on the other hand, a probabilistic model $M$
+defines a posterior probability distribution for its parameters,
+$P(\theta|D) = P(D|\theta)P(\theta) / P(D)$, in which our prior
+knowledge or beliefs about the natural world -- represented by the prior
+distribution $P(\theta)$ -- are confronted and updated by the data through the
+likelihood function.
+$P(D) = \int_\theta P(D|\theta)P(\theta)d\theta$, the probability of
+the data, is also known as the marginal likelihood or the model
+evidence.
+Crucially, note that a Bayesian model includes prior $P(\theta)$:
+when models are compared, for example, $P(\theta)$ needs to be taken
+into account when computing the model evidence $P(D)$.
+
+Under simple-enough models, the probability density function of the posterior distribution can sometimes be analytically
+derived.
+Models routinely used in biology are nonetheless often complex enough
+to preclude such closed-form solutions, mainly due to the
+intractability of the integral that appears in the marginal
+likelihood.
+In those cases, techniques like Markov Chain Monte Carlo (MCMC) are
+routinely employed to sample the posterior distribution (but see
+{\color{red}{citation for HMC}} \citealt{zhang18}).
+When MCMC is conducted, one can use the fact that $P(D)$
+evaluates to a constant that can be conveniently ignored, i.e., $P(\theta|D) \propto P(\theta|D)P(\theta)$.
+
+Assuming MCMC is the chosen technique for obtaining $P(\theta|D)$
+under a focal implementation of model $M$,
+a thorough validation effort entails verifying the
+correctness of (i) the model (i.e., $P(D|\theta)P(\theta)$), and (ii)
+the components involved in the MCMC procedure.
+We address these two stages of validation separately in the following sections.
+
+\subsection*{Validating model $M$}
+
+When a model $M$ is implemented for the first time, usually both an
+inferential engine, $I(M)$, and a simulator, $S(M)$, need to be devised.
+These generate the aforementioned posterior distribution,
+$P_I(\theta|D)$ (we introduce subscript ``I'' for
+\textbf{i}nference), and a ``target'' distribution $P_S(\theta|D)$ (``S''
+for \textbf{s}imulation), respectively.
+Here, we refer to the distribution produced through simulation as the
+target distribution because simulators are used to establish an
+expected, ``true'' distribution to be approximated by sampling through MCMC.
+Ultimately, we want $P_I(\theta|D)$ to reach stationarity at
+$P_S(\theta|D)$.
+
+\subsubsection*{Validating the simulator, $S(M)$}\label{verify-correctness-of-simulator-implementation}
+
+As mentioned above, the main purpose of a simulator $S(M)$ in the context of model
+validation is to generate a known distribution,
+$P_S(\theta|M)$, that should act as the target distribution during
+Bayesian inference.
+However, simulators themselves need to be validated.
+In the case of models that have well-known parametric distributions as their
+likelihood functions (see Box 1), one can validate $S(M)$ by
+drawing a very large sample of points and comparing summary statistics
+(e.g., mean, variance, etc.) from the sample against their true value counterparts (i.e., the
+values used in the simulation procedure). 
+
+Alternatively, summary statistic expectations derived under other kinds of models can also be compared
+to those computed from simulated datasets.
+One such model is the Yule process \citep{yule24}, also known as a pure-birth model.
+The Yule process is a continuous-time Markov process that has been
+classically employed in phylogenetics, as a way to model the number of
+species in a clade \citep{yule24,aldous01}.
+Under the Yule process, for example, the expected tree height,
+$\text{E}[t_{MRCA}]$ for a tree with $n$ tips is:
+
+\begin{equation}
+  \text{E}[t_{MRCA}] = \sum_{i=2}^{n}\frac{1}{1\lambda}
+  \label{eq:yule}
+\end{equation}
+
+\noindent where $\lambda$ is the species ``birth'' rate \citep{yule24}.
+This analytical expectation can then be compared to the expected tree
+height in several independent datasets of simulated phylogenetic trees.
+If $S(M)$ was correctly implemented, $\text{E}[t_{MRCA}]$ should be contained within $\pm 2$ standard errors of
+the mean in $\sim 95\%$ of all the simulated datasets under the Yule process.
+
+Here, we note that $S(M)$ represents a \emph{direct} simulator (Table
+\ref{tab:sim}) of model
+$M$ -- i.e., $S(M)$ allows one to directly draw truly independent
+samples from $M$.
+This is contrast with other simulation strategies, such as conducting
+MCMC under a model with fixed parameter values and no data.
+This latter approach is predicated on the existence of a correct
+implementation of both $I(M)$ and proposal functions, and for this
+reason is more appropriately used in the validation of these components rather than in
+the validation of $S(M)$ (see below).
+
+\begin{center}
+  \begin{table}
+  \caption{A non-exhaustive list of direct simulation software commonly used in evolutionary
+    biology analyses.}
+  \label{tab:sim}
+  \begin{tabular}{ p{0.7in} | p{1.3in} | p{1in} | p{1.1in} }
+    \hline
+    Software package & Model type & Platform & Reference \\
+    \hline  
+    Seq-Gen & Molecular sequence evolution models & Standalone & \citealp{rambaut97} \\
+    ms & Coalescent model & Standalone & \citealp{hudson02}\\
+    SLiM & Population genetic models & Standalone & \citealp{haller19}\\
+    TreeSim & Birth-death models & R & \citealp{stadler11}\\
+    mvMORPH & Continuous trait evolution models & R &
+                                                      \citealp{clavel15}\\
+    phytools & Several phylogenetic models & R & \citealp{revell12}\\
+    MASTER & Continuous-time Markov (tree) models & BEAST 2 & \citealp{vaughan13}\\
+    \hline
+  \end{tabular}
+  \end{table}
+\end{center}
+
+\begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
+  break at=11cm/0cm, title=Box 1: Models with well-known parametric \emph{pdf}'s, fonttitle=\bfseries]
+  One commonly used model in macroevolution, specifically in the study
+of continuous traits, is a diffusion model known as
+Brownian motion (BM; \citealt{felsenstein73}).
+The log-likelihood function of this model is simply the multivariate
+normal (MVN) probability density function:
+
+\begin{equation}
+  \begin{split}
+    \text{log P}(\mathbf{y} \mid \mathbf{y_0}, r, \mathbf{T}) = -\frac{1}{2} \Big[ n\text{log}(2\pi) + \text{log}|r \mathbf{T}| \Big] & \\
+    -\frac{1}{2} \Big[ (\mathbf{y} - \mathbf{y_0})^T (r \mathbf{T})^{-1} (\mathbf{y} - \mathbf{y_0}) \Big],
+  \label{eq:1}
+  \end{split}
+\end{equation}
+
+\noindent where $\mathbf{y}$ corresponds to the mean trait values in $n$ species,
+$y_0$ is the trait value at the root of the species tree, $r$ is the variance of the process
+(also known as the evolutionary rate, and sometimes represented by $\sigma^2$), and $r\mathbf{T}$ is the
+variance-covariance matrix ($\mathbf{T}$ is a matrix whose elements
+come from the species tree branch lengths; see Fig. 1 below).
+
+\vspace{.25cm}
+The MVN density function describes the distribution that would result from an infinite
+number of BM process ``experiments'' (each experiment being non-mean-reverting, and
+representing an independent evolutionary trajectory).
+Under this model $\theta = \{y_0,
+r\}$ and $D = \{\mathbf{y, \mathbf{T}} \}$ (but note that $\mathbf{T}$ can
+be a parameter elsewhere in a hierarchical model of which BM is just a
+component).
+
+
+\includegraphics[width=10cm]{../figures/bmsim.pdf}
+\label{fig:1}
+\captionof{figure}{A sample of 150 draws from a MVN distribution, each
+  representing the evolutionary trajectory of one continuous trait along
+  the species tree on the left. The root trait value, $y_0$, and the
+  evolutionary rate of the process, $r$, were set to 0.0 and 0.1, respectively. The panel on the right shows
+  histograms of trait values sampled from the MVN for each species, as
+well as their covariation.}
+
+\vspace{.25cm}
+\emph{Validating a BM simulator}
+
+Because the MVN is a \textbf{known parametric
+  distribution}, it is somewhat trivial to verify the correctness of a
+BM model simulator, $S(BM)$.
+
+
+\vspace{.25cm}
+\emph{Validating a BM likelihood implementation}
+
+For a small tree (Fig. 1, left panel) the likelihood of a given set
+of parameter values $\theta$ can be computed manually and compared to
+the output of a focal implementation.
+
+While this is a very trivial validation procedure, it is a crucial first
+step for more complex tests, and of particular use to likelihood functions that can be
+implemented with different algorithms.
+The likelihood of the BM model, for example, can be computed using a
+dynamic-programming algorithm known in the phylogenetics literature
+as the ``pruning'' or ``peeling'' algorithm \citep{felsenstein73}.
+If a BM model is implemented correctly, the likelihood of any specific
+$\theta$ should match the solution of equation \ref{eq:1} no matter which algorithm is used.
+
+\end{tcolorbox}
+
+% To verify correctness of a simulator implementation \(S\) for model
+% \(M\) directly, the distributions \(p_S(\theta|M)\) should match
+% expected distribution based on theory. We can verify this by drawing a
+% large number of samples using \(S\), calculate summary statistics on the
+% sample and compare these with analytical estimates for these statistics.
+% For example, for tree priors, expected tree heights can often be determined, and for parametric distributions we often know mean and variance values. Simulating values and making sure the expected value is in the expected range is easy to verify in Tracer: the expected values should be within the mean value logged plus/minus 2 times stderr of mean (as shown in the summary statistics panel).
+
+% When no analytical estimates of statistics are available, it may be possible to find a simplified case (e.g. by leaving out any trees) which can be done analytically.
+
+% Some examples of direct simulators (this list is far from exhaustive):
+
+% \begin{itemize}
+% \item
+%   the \href{http://tgvaughan.github.io/MASTER/}{MASTER} (\cite{vaughan2013stochastic}) 
+%   BEAST 2 package is a general purpose package for
+%   simulating stochastic population dynamics models which can be
+%   expressed in terms of a chemical master equation.
+% \item
+%   SimSnap for SNAPP (\cite{bryant2012inferring}) is a custom build
+%   implementation in C++ for simulating alignments for a fixed tree and
+%   SNAPP parameters.
+% \item
+%   The \texttt{beast.app.seqgen.SequenceSimulator} class in BEAST 2 can
+%   be used to simulate alignments for general site models using
+%   reversible substitution models. See
+%   \href{https://github.com/CompEvol/beast2/blob/master/examples/testSeqGen.xml}{testSeqGen.xml}
+%   for an example.
+% \item
+%   Models implemented in other phylogenetic software packages, such a
+%   BEAS 1, MrBayes, RevBayes, allow sampling a distribution using MCMC.
+% \item
+%   The \texttt{beast.core.DirectSimulator} class in BEAST 2 can be used
+%   to draw samples from distributions in BEAST that extend
+%   \texttt{beast.core.distribution.Distribution} and implement the
+%   \texttt{sample(state,\ random)} method. You can set up an XML file and
+%   run it in BEAST. Here are a few examples:
+%   \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator.xml}{testDirectSimulator.xml},
+%   \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator2.xml}{testDirectSimulator2.xml},
+%   and
+%   \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulatorHierarchical.xml}{testDirectSimulatorHierarchical.xml}.
+% \end{itemize}
+
+\subsubsection*{Validating the inferential engine, $I(M)$}
+
 There are several levels of validation:
 
 \begin{itemize}
@@ -173,148 +426,63 @@ and tree and parameters sampled from a reasonable prior.
 are model violations in simulating the parameters.
 \end{itemize}
 
-	
-New methods require usually require two parts: an implementation
-\(I(M)\) of a model \(M\) and associated probability \(p_I(\theta|M)\)
-of states \(\theta\), and MCMC operators \(R(\theta)\to\theta'\) for
-creating proposals \(\theta'\) for moving through state space starting
-in state \(\theta\) (though sometimes just an operator is validated that
-is much more efficient than previously existing operators). This guide
-contains some procedures to get some confidence that the model and
-operators are correctly implemented. Ideally, we have an independent
-implementation of a simulator \(S(M)\to\theta\) that allows (possibly
-inefficiently) to sample from the target distribution \(p_S(\theta|M)\).
-If so, we also need to verify that the simulator is correctly
-implemented. In summary, we need to establish correctness of:
+% New methods require usually require two parts: an implementation
+% \(I(M)\) of a model \(M\) and associated probability \(p_I(\theta|M)\)
+% of states \(\theta\), and MCMC operators \(R(\theta)\to\theta'\) for
+% creating proposals \(\theta'\) for moving through state space starting
+% in state \(\theta\) (though sometimes just an operator is validated that
+% is much more efficient than previously existing operators). This guide
+% contains some procedures to get some confidence that the model and
+% operators are correctly implemented. Ideally, we have an independent
+% implementation of a simulator \(S(M)\to\theta\) that allows (possibly
+% inefficiently) to sample from the target distribution \(p_S(\theta|M)\).
+% If so, we also need to verify that the simulator is correctly
+% implemented. In summary, we need to establish correctness of:
 
-\begin{itemize}
-\item
-  the simulator implementation \(S(M)\to\theta\) (if any)
-\item
-  the model implementation \(I(M)\)
-\item
-  operator implementations \(R\)
-\end{itemize}
-
-\subsubsection{Verify correctness of simulator implementation}\label{verify-correctness-of-simulator-implementation}
-
-To verify correctness of a simulator implementation \(S\) for model
-\(M\) directly, the distributions \(p_S(\theta|M)\) should match
-expected distribution based on theory. We can verify this by drawing a
-large number of samples using \(S\), calculate summary statistics on the
-sample and compare these with analytical estimates for these statistics.
-For example, for tree priors, expected tree heights can often be determined, and for parametric distributions we often know mean and variance values. Simulating values and making sure the expected value is in the expected range is easy to verify in Tracer: the expected values should be within the mean value logged plus/minus 2 times stderr of mean (as shown in the summary statistics panel).
-
-When no analytical estimates of statistics are available, it may be possible to find a simplified case (e.g. by leaving out any trees) which can be done analytically.
-
-Some examples of direct simulators (this list is far from exhaustive):
-
-\begin{itemize}
-\item
-  the \href{http://tgvaughan.github.io/MASTER/}{MASTER} (\cite{vaughan2013stochastic}) 
-  BEAST 2 package is a general purpose package for
-  simulating stochastic population dynamics models which can be
-  expressed in terms of a chemical master equation.
-\item
-  SimSnap for SNAPP (\cite{bryant2012inferring}) is a custom build
-  implementation in C++ for simulating alignments for a fixed tree and
-  SNAPP parameters.
-\item
-  The \texttt{beast.app.seqgen.SequenceSimulator} class in BEAST 2 can
-  be used to simulate alignments for general site models using
-  reversible substitution models. See
-  \href{https://github.com/CompEvol/beast2/blob/master/examples/testSeqGen.xml}{testSeqGen.xml}
-  for an example.
-\item
-  Models implemented in other phylogenetic software packages, such a
-  BEAS 1, MrBayes, RevBayes, allow sampling a distribution using MCMC.
-\item
-  The \texttt{beast.core.DirectSimulator} class in BEAST 2 can be used
-  to draw samples from distributions in BEAST that extend
-  \texttt{beast.core.distribution.Distribution} and implement the
-  \texttt{sample(state,\ random)} method. You can set up an XML file and
-  run it in BEAST. Here are a few examples:
-  \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator.xml}{testDirectSimulator.xml},
-  \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator2.xml}{testDirectSimulator2.xml},
-  and
-  \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulatorHierarchical.xml}{testDirectSimulatorHierarchical.xml}.
-\end{itemize}
-
+% \begin{itemize}
+% \item
+%   the simulator implementation \(S(M)\to\theta\) (if any)
+% \item
+%   the model implementation \(I(M)\)
+% \item
+%   operator implementations \(R\)
+% \end{itemize}
 
 \subsection*{Verifying the correctness of a model implementation}
 
-The central component of a probabilistic model is its likelihood
-function, $P(D|\theta)$, which establishes the
-interface between an abstract representation of reality (defined by parameters $\theta$), and the
-empirical world (from which data $D$ is obtained).
-In a frequentist statistical framework, the likelihood function is the sole
-component of a probabilistic model.
-Here, tasks like parameter estimation and model comparison are conducted
-by maximizing the likelihood function across parameter
-space.
-
-In Bayesian inference, on the other hand, a probabilistic model
-defines a posterior probability distribution for its parameters,
-$P(\theta|D) = P(\theta|D)P(\theta) / P(D)$, in which our prior
-knowledge or beliefs about the natural world -- represented by the prior
-distribution $P(\theta)$ -- are confronted and updated by the data through the
-likelihood function.
-$P(D) = \int_\theta P(D|\theta)P(\theta)d\theta$, the probability of
-the data, is also known as the marginal likelihood or the model evidence.
-Under simple-enough models, the probability density function of the posterior distribution can sometimes be analytically
-derived.
-Models routinely used in biology are nonetheless often complex enough
-to preclude such closed-form solutions, mainly due to the
-intractability of the integral that appears in the marginal
-likelihood.
-In those cases, techniques like Markov Chain Monte Carlo (MCMC) can be employed to
-sample the posterior distribution (but see \citealt{zhang18}).
-When MCMC is conducted, one can use the fact that $P(D)$
-evaluates to a constant that can be conveniently ignored, i.e., $P(\theta|D) \propto P(\theta|D)P(\theta)$.
-
 A good starting point when validating the implementation of a probabilistic
 model is the comparison between the value of its likelihood function given
-specific parameter values to some expected value $z$, that
-is, evaluating $P(D|\theta)$ for some $\theta$, and comparing the
-result to $z$.
-What should $z$ be? When models are sufficiently simple, or by focusing
+specific parameter values ($P(D|\theta)$) to some expected result.
+When models are sufficiently simple, or by focusing
 on a subcase of a complex model, it is often straightforward to derive
-what $z$ should be.
+what this expected result should be (see Box 1).
 
-For example, one commonly used model in macroevolution, specifically in the study
-of continuous trait evolution, is a random walk model known as
-Brownian motion (BM; \citealt{felsenstein73}).
-The log-likelihood function of this model is simply the multivariate
-normal probability density function:
+Again using the Yule model as an example, the probability of observing
+a phylogenetic tree $T$ given $n$ internal nodes and birth-rate
+$\lambda$ (i.e., the Yule's model likelihood function;
+\citealp{nee01}) is:
 
 \begin{equation}
-  \begin{split}
-    \text{log P}(\mathbf{y} \mid \mathbf{y_0}, r, \mathbf{T}) = -\frac{1}{2} \Big[ n\text{log}(2\pi) + \text{log}|r \mathbf{T}| \Big] & \\
-    -\frac{1}{2} \Big[ (\mathbf{y} - \mathbf{y_0})^T (r \mathbf{T})^{-1} (\mathbf{y} - \mathbf{y_0}) \Big],
-  \label{eq:1}
-  \end{split}
+  \text{P}(T|n,\lambda) = (n-1)!\lambda^{n-2}e^{-\lambda L},
+  \label{eq:yulelik}
 \end{equation}
 
-\noindent where $\mathbf{y}$ corresponds to the mean trait values in $n$ species,
-$y_0$ is the trait value at the root, $r$ is the variance of the process
-(also known as the evolutionary rate, and sometimes represented by $\sigma^2$), and $\mathbf{T}$ is the
-variance-covariance matrix derived from the species tree.
-Following the notation from before, under this model $\theta = \{y_0,
-r\}$ and $D = \{\mathbf{y, \mathbf{T}} \}$ (but note that $\mathbf{T}$ can
-be a parameter elsewhere in a hierarchical model of which BM is just a
-component).
-For a small tree -- e.g., (A:1.0,B:1.0) -- the likelihood of a given set
-of parameter values $\theta$ can be computed with pen and paper and compared to
-the output of a focal implementation.
+\noindent where $L$ is the total length of the tree.
+Because likelihood functions are often computed in log-space, and
+because constants (e.g., the $(n-1)!$ term in Eq. \ref{eq:yulelik}) can be
+ignored during MCMC for efficiency, the log-likelihood function for the Yule model
+becomes:
 
-While this is a very trivial validation procedure, it is a crucial first
-step for more complex tests, and of particular use to likelihood functions that can be
-implemented with different algorithms.
-The likelihood of the BM model, for example, can be computed using a
-dynamic-programming algorithm known in the phylogenetics literature
-as the ``pruning'' or ``peeling'' algorithm \citep{felsenstein73}.
-If a BM model is implemented correctly, the likelihood of any specific
-$\theta$ should match the solution of equation \ref{eq:1} no matter which algorithm is used.
+\begin{equation}
+\text{log P}(T|n,\lambda) = \text{log}(\lambda^{n-2}) - \lambda L.
+\end{equation}
+
+\noindent One can then easily compute the log-likelihood of an example
+tree given some $\lambda$ value by hand (and
+compare it against the value produced by some implementation).
+This forms the basis of what software engineers refer to as ``unit
+testing'' (see the supplementary material for a unit test example
+under the BEAST 2 platform).
 
 More thorough correctness checks occur when $z$ can be
 compared to a quantity that emerges from a valid model implementation,
@@ -655,7 +823,6 @@ Blabla
 % \section*{References}
 % \clearpage
 
-\bibliographystyle{sysbio}
 \bibliography{refs}
 
 %----------------------------------------------------------------------------------------
