@@ -207,8 +207,7 @@ to preclude such closed-form solutions, mainly due to the
 intractability of the integral that appears in the marginal
 likelihood.
 In those cases, techniques like Markov Chain Monte Carlo (MCMC) are
-routinely employed to sample the posterior distribution (but see
-{\color{red}{citation for HMC}} \citealt{zhang18}).
+routinely employed to sample the posterior distribution (but see \citealt{hmc,zhang18}).
 When MCMC is conducted, one can use the fact that $P(D)$
 evaluates to a constant that can be conveniently ignored, i.e., $P(\theta|D) \propto P(\theta|D)P(\theta)$.
 
@@ -521,33 +520,61 @@ This forms the basis of what software engineers refer to as ``unit
 testing'' (see the supplementary material for a unit test example
 under the BEAST 2 platform).
 
+\begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
+  break at=11cm/0cm, title=Box 2: Additional validation sanity-checks, fonttitle=\bfseries]
+  \small
+
+  In addition to the validation procedures described in the main text, method developers can opt to conduct sanity checks that will not provide evidence for model correctness, but that can nonetheless reveal something is wrong with the implementation of a likelihood function (i.e., checks that are necessary but not sufficient).
+
+  \vspace{.25cm}
+  \emph{The score function}
+  
+  One such check is looking at properties of the score function, $U(\theta,D)=\frac{\partial}{\partial\theta}\log \text{P}(D|\theta)$. $U(\theta,D)$ is the gradient of the log-likelihood function with respect to $\theta$ (the parameters in the model), thus indicating the slope of $\text{P}(D|\theta)$ and its behavior given very small changes in $\theta$.
+  Given data sets $D$ generated from a range of parameter values $\theta$, two properties can be expected from a correct implementation of a model's likelihood function:
+
+  \begin{equation}\label{eq:scorefunction}
+    \text{E}[U(\theta,D)] = \int U(\theta,D)\text{P}(D|\theta)dx = 0,
+  \end{equation}
+  
+  and
+
+  \begin{equation}\label{eq:variancestatistic}
+    E\left[U(\theta,D)U(\theta,D)^T + \frac{\partial^2}{\partial\theta^2}\text{log} \text{P}(D|\theta)\right]=0.
+  \end{equation}
+
+  (we point the interested reader to {\color{red}{NON-WIKIPEDIA CITATIONS HERE}} for derivations of equations 6 and 7).
+  One can then evaluate these two expectations using datasets simulated by $S(M)$ across parameter space {\color{red}{MORE ON THIS...}}
+\end{tcolorbox}
+
 More thorough correctness checks occur when $z$ can be
 compared to a quantity that emerges from a valid model implementation,
 rather than to the likelihood value itself.
-One such instance is the well-established Kingman's coalescent model \citep{kingman82}
-from population genetics, the likelihood function of which is given by:
 
-\begin{equation}
-  P(T \mid N_e) = \prod_{k=2}^{n} \Bigg( \frac{1}{N_e} \text{exp} \Bigg(
-  \frac{k(k-1)t_k}{2N_e} \Bigg) \Bigg),
-  \label{eq:2}
-\end{equation}
+% One such instance is the well-established Kingman's coalescent model \citep{kingman82}
+% from population genetics, the likelihood function of which is given by:
 
-\noindent where $n$ is the number of lineages we sampled, $t_k$ is the time during which $k$ lineages
-coexist, and $N_e$ is the effective population size.
-Here, the data is a genealogy $T$ that defines a set of intervals
-between coalescence events.
-Interestingly, while the height of $T$, $T_{MRCA}$ (the time to the most
-recent common ancestor of all $n$ samples), is not part of the
-likelihood function, it can be derived from the properties of the
-model:
+% \begin{equation}
+%   P(T \mid N_e) = \prod_{k=2}^{n} \Bigg( \frac{1}{N_e} \text{exp} \Bigg(
+%   \frac{k(k-1)t_k}{2N_e} \Bigg) \Bigg),
+%   \label{eq:2}
+% \end{equation}
 
-\begin{equation}
-  \text{E}[T_{MRCA}] = 2 \bigg(1-\frac{1}{n}\bigg),
-  \label{eq:3}
-\end{equation}
+% \noindent where $n$ is the number of lineages we sampled, $t_k$ is the time during which $k$ lineages
+% coexist, and $N_e$ is the effective population size.
+% Here, the data is a genealogy $T$ that defines a set of intervals
+% between coalescence events.
+% Interestingly, while the height of $T$, $T_{MRCA}$ (the time to the most
+% recent common ancestor of all $n$ samples), is not part of the
+% likelihood function, it can be derived from the properties of the
+% model:
 
-\noindent \citep{hudson90}.
+% \begin{equation}
+%   \text{E}[T_{MRCA}] = 2 \bigg(1-\frac{1}{n}\bigg),
+%   \label{eq:3}
+% \end{equation}
+
+% \noindent \citep{hudson90}.
+
 One way to verify the correctness of an implementation of the Kingman's
 coalescent, for example, is then to simulate genealogies given some
 $N_e$ and compare the genalogical heights with the result of equation
