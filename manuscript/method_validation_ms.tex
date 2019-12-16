@@ -195,7 +195,7 @@ likelihood function.
 $\text{P}(D) = \int_\theta \text{P}(D|\theta)\text{P}(\theta)d\theta$, the probability of
 the data, is also known as the marginal likelihood or the model
 evidence.
-Crucially, note that a Bayesian model includes prior $\text{P}(\theta)$:
+Crucially, note that a Bayesian model includes a prior, $\text{P}(\theta)$:
 when models are compared, for example, $\text{P}(\theta)$ needs to be taken
 into account when computing the model evidence $\text{P}(D)$.
 
@@ -205,17 +205,37 @@ Models routinely used in biology are nonetheless often complex enough
 to preclude such closed-form solutions, mainly due to the
 intractability of the integral that appears in the marginal
 likelihood.
-In those cases, techniques like Markov Chain Monte Carlo (MCMC) are
-routinely employed to sample the posterior distribution (but see \citealt{hmc,zhang18}).
-When MCMC is conducted, one can use the fact that $\text{P}(D)$
-evaluates to a constant that can be conveniently ignored, i.e., $\text{P}(\theta|D) \propto \text{P}(\theta|D)\text{P}(\theta)$.
+In those cases, techniques like Markov chain Monte Carlo (MCMC) are
+routinely employed to sample the posterior distribution, as it uses
+the fact that $\text{P}(D)$ evaluates to a constant that can be
+conveniently ignored (i.e., $\text{P}(\theta|D) \propto
+\text{P}(\theta|D)\text{P}(\theta)$).
+In practice, the algorithm that generates the Markov chain under MCMC is called
+Metropolis-Hastings, and it samples the posterior distribution by
+means of a transition mechanism. 
+If the resulting chain is long enough, aperiodic, irreducible and
+positive recurrent, then the sampled posterior distribution will
+approximate the true, target distribution $\text{P}(\theta|D)$
+\citep{mh,mau99,gelman}.
 
-Assuming MCMC is the chosen technique for obtaining $\text{P}(\theta|D)$
-under a focal implementation of model $M$,
-a thorough validation effort entails verifying the
+We focus on MCMC as the chosen technique for obtaining $\text{P}(\theta|D)$
+under an implementation of model $M$,
+and a thorough validation effort thus entails verifying the
 correctness of (i) the model (i.e., $\text{P}(D|\theta)\text{P}(\theta)$), and (ii)
-the components involved in the MCMC procedure.
-We address these two stages of validation separately in the following sections.
+the components involved in the MCMC transition mechanism.
+This is not to say the latter are part of the model (they are
+\emph{not}), as it is possible to sample $\text{P}(\theta|D)$ with importance sampling, Hamiltonian
+Monte Carlo \citep{hmc}, or even by converting the sampling problem into an
+optimization one \citep{zhang18}.
+
+Finally, we stress that we are interested in practices for verifying model
+\emph{correctness}.
+Determining that one or more independent Markov chains converged on very
+similar posterior distributions is not a correctness test, as those
+distributions might be very different from the target distribution.
+Similarly, obtaining ``reasonable'' results from real data sets also
+does not consist of a correctness test, as the true target
+distribution (across all parameters) is unknown.
 
 \subsection*{Validating model $M$}
 
