@@ -28,7 +28,7 @@
 \usepackage{color} % FKM: for colored text
 \usepackage{float} % FKM: for forcing figure placement
 \usepackage[breakable]{tcolorbox} % FKM: for text box
-\usepackage{microtype}
+\usepackage{enumerate}
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
@@ -38,7 +38,8 @@
 \usepackage{booktabs} % Horizontal rules in tables
 \usepackage{amsmath} % Text in equations
 
-\usepackage{enumitem} % Customized lists
+\usepackage[shortlabels]{enumitem} % customized lists (shortlabels
+                                % necessary to have i., ii., etc., in enumerate)
 \setlist[itemize]{noitemsep} % Make itemize lists more compact
 
 \usepackage{abstract} % Allows abstract customization
@@ -175,10 +176,8 @@ importantly, correctly implemented.
 
 \section*{Probabilistic model validation}
 
-\subsection*{Introductory remarks}
-
 The central component of a probabilistic model is its likelihood
-function, $P(D|\theta)$, which establishes the
+function, $\text{P}(D|\theta)$, which establishes the
 interface between an abstract representation of reality (defined by parameters $\theta$), and the
 empirical world (from which data $D$ is obtained).
 In a frequentist statistical framework, the likelihood function is the sole
@@ -189,16 +188,16 @@ space.
 
 In Bayesian inference, on the other hand, a probabilistic model $M$
 defines a posterior probability distribution for its parameters,
-$P(\theta|D) = P(D|\theta)P(\theta) / P(D)$, in which our prior
+$\text{P}(\theta|D) = \frac{\text{P}(D|\theta)\text{P}(\theta)}{\text{P}(D)}$, in which our prior
 knowledge or beliefs about the natural world -- represented by the prior
-distribution $P(\theta)$ -- are confronted and updated by the data through the
+distribution $\text{P}(\theta)$ -- are confronted and updated by the data through the
 likelihood function.
-$P(D) = \int_\theta P(D|\theta)P(\theta)d\theta$, the probability of
+$\text{P}(D) = \int_\theta \text{P}(D|\theta)\text{P}(\theta)d\theta$, the probability of
 the data, is also known as the marginal likelihood or the model
 evidence.
-Crucially, note that a Bayesian model includes prior $P(\theta)$:
-when models are compared, for example, $P(\theta)$ needs to be taken
-into account when computing the model evidence $P(D)$.
+Crucially, note that a Bayesian model includes prior $\text{P}(\theta)$:
+when models are compared, for example, $\text{P}(\theta)$ needs to be taken
+into account when computing the model evidence $\text{P}(D)$.
 
 Under simple-enough models, the probability density function of the posterior distribution can sometimes be analytically
 derived.
@@ -208,13 +207,13 @@ intractability of the integral that appears in the marginal
 likelihood.
 In those cases, techniques like Markov Chain Monte Carlo (MCMC) are
 routinely employed to sample the posterior distribution (but see \citealt{hmc,zhang18}).
-When MCMC is conducted, one can use the fact that $P(D)$
-evaluates to a constant that can be conveniently ignored, i.e., $P(\theta|D) \propto P(\theta|D)P(\theta)$.
+When MCMC is conducted, one can use the fact that $\text{P}(D)$
+evaluates to a constant that can be conveniently ignored, i.e., $\text{P}(\theta|D) \propto \text{P}(\theta|D)\text{P}(\theta)$.
 
-Assuming MCMC is the chosen technique for obtaining $P(\theta|D)$
+Assuming MCMC is the chosen technique for obtaining $\text{P}(\theta|D)$
 under a focal implementation of model $M$,
 a thorough validation effort entails verifying the
-correctness of (i) the model (i.e., $P(D|\theta)P(\theta)$), and (ii)
+correctness of (i) the model (i.e., $\text{P}(D|\theta)\text{P}(\theta)$), and (ii)
 the components involved in the MCMC procedure.
 We address these two stages of validation separately in the following sections.
 
@@ -223,20 +222,20 @@ We address these two stages of validation separately in the following sections.
 When a model $M$ is implemented for the first time, usually both an
 inferential engine, $I(M)$, and a simulator, $S(M)$, need to be devised.
 These generate the aforementioned posterior distribution,
-$P_I(\theta|D)$ (we introduce subscript ``I'' for
-\textbf{i}nference), and a ``target'' distribution $P_S(\theta|D)$ (``S''
+$\text{P}_{\text{I}}(\theta|D)$ (we introduce subscript ``I'' for
+\textbf{i}nference), and a ``target'' distribution $\text{P}_{\text{S}}(\theta|D)$ (``S''
 for \textbf{s}imulation), respectively.
 Here, we refer to the distribution produced through simulation as the
 target distribution because simulators are used to establish an
 expected, ``true'' distribution to be approximated by sampling through MCMC.
-Ultimately, we want $P_I(\theta|D)$ to reach stationarity at
-$P_S(\theta|D)$.
+Ultimately, we want $\text{P}_{\text{I}}(\theta|D)$ to reach stationarity at
+$\text{P}_{\text{S}}(\theta|D)$.
 
 \subsubsection*{Validating the simulator, $S(M)$}\label{verify-correctness-of-simulator-implementation}
 
 As mentioned above, the main purpose of a simulator $S(M)$ in the context of model
 validation is to generate a known distribution,
-$P_S(\theta|M)$, that should act as the target distribution during
+$\text{P}_{\text{S}}(\theta|M)$, that should act as the target distribution during
 Bayesian inference.
 However, simulators themselves need to be validated.
 In the case of models that have well-known parametric distributions as their
@@ -434,20 +433,26 @@ From a short literature review on Bayesian methods applied to
 phylogenetics {\color{red}{(Table X)}}, we summarize {\color{red}{four [could be more
     after literature review]}} main validation categories,
 in increasing order of stringency and comprehensiveness,
-that model implementations can adhere to: (i) the model appears to
-produce reasonable results (perhaps more reasonable than other models)
-on a data set of interest, (ii) the likelihood function a model
+that model implementations can adhere to:
+
+\begin{enumerate}[i.]
+  \item the model appears to produce reasonable results (perhaps more reasonable than other models)
+    on a data set of interest,
+  \item the likelihood function a model
 implements evaluates to some value expected from theory or from a
 second independent implementation (``unit testing'', see
-below), (iii) the model correctly estimates a small set of parameter
+below),
+  \item the model correctly estimates a small set of parameter
 values -- for one or more parameters (i.e., a small ``grid'' of
-values) -- used in simulated data sets from $S(M)$, and (iv) the model
+values) -- used in simulated data sets from $S(M)$, and
+  \item the model
 correctly estimates parameter values from data sets simulated from
 parameter priors, as indicated by the estimated posterior coverage of parameters
 and their correlation with true values (``calibrated validation'', see
 below). {\color{red}{If we want to talk about the next level, from
     those two other guys, we can add it as the 5th possibility and
     expand on it below}}
+\end{enumerate}
 
 % \begin{itemize}
 % \item the model appears to produce reasonable results on a data set of interest.
@@ -521,7 +526,7 @@ testing'' (see the supplementary material for a unit test example
 under the BEAST 2 platform).
 
 \begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
-  break at=11cm/0cm, title=Box 2: Additional validation sanity-checks, fonttitle=\bfseries]
+  title=Box 2: Additional validation sanity-checks, fonttitle=\bfseries]
   \small
 
   In addition to the validation procedures described in the main text, method developers can opt to conduct sanity checks that will not provide evidence for model correctness, but that can nonetheless reveal something is wrong with the implementation of a likelihood function (i.e., checks that are necessary but not sufficient).
@@ -530,7 +535,7 @@ under the BEAST 2 platform).
   \emph{The score function}
   
   One such check is looking at properties of the score function, $U(\theta,D)=\frac{\partial}{\partial\theta}\log \text{P}(D|\theta)$. $U(\theta,D)$ is the gradient of the log-likelihood function with respect to $\theta$ (the parameters in the model), thus indicating the slope of $\text{P}(D|\theta)$ and its behavior given very small changes in $\theta$.
-  Given data sets $D$ generated from a range of parameter values $\theta$, two properties can be expected from a correct implementation of a model's likelihood function:
+  Given data sets $D$ generated from a range of $\theta$ values, two properties can be expected from a correct implementation of a model's likelihood function:
 
   \begin{equation}\label{eq:scorefunction}
     \text{E}[U(\theta,D)] = \int U(\theta,D)\text{P}(D|\theta)dx = 0,
@@ -543,12 +548,37 @@ under the BEAST 2 platform).
   \end{equation}
 
   (we point the interested reader to {\color{red}{NON-WIKIPEDIA CITATIONS HERE}} for derivations of equations 6 and 7).
-  One can then evaluate these two expectations using datasets simulated by $S(M)$ across parameter space {\color{red}{MORE ON THIS...}}
+  One can then evaluate these two expectations using datasets
+  simulated by $S(M)$ across parameter space {\color{red}{MORE ON
+      THIS...}}
+
+  \vspace{.25cm}
+  \emph{Comparing empirical vs. target posterior distributions}
+
+  Given a correctly implemented simulator for model $M$, $S(M)$, one
+  can generate a target distribution $\text{P}_{\text{S}}(\theta|D)$
+  that should be approximated by $\text{P}_{\text{I}}(\theta|D)$ at stationarity.
+  If chains are run long enough (as suggested by large effective
+  sample sizes, ESS's), $\text{P}_{\text{S}}(\theta|D)$ and
+  $\text{P}_{\text{I}}(\theta|D)$ can be compared, and large
+  discrepancies between them can be taken as evidence of an error in the
+  likelihood function implementation (assuming all other inferential
+  components are working properly).
+
+  \vspace{.15cm}
+  Such task can be done with a non-parametric test, for example, such
+  as the Kolgomorov-Smirnov test \citep{kolgomorov,smirnov,ks}, which
+  compares two empirical distribution functions (\emph{ecdf}'s) or an
+  \emph{ecdf} with a cumulative distribution function (\emph{cdf}).
+  We provide an example of this procedure in the supplementary material.
 \end{tcolorbox}
 
 More thorough correctness checks occur when $z$ can be
 compared to a quantity that emerges from a valid model implementation,
 rather than to the likelihood value itself.
+
+
+$\text{P}_{I}(\theta|D)$ with $\text{P}_{S}$
 
 % One such instance is the well-established Kingman's coalescent model \citep{kingman82}
 % from population genetics, the likelihood function of which is given by:
@@ -583,37 +613,22 @@ In a Bayesian framework this procedure amounts to a direct validation of the
 likelihood if one carries out MCMC without any data (i.e., sampling
 from the prior), but also to a validation of all the machinery involved in MCMC.
 
-Alternatively, when theoretical expectations cannot be derived from
-the model itself, usually due to complexity of its formulation, {\color{red}{[Place holder for Christiaan's text]}}
+% If the model has a simulator built in, samples can be generated and compared with an 
+% independent direct simulator, producing two samples from the distribution. Comparing 
+% two distributions can be done by
 
-Finally, whether or not theoretical expectations can be
-derived, one can generate expectations from independent (validated) model implementations.
-If such implementations are available, likelihood values or other
-quantities can be promptly computed or simulated and compared against.
-
-
-
-
-
-
-
-
-If the model has a simulator built in, samples can be generated and compared with an 
-independent direct simulator, producing two samples from the distribution. Comparing 
-two distributions can be done by
-
-\begin{itemize}
-\item
-  eye balling the marginal likelihoods in Tracer and making sure they
-  are close enough.
-\item
-  testing whether parameters are covered 95\% of the time in the 95\%
-  HPD interval of parameter distributions.
-\item
-  using a statistical test, e.g.~the Kolmogorov-Smirnov test, to verify
-  the distributions \(p_I(\theta|M)\) and \(p_S(\theta|M)\) are the
-  same.
-\end{itemize}
+% \begin{itemize}
+% \item
+%   eye balling the marginal likelihoods in Tracer and making sure they
+%   are close enough.
+% \item
+%   testing whether parameters are covered 95\% of the time in the 95\%
+%   HPD interval of parameter distributions.
+% \item
+%   using a statistical test, e.g.~the Kolmogorov-Smirnov test, to verify
+%   the distributions \(p_I(\theta|M)\) and \(p_S(\theta|M)\) are the
+%   same.
+% \end{itemize}
 
 
 \subsection{Validating operators}
@@ -827,38 +842,38 @@ validation studies]
 
 
 
-\section{Stats tricks for validating models}
+% \section{Stats tricks for validating models}
 
 
-For a density $p$ on data $x$ (this could be a scalar, vector, or a tree) parameterised by the vector $\theta$, the expected value of the score function $U(\theta,x)=\frac{\partial}{\partial\theta}\log p(x;\theta)$ is 0:
+% For a density $p$ on data $x$ (this could be a scalar, vector, or a tree) parameterised by the vector $\theta$, the expected value of the score function $U(\theta,x)=\frac{\partial}{\partial\theta}\log p(x;\theta)$ is 0:
 
-\begin{equation}\label{eq:scorefunction}
-E(U(\theta,x)) = \int U(\theta,x)p(x;\theta)dx = 0
-\end{equation}
+% \begin{equation}\label{eq:scorefunction}
+% E(U(\theta,x)) = \int U(\theta,x)p(x;\theta)dx = 0
+% \end{equation}
 
-(this is the expected value over the data $x$ at the true parameters $\theta$). Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
+% (this is the expected value over the data $x$ at the true parameters $\theta$). Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
 
-$$
-\textrm{Var}(U(\theta, x))=-E\left(\frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)
-$$
+% $$
+% \textrm{Var}(U(\theta, x))=-E\left(\frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)
+% $$
 
-Or equivalently:
+% Or equivalently:
 
-\begin{equation}\label{eq:variancestatistic}
-E\left(U(\theta, x)U(\theta, x)^T + \frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)=0 
-\end{equation}
+% \begin{equation}\label{eq:variancestatistic}
+% E\left(U(\theta, x)U(\theta, x)^T + \frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)=0 
+% \end{equation}
 
-Proofs of these results are relatively straightforward\footnote{\url{https://en.wikipedia.org/wiki/Score_(statistics)}}. The proofs depend on some regularity conditions to interchange integration and differentiation\footnote{\url{https://en.wikipedia.org/wiki/Leibniz_integral_rule}}; roughly speaking, the parameters must not change the support of the data. This means they don't hold for some parameters of interest in phylogenetics e.g. the origin time in a birth-death tree prior.
+% Proofs of these results are relatively straightforward\footnote{\url{https://en.wikipedia.org/wiki/Score_(statistics)}}. The proofs depend on some regularity conditions to interchange integration and differentiation\footnote{\url{https://en.wikipedia.org/wiki/Leibniz_integral_rule}}; roughly speaking, the parameters must not change the support of the data. This means they don't hold for some parameters of interest in phylogenetics e.g. the origin time in a birth-death tree prior.
 
-These properties can be used in conjunction with a direct simulator as a necessary but not sufficient check that the likelihood is implemented correctly. The score function (\ref{eq:scorefunction}) and Hessian (\ref{eq:variancestatistic}) statistics can be calculated on samples from the simulator and a hypothesis test used to check that their mean is 0. In the multivariate case a potentially useful test is the likelihood ratio test for a multivariate normal with zero mean. If there are non-identifiable parameters there may be issues with performing this test as colinearity will lead to a singular sample covariance matrix.
+% These properties can be used in conjunction with a direct simulator as a necessary but not sufficient check that the likelihood is implemented correctly. The score function (\ref{eq:scorefunction}) and Hessian (\ref{eq:variancestatistic}) statistics can be calculated on samples from the simulator and a hypothesis test used to check that their mean is 0. In the multivariate case a potentially useful test is the likelihood ratio test for a multivariate normal with zero mean. If there are non-identifiable parameters there may be issues with performing this test as colinearity will lead to a singular sample covariance matrix.
 
-In practice it is appropriate to compute the score function by calculating derivatives using finite differences\footnote{Implemented here: \url{https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/statistics/NumericalScoreFunctionStatistics.java}}.
+% In practice it is appropriate to compute the score function by calculating derivatives using finite differences\footnote{Implemented here: \url{https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/statistics/NumericalScoreFunctionStatistics.java}}.
 
-\subsection{Comparing multivariate distributions}
+% \subsection{Comparing multivariate distributions}
 
-Often we want to evaluate whether two multivariate samples are drawn from the same distribution. For example, when testing that an MCMC sampler produces the same distribution as direct simulation. There is no obvious choice of statistical machinery for performing this test. A popular univariate test for whether two samples are drawn from the same distributions is the Kolmogorov-Smirnov (KS) test\footnote{\url{https://en.wikipedia.org/wiki/Kolmogorov\%E2\%80\%93Smirnov_test\#Two-sample_Kolmogorov\%E2\%80\%93Smirnov_test}}, which uses a statistic based on the maximum difference between empirical cumulative distribution functions (ECDFs). The asymptotic distribution of this statistic has been derived. One way to adapt this to multivariate samples would be to test the marginals, but this would miss differences in correlations between variables.
+% Often we want to evaluate whether two multivariate samples are drawn from the same distribution. For example, when testing that an MCMC sampler produces the same distribution as direct simulation. There is no obvious choice of statistical machinery for performing this test. A popular univariate test for whether two samples are drawn from the same distributions is the Kolmogorov-Smirnov (KS) test\footnote{\url{https://en.wikipedia.org/wiki/Kolmogorov\%E2\%80\%93Smirnov_test\#Two-sample_Kolmogorov\%E2\%80\%93Smirnov_test}}, which uses a statistic based on the maximum difference between empirical cumulative distribution functions (ECDFs). The asymptotic distribution of this statistic has been derived. One way to adapt this to multivariate samples would be to test the marginals, but this would miss differences in correlations between variables.
 
-We can extend this test to multivariate distributions using multivariate ECDFs\footnote{\url{https://en.wikipedia.org/wiki/Cumulative_distribution_function\#Multivariate_case}}. However, the asymptotic distribution of this statistic is not known. One approach would be to generate a sampling distribution of the statistic under the null hypothesis (distributions being the same) with the non-parameteric bootstrap, pooling samples from both distributions. Calculating the ECDF for each bootstrap sample is expensive but can be made more efficient by pre-computing indicators of pairwise 'less than's between samples\footnote{Implemented here: \url{https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/tests/BootstrapMultivariateDistributionTest.java}}.
+% We can extend this test to multivariate distributions using multivariate ECDFs\footnote{\url{https://en.wikipedia.org/wiki/Cumulative_distribution_function\#Multivariate_case}}. However, the asymptotic distribution of this statistic is not known. One approach would be to generate a sampling distribution of the statistic under the null hypothesis (distributions being the same) with the non-parameteric bootstrap, pooling samples from both distributions. Calculating the ECDF for each bootstrap sample is expensive but can be made more efficient by pre-computing indicators of pairwise 'less than's between samples\footnote{Implemented here: \url{https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/tests/BootstrapMultivariateDistributionTest.java}}.
 
 \section*{Concluding remarks}
 
@@ -872,12 +887,9 @@ Version numbers of BEAST and packages used should be noted.
 For released software, default priors should be made as uninformative as 
 possible and/or provide some guidance on how to set them -- users will use defaults.
 
-
-\subsection*{Authors' contributions}
-Blabla
-
 \subsection*{Funding}
-Blabla
+F.K.M. and A.J.D. were supported by Marsden grant 16-UOA-277. R.B. was
+supported by Marsden grant .
 
 
 %----------------------------------------------------------------------------------------
