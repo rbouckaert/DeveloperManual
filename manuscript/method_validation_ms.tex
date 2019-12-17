@@ -8,7 +8,7 @@
 %
 % Original author:
 % Frits Wenneker (http://www.howtotex.com) with extensive modifications by
-% Vel (vel@LaTeXTemplates.com)
+% Vel (vel@LaTeXTemplates.com) and Fabio Mendes (f.mendes@auckland.ac.nz)
 %
 % License:
 % CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
@@ -28,11 +28,13 @@
 \usepackage{color} % FKM: for colored text
 \usepackage{float} % FKM: for forcing figure placement
 \usepackage[breakable]{tcolorbox} % FKM: for text box
-\usepackage{enumerate}
+\usepackage{enumerate} % FKM: for bullet point lists
+\usepackage{setspace} % FKM: line spacing
+\usepackage[margin=1in]{geometry} % FKM: margins
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
-\linespread{1.05} % Line spacing - Palatino needs more space between lines
+% \linespread{1.05} % Line spacing - Palatino needs more space between lines
 \usepackage{microtype} % Slightly tweak font spacing for aestheticsgins
 \usepackage[small,labelfont=bf,up,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
@@ -73,12 +75,14 @@
 \pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 \posttitle{\end{center}} % Article title closing formatting
 \title{How to validate your probabilistic model implementation} % Article title
-\author{\textsc{An author here$^{1*}$}, \textsc{Another author
+\author{\textsc{An author here$^{1,2*}$}, \textsc{Another author
     here$^{1*}$}, \\ \textsc{Yet another author here$^{1*}$},
   \textsc{Last author here$^{1*}$} \\
 \small $^1$School of Computer Science, The University of Auckland\\
 \small $^2$School of Biological Sciences, The University of Auckland\\
-\small \href{mailto:@aucklanduni.ac.nz}{$^*$@aucklanduni.ac.nz}
+\small
+\href{mailto:f.mendes@auckland.ac.nz}{Corresponding authors$^*$: f.mendes@auckland.ac.nz,}
+\href{mailto:f.mendes@auckland.ac.nz}{another.email@auckland.ac.nz}
 %\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
 %\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
 %\normalsize University of Utah \\ % Second author's institution
@@ -108,6 +112,8 @@
 
 %----------------------------------------------------------------------------------------
 
+\doublespacing
+
 \begin{document}
 
 % Print the title
@@ -122,7 +128,7 @@ The last two decades have seen the biological sciences undergo a major revolutio
 Critical technological innovations such as the advent of massive parallel sequencing and the accompanying improvements in computational power and storage have flooded biology with unprecedented amounts of data ripe for analysis.
 Not only has intraspecific data from multiple individuals allowed
 progress in disparate fields like medicine and epidemiology
-\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{martin13,brawand14,jarvis14,novikova16,pease2016,upham19}.
+\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{martin13,brawand14,jarvis14,novikova16,pease2016,kawahara19,upham19}.
 However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care with which to analyze it.
 Almost at par with with data accumulation is the rate at which new computational tools are being proposed, as evidenced by journals entirely dedicated to method advances, methodological sections in biological journals, and computational biology degrees being offered by institutions around the world.
 
@@ -211,12 +217,12 @@ the fact that $\text{P}(D)$ evaluates to a constant that can be
 conveniently ignored (i.e., $\text{P}(\theta|D) \propto
 \text{P}(\theta|D)\text{P}(\theta)$).
 In practice, the algorithm that generates the Markov chain under MCMC is called
-Metropolis-Hastings, and it samples the posterior distribution by
+Metropolis-Hastings \citep{mh}, and it samples the posterior distribution by
 means of a transition mechanism. 
 If the resulting chain is long enough, aperiodic, irreducible and
 positive recurrent, then the sampled posterior distribution will
 approximate the true, target distribution $\text{P}(\theta|D)$
-\citep{mh,mau99,gelman}.
+\citep{mau99,gelman}.
 
 We focus on MCMC as the chosen technique for obtaining $\text{P}(\theta|D)$
 under an implementation of model $M$,
@@ -300,6 +306,7 @@ the validation of $S(M)$ (see below).
   \caption{A non-exhaustive list of direct simulation software commonly used in evolutionary
     biology analyses.}
   \label{tab:sim}
+  \centering
   \begin{tabular}{ p{0.7in} | p{1.3in} | p{1in} | p{1.1in} }
     \hline
     Software package & Model type & Platform & Reference \\
@@ -317,8 +324,10 @@ the validation of $S(M)$ (see below).
   \end{table}
 \end{center}
 
-\begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
-  break at=11cm/0cm, title=Box 1: Models with well-known parametric \emph{pdf}'s, fonttitle=\bfseries]
+% \begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
+%   break at=11cm/0cm, title=Box 1: Models with well-known parametric \emph{pdf}'s, fonttitle=\bfseries]
+\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
+  title=Box 1: Models with well-known parametric \emph{pdf}'s, fonttitle=\bfseries]
   \small 
   One commonly used model in macroevolution, specifically in the study
 of continuous traits, is a diffusion model known as
@@ -349,8 +358,8 @@ r\}$ and $D = \{\mathbf{y, \mathbf{T}} \}$ (but note that $\mathbf{T}$ can
 be a parameter elsewhere in a hierarchical model of which BM is just a
 component).
 
-
-\includegraphics[width=10cm]{../figures/bmsim.pdf}
+\begin{center}
+\includegraphics[width=11cm]{../figures/bmsim.pdf}
 \label{fig:bmsim}
 \captionof{figure}{A sample of 200 draws from a MVN distribution, each
   representing the evolutionary trajectory of one continuous trait along
@@ -358,6 +367,7 @@ component).
   evolutionary rate of the process, $r$, were set to 0.0 and 0.1, respectively. The panel on the right shows
   histograms of trait values sampled from the MVN for each species, as
 well as their covariation.}
+\end{center}
 
 \vspace{.25cm}
 \emph{Validating a BM simulator}
@@ -450,14 +460,12 @@ There is a wide variation on the validation stringencies different
 methods and models are subjected to in the course of their
 development \citep{darriba18}.
 From a short literature review on Bayesian methods applied to
-phylogenetics {\color{red}{(Table X)}}, we summarize {\color{red}{four [could be more
+phylogenetics {\color{red}{(Table X)}}, we summarize {\color{red}{three [could be more
     after literature review]}} main validation categories,
 in increasing order of stringency and comprehensiveness,
 that model implementations can adhere to:
 
 \begin{enumerate}[i.]
-  \item the model appears to produce reasonable results (perhaps more reasonable than other models)
-    on a data set of interest,
   \item the likelihood function a model
 implements evaluates to some value expected from theory or from a
 second independent implementation (``unit testing'', see
@@ -470,7 +478,7 @@ correctly estimates parameter values from data sets simulated from
 parameter priors, as indicated by the estimated posterior coverage of parameters
 and their correlation with true values (``calibrated validation'', see
 below). {\color{red}{If we want to talk about the next level, from
-    those two other guys, we can add it as the 5th possibility and
+    those two other guys, we can add it as the 4th possibility and
     expand on it below}}
 \end{enumerate}
 
@@ -545,7 +553,8 @@ This forms the basis of what software engineers refer to as ``unit
 testing'' (see the supplementary material for a unit test example
 under the BEAST 2 platform).
 
-\begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
+\vspace{.25cm}
+\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
   title=Box 2: Additional validation sanity-checks, fonttitle=\bfseries]
   \small
 

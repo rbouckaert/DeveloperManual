@@ -1,0 +1,238 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Journal Article
+% LaTeX Template
+% Version 1.4 (15/5/16)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
+% Vel (vel@LaTeXTemplates.com) and Fabio Mendes (f.mendes@auckland.ac.nz)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+%\documentclass[oneside,twocolumn]{article}
+\documentclass[oneside]{article}
+
+\usepackage{blindtext} % Package to generate dummy text throughout this template 
+
+\usepackage{graphicx} % FKM: for figures
+\usepackage{color} % FKM: for colored text
+\usepackage{float} % FKM: for forcing figure placement
+\usepackage[breakable]{tcolorbox} % FKM: for text box
+\usepackage{enumerate} % FKM: for bullet point lists
+\usepackage{setspace} % FKM: line spacing
+\usepackage[margin=1in]{geometry} % FKM: margins
+\usepackage{listings} % FKM: for code windows (lstlisting)
+\usepackage{tikz} % FKM: using for \checkmark
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
+
+\usepackage[sc]{mathpazo} % Use the Palatino font
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+% \linespread{1.05} % Line spacing - Palatino needs more space between lines
+\usepackage{microtype} % Slightly tweak font spacing for aestheticsgins
+\usepackage[small,labelfont=bf,up,up]{caption} % Custom captions under/above floats in tables or figures
+\usepackage{booktabs} % Horizontal rules in tables
+\usepackage{amsmath} % Text in equations
+
+\usepackage[shortlabels]{enumitem} % customized lists (shortlabels
+                                % necessary to have i., ii., etc., in enumerate)
+\setlist[itemize]{noitemsep} % Make itemize lists more compact
+
+\usepackage{abstract} % Allows abstract customization
+\renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
+\renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
+
+\usepackage{titlesec} % Allows customization of titles
+
+\usepackage{fancyhdr} % Headers and footers
+\pagestyle{fancy} % All pages have headers and footers
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Authors et al. $\bullet$ August 2018 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+\usepackage{titling} % Customizing the title section
+
+\usepackage[hidelinks]{hyperref} % For hyperlinks in the PDF
+
+\usepackage{natbib}
+\bibliographystyle{apalike}
+
+\setlength\columnsep{20pt}
+
+\definecolor{pblue}{rgb}{0.13,0.13,1}
+\definecolor{pgreen}{rgb}{0,0.5,0}
+\definecolor{pred}{rgb}{0.9,0,0}
+\definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+\lstset{language=Java,
+  showspaces=false,
+  showtabs=false,
+  breaklines=true,
+  showstringspaces=false,
+  breakatwhitespace=true,
+  commentstyle=\color{pgreen},
+  keywordstyle=\color{pblue},
+  stringstyle=\color{pred},
+  basicstyle=\ttfamily,
+  moredelim=[il][\textcolor{pgrey}]{$$},
+  moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
+}
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\setlength{\droptitle}{-4\baselineskip} % Move the title up
+
+\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+\posttitle{\end{center}} % Article title closing formatting
+\title{{\huge SUPPLEMENTARY MATERIAL}\\\vspace{.5cm}How to validate your probabilistic model
+  implementation} % Article title
+\author{\textsc{An author here$^{1,2*}$}, \textsc{Another author
+    here$^{1*}$}, \\ \textsc{Yet another author here$^{1*}$},
+  \textsc{Last author here$^{1*}$} \\
+\small $^1$School of Computer Science, The University of Auckland\\
+\small $^2$School of Biological Sciences, The University of Auckland\\
+\small
+\href{mailto:f.mendes@auckland.ac.nz}{Corresponding authors$^*$: f.mendes@auckland.ac.nz,}
+\href{mailto:f.mendes@auckland.ac.nz}{another.email@auckland.ac.nz}
+%\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
+%\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
+%\normalsize University of Utah \\ % Second author's institution
+%\normalsize \href{mailto:jane@smith.com}{jane@smith.com} % Second author's email address
+}
+\date{\today} % Leave empty to omit a date
+% \renewcommand{\maketitlehookd}{}
+
+%----------------------------------------------------------------------------------------
+
+\doublespacing
+
+\begin{document}
+
+% Print the title
+\maketitle
+
+\clearpage
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section{Validation procedures in the literature}
+
+The literature on probabilistic modelling in evolutionary biology is vast,
+and a thorough, exhaustive review of this literature is outside the
+scope of the present work. 
+We do however provide a brief, non-exhaustive list of references that
+have implemented (and potentially validated) phylogenetic Bayesian
+models (Table \ref{tab:papers}) and other inference components such as
+operators.
+Each reference was annotated for different validation categories (these
+are discussed in the main text).
+Our goal was to capture the variation in validation stringency and
+comprehensiveness present in this set of computational tools.
+
+\begin{center}
+  \begin{table}[H]
+  \caption{A non-exhaustive list of references from the Bayesian
+    phylogenetics literature and the validation procedures explicitly
+    mentioned in the main or supplementary text.}
+  \label{tab:papers}
+  \centering
+  \begin{tabular}{ c|c|c|c|c }
+    \hline
+    Reference & i & ii & iii & (a) \\
+    \hline  
+    \citealp{mau99} & & \checkmark & & \\
+    \citealp{huelsenbeck00} & & & & \\
+    \citealp{drummond02} & \checkmark & & & \checkmark \\
+    \citealp{eastman11} & & & & \checkmark \\
+    \citealp{uyeda14} & & \checkmark & & \\
+    \citealp{kostikova16} & & \checkmark & & \\
+    \citealp{caetano17} & & & & \\
+    \citealp{carretero18} & & & & \\
+    \hline
+  \end{tabular}
+  \end{table}
+\end{center}
+
+A reference was annotated as having conducted a validation
+procedure if it explicitly mentioned the procedure in the main or
+supplementary text.
+We note that we list references implementing models from the ground
+up, meaning that ideally some validation should have been
+reported in the manuscript.
+It is perfectly possible, however, that some of these procedures were in fact
+carried out prior to or during publication, but were simply not
+mentioned in the text.
+We would hope that unit tests for the likelihood function (item ``i''
+in Tab. \ref{tab:papers}), for example, have been implemented in most
+if not all of the software we listed.
+Alternatively, a reference might belong to a group of several
+publications collectively documenting the development of a large
+software package, in which case previous papers could have documented 
+the validation of at least part of the Bayesian inference machinery,
+such as MCMC operators.
+
+\section*{Validation examples}
+Below we provide code examples for the validation procedures mentioned
+in the main text.
+The code excerpts are written in Java or xml, as they use BEAST 2
+model implementations as the reference software being validated.
+
+\subsection*{Computing the likelihood and comparing against an expected value}
+
+The simplest validation test for an implementation of a likelihood
+function is to evaluate the likelihood of a parameter value given some
+data.
+Ideally, the expected value will have been analytically derived from the
+model under simple conditions (e.g., a small phylogenetic tree,
+equating some of the parameters to zero or unity, etc.).
+This forms the basis of what software engineers refer to as ``unit testing''.
+We show a unit test example for the Yule model in listing \ref{lst:yuleunit}.
+
+\singlespacing
+{\small
+\begin{lstlisting}[language=Java, caption=Unit test for Yule model
+  likelihood function given small phylogenetic tree.,label={lst:yuleunit}]
+  
+package test;
+
+import org.junit.Test;
+import beast.evolution.speciation.YuleModel;
+import beast.util.TreeParser;
+import junit.framework.TestCase;
+
+public class YuleLikelihoodTest extends TestCase {
+    @Test
+    public void testYuleLikelihood() {
+        TreeParser tree = new TreeParser("((A:1.0,B:1.0):1.0,(C:1.0,D:1.0):1.0);");
+        YuleModel likelihood = new YuleModel();
+        likelihood.initByName("tree", tree, "birthDiffRate", "1.0");
+
+        assertEquals(-6.0, likelihood.calculateLogP());
+   }
+ }
+\end{lstlisting}
+}
+
+%----------------------------------------------------------------------------------------
+%	REFERENCE LIST
+%----------------------------------------------------------------------------------------
+
+\section*{References}
+\clearpage
+
+\bibliography{refs}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
