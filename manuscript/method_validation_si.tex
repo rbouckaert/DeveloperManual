@@ -126,12 +126,12 @@
 %	ARTICLE CONTENTS
 %----------------------------------------------------------------------------------------
 
-\section{Validation procedures in the literature}
+\section*{Validation procedures in the literature}
 
 The literature on probabilistic modelling in evolutionary biology is vast,
-and a thorough, exhaustive review of this literature is outside the
+and an exhaustive review of this literature is outside the
 scope of the present work. 
-We do however provide a brief, non-exhaustive list of references that
+We do however provide an extensive list of references that
 have implemented (and potentially validated) phylogenetic Bayesian
 models (Table \ref{tab:papers}) and other inference components such as
 operators.
@@ -140,48 +140,79 @@ are discussed in the main text).
 Our goal was to capture the variation in validation stringency and
 comprehensiveness present in this set of computational tools.
 
-\begin{center}
-  \begin{table}[H]
-  \caption{A non-exhaustive list of references from the Bayesian
-    phylogenetics literature and the validation procedures explicitly
-    mentioned in the main or supplementary text.}
-  \label{tab:papers}
-  \centering
-  \begin{tabular}{ c|c|c|c|c }
-    \hline
-    Reference & i & ii & iii & (a) \\
-    \hline
-    \citealp{yang97} & & & & \\
-    \citealp{mau99} & & \checkmark & & \\
-    \citealp{huelsenbeck00} & & & & \\
-    \citealp{drummond02} & \checkmark & & & \checkmark \\
-    \citealp{eastman11} & & & & \checkmark \\
-    \citealp{uyeda14} & & \checkmark & & \\
-    \citealp{kostikova16} & & \checkmark & & \\
-    \citealp{caetano17} & & & & \\
-    \citealp{carretero18} & & & & \\
-    \hline
-  \end{tabular}
-  \end{table}
-\end{center}
-
-A reference was annotated as having conducted a validation
-procedure if it explicitly mentioned the procedure in the main or
-supplementary text.
-We note that we list references implementing models from the ground
-up, meaning that ideally some validation should have been
-reported in the manuscript.
-It is perfectly possible, however, that some of these procedures were in fact
-carried out prior to or during publication, but were simply not
-mentioned in the text.
+We listed references implementing models from the ground
+up, meaning that ideally some validation should have been reported in
+the manuscript or appendix.
+A reference was annotated as having conducted a particular correctness
+test if it explicitly mentioned the procedure in the main or
+supplementary text, and annotated as ``N/A'' if no validation was mentioned.
+Note that ``N/A'' does not mean that validation did not took place,
+only that it was not mentioned in the text.
 We would hope that unit tests for the likelihood function (item ``i''
 in Tab. \ref{tab:papers}), for example, have been implemented in most
 if not all of the software we listed.
 Alternatively, a reference might belong to a group of several
 publications collectively documenting the development of a large
-software package, in which case previous papers could have documented 
+software package, in which case previous work could have documented 
 the validation of at least part of the Bayesian inference machinery,
 such as MCMC operators.
+
+\begin{center}
+  \begin{table}
+  \caption{A non-exhaustive list of references from the Bayesian
+    phylogenetics literature and the validation procedures explicitly
+    mentioned in the main or supplementary text. When no validation
+    was mentioned, a reference was annotated as ``N/A''.}
+  \label{tab:papers}
+  \centering
+  \begin{tabular}{ c|c|c|c|c|c }
+    \hline
+    Reference & N/A & i & ii & iii & (a) \\
+    \hline
+    \citealp{yang97} & & & & & \\
+    \citealp{mau99} & & & \checkmark & & \\
+    \citealp{huelsenbeck00} & & & & & \\
+    \citealp{drummond02} & & \checkmark & & & \checkmark \\
+    \citealp{pybus03} & & & & & \\
+    \citealp{lunter03} & & & & & \\
+    \citealp{drummond05} & & & & & \\
+    \citealp{drummond06} & & & & & \\
+    \citealp{best07} & & & & & \\
+    \citealp{than08} & & & & & \\
+    \citealp{heled08} & & & & & \\
+    \citealp{drummond08} & & & & & \\
+    \citealp{lemey09} & & & & & \\
+    \citealp{heled10} & & & & & \\
+    \citealp{drummond10} & & & & & \\
+    \citealp{wu11} & & & & & \\
+    \citealp{liu11} & & & \checkmark & & \\
+    \citealp{eastman11} & & & \checkmark & & \\
+    \citealp{stadler12} & & & & & \\
+    \citealp{li12} & & & & & \\
+    \citealp{hohna12} & & & & & \\
+    \citealp{heled12} & & & & & \\
+    \citealp{wu13} & & & & & \\
+    \citealp{stadler13} & & & & & \\
+    \citealp{vaughan14} & & & & & \\
+    \citealp{kuhnert14} & & & & & \\
+    \citealp{gavryushkina14} & & & & & \\
+    \citealp{popinga15} & & & & & \\
+    \citealp{heled15} & & & & & \\
+    \citealp{uyeda14} & & & \checkmark & & \\
+    \citealp{kuhnert16} & & & & & \\
+    \citealp{kostikova16} & & & \checkmark & & \\
+    \citealp{vaughan17} & & & & & \\
+    \citealp{ogilvie17} & & & & & \\
+    \citealp{bouckaert17} & & & & \checkmark & \\
+    \citealp{zhang17} & & & & & \\
+    \citealp{caetano17} & & & & & \\
+    \citealp{carretero18} & & & & & \\
+    \citealp{du18} & & & \checkmark & & \\
+    \citealp{silvestro19} & & & \checkmark & & \\
+    \hline
+  \end{tabular}
+  \end{table}
+\end{center}
 
 \section*{Validation examples}
 Below we provide code examples for the validation procedures mentioned
@@ -203,7 +234,7 @@ We show a unit test example for the Yule model in listing \ref{lst:yuleunit}.
 \singlespacing
 {\small
 \begin{lstlisting}[language=Java, caption=Unit test for Yule model
-  likelihood function given small phylogenetic tree.,label={lst:yuleunit}]
+  likelihood function given a small phylogenetic tree.,label={lst:yuleunit}]
   
 package test;
 
