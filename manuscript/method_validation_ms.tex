@@ -520,6 +520,7 @@ below). {\color{red}{If we want to talk about the next level, from
 
 % \subsection*{Verifying the correctness of a model implementation}
 
+\vspace{.25cm}
 \noindent \emph{Testing whether the likelihood function evaluates to some
   expected value}
 
@@ -661,13 +662,13 @@ mechanism (and of $S(M)$ if analytical expectations are hard to derive).
 
 % \noindent \citep{hudson90}.
 
-One way to verify the correctness of an implementation of the Kingman's
-coalescent, for example, is then to simulate genealogies given some
-$N_e$ and compare the genalogical heights with the result of equation
-\ref{eq:3}.
-In a Bayesian framework this procedure amounts to a direct validation of the
-likelihood if one carries out MCMC without any data (i.e., sampling
-from the prior), but also to a validation of all the machinery involved in MCMC.
+% One way to verify the correctness of an implementation of the Kingman's
+% coalescent, for example, is then to simulate genealogies given some
+% $N_e$ and compare the genalogical heights with the result of equation
+% \ref{eq:3}.
+% In a Bayesian framework this procedure amounts to a direct validation of the
+% likelihood if one carries out MCMC without any data (i.e., sampling
+% from the prior), but also to a validation of all the machinery involved in MCMC.
 
 % If the model has a simulator built in, samples can be generated and compared with an 
 % independent direct simulator, producing two samples from the distribution. Comparing 
@@ -686,6 +687,9 @@ from the prior), but also to a validation of all the machinery involved in MCMC.
 %   same.
 % \end{itemize}
 
+\vspace{.25cm}
+\noindent \emph{Testing whether correct parameter values are estimated
+  from data sets simulated at a (grid of) point(s) in parameter space}
 
 \subsection{Validating operators}
 
