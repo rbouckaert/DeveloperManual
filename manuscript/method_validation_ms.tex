@@ -470,11 +470,11 @@ that model implementations can meet:
     values -- for one or more parameters (i.e., a small hand-picked
     ``grid'' of values) -- from data sets simulated with $S(M)$, and
 \item the model correctly estimates parameter values from data sets
-  simulated from parameter priors, as indicated by the estimated posterior
-  coverage of parameters and their correlation with true values
-  (``well-calibrated validation'', see below). {\color{red}{If we want to talk about the next level -- using
-    other HPDs, we can add it as the 5th possibility and
-    expand on it below}}
+  simulated from prior distributions, as indicated by the estimated
+  posterior coverage of parameters and their correlation with true
+  values (``well-calibrated validation'', see below). {\color{red}{If
+      we want to talk about the next level -- using other HPDs, we can
+      add it as the 5th possibility and expand on it below}}
 \end{enumerate}
 
 % \begin{itemize}
@@ -708,8 +708,8 @@ implementations of both the likelihood function and the proposal mechanism
 \noindent \emph{The model often recovers the right parameter values
   from data sets simulated at a (grid of) point(s) in parameter space}
 
-Perhaps the most common approach for validating a probabilistic model
-involves simulating data sets under specific parameter
+Perhaps the most common approach to date for validating a
+probabilistic model involves simulating data sets under specific parameter
 values (for one or more parameters), carrying out inference, and tabulating
 estimates depending on how close they were to the known, true values.
 This procedure is particularly valuable in the context of point estimates
@@ -723,9 +723,9 @@ simultaneously addressing uncertainty.
 As a result, parameter estimates come in the form of a posterior
 distribution that depends not only on the model likelihood, but
 also the priors of choice.
-It is for this reason that validating a Bayesian model by trying to recover
-hand-picked parameter values can be problematic. 
-Here, it is unclear which prior is to be used, and also how often one should
+Validating a Bayesian model by trying to recover
+hand-picked parameter values can be problematic because it is unclear
+which prior is to be used, and also how often one should
 expect a specific highest posterior density (HPD) interval to contain
 the true parameter values.
 
@@ -737,10 +737,49 @@ implemented should most inferred 95\% HPDs include the true parameter
 values, for example, or vice-versa.
 This validation approach can still be useful in revealing regions
 in parameter space where inference is easier or harder (given different
-prior distributions), but we instead recommend validations that are exact,
-such as well-calibrated studies (see below).
+prior distributions), but we instead recommend procedures that are exact,
+such as calibrated validation studies (see below).
 
-\subsection{Validating operators}
+\vspace{.5cm}
+\noindent \emph{The model correctly estimates parameter values from
+  data sets simulated from prior distributions, as indicated by the
+  estimated posterior coverage}
+
+Rather than simulating a fixed number of data sets for hand-picked
+parameter values (see above), we can let the prior density of
+different values dictate how often they are used in simulations.
+This forms the basis of a calibrated validation study: a large number
+of data sets are simulated directly from the prior distributions on
+model parameters.
+Here, the choice of prior is arbitrary, but ideally should reflect
+what is currently known about the natural phenomenon being modeled.
+
+The advantage of this approach is that if the same Bayesian model (which
+includes likelihood \emph{and} priors) is used for both
+simulation and inference, there are clear expectations under a
+correctly implemented model.
+Namely, out of a large number of simulations, the coverage of a
+parameter should match the width of the HPD of choice
+(coverage is defined as the number of times the HPD
+interval contained the true value out of the total number of
+simulations; \citealp{dawid82}; Fig. X).
+Beyond coverage, one can also determine how good estimates can be,
+potentially under several simulation scenarios, by investigating the
+correlation between true parameter values and their posterior means.
+A high correlation should be expected when the data carries a lot of
+signal, with mean posteriors falling around the prior mean if not
+(Fig. X; we provide further guidelines and code examples for
+calibrated validation in the supplementary material).
+
+Finally, we note that a calibrated validation test is a multifarious
+analysis, as it not only verifies the correctness of a model
+likelihood (both $S(M)$ and $I(M)$), but also of all the components
+involved in the sampling of the posterior.
+For this reason, calibrated validation is the most thorough,
+integrated procedure one can carry out when the goal is to verify
+implementation correctness.
+
+\subsection*{Validating the MCMC transition mechanism (operators)}
 
 Once simulator \(S(M)\) and model implementation \(I(M)\) are verified
 to be correct, next step is implementing efficient operators, running
