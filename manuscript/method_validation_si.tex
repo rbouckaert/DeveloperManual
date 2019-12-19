@@ -73,6 +73,9 @@
 \definecolor{pgreen}{rgb}{0,0.5,0}
 \definecolor{pred}{rgb}{0.9,0,0}
 \definecolor{pgrey}{rgb}{0.46,0.45,0.48}
+\definecolor{maroon}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+
 \lstset{language=Java,
   showspaces=false,
   showtabs=false,
@@ -86,6 +89,22 @@
   moredelim=[il][\textcolor{pgrey}]{$$},
   moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
 }
+
+
+\lstdefinelanguage{XML}
+{
+  basicstyle=\ttfamily,
+  morestring=[s]{"}{"},
+  morecomment=[s]{?}{?},
+  morecomment=[s]{!--}{--},
+  commentstyle=\color{darkgreen},
+  moredelim=[s][\color{black}]{>}{<},
+  moredelim=[s][\color{red}]{\ }{=},
+  stringstyle=\color{black},
+  keywordstyle=\color{black},
+  identifierstyle=\color{blue}
+}
+
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
@@ -165,55 +184,55 @@ such as MCMC operators.
     was mentioned, a reference was annotated as ``N/A''.}
   \label{tab:papers}
   \centering
-  \begin{tabular}{ c|c|c|c|c|c }
+  \begin{tabular}{ l|c|c|c|c|c|c }
     \hline
-    Reference & N/A & i & ii & iii & (a) \\
+    Reference & N/A & i & ii & iii & iv & (a) \\
     \hline
-    \citealp{yang97} & & & & & \\
-    \citealp{mau99} & & & \checkmark & & \\
-    \citealp{huelsenbeck00} & & & & & \\
-    \citealp{drummond02} & & \checkmark & & & \checkmark \\
-    \citealp{pybus03} & & & & & \\
-    \citealp{lunter03} & & & & & \\
-    \citealp{drummond05} & & & & & \\
-    \citealp{drummond06} & & & & & \\
-    \citealp{best07} & & & & & \\
-    \citealp{than08} & & & & & \\
-    \citealp{heled08} & & & & & \\
-    \citealp{drummond08} & & & & & \\
-    \citealp{lemey09} & & & & & \\
-    \citealp{heled10} & & & & & \\
-    \citealp{drummond10} & & & & & \\
-    \citealp{wu11} & & & & & \\
-    \citealp{liu11} & & & \checkmark & & \\
-    \citealp{eastman11} & & & \checkmark & & \\
-    \citealp{stadler12} & & & & & \\
-    \citealp{heath12a} & & & & & \\
-    \citealp{heath12b} & & & & & \\
-    \citealp{li12} & & & & & \\
-    \citealp{hohna12} & & & & & \\
-    \citealp{heled12} & & & & & \\
-    \citealp{wu13} & & & & & \\
-    \citealp{stadler13} & & & & & \\
-    \citealp{landis13a} & & & & & \\
-    \citealp{landis13b} & & & & & \\
-    \citealp{vaughan14} & & & & & \\
-    \citealp{kuhnert14} & & & & & \\
-    \citealp{gavryushkina14} & & & & & \\
-    \citealp{heath14} & & & & & \\
-    \citealp{popinga15} & & & & & \\
-    \citealp{heled15} & & & & & \\
-    \citealp{uyeda14} & & & \checkmark & & \\
-    \citealp{kuhnert16} & & & & & \\
-    \citealp{kostikova16} & & & \checkmark & & \\
-    \citealp{vaughan17} & & & & & \\
-    \citealp{ogilvie17} & & & & & \\
-    \citealp{bouckaert17} & & & & \checkmark & \\
-    \citealp{zhang17} & & & & & \\
-    \citealp{caetano17} & & & & & \\
-    \citealp{carretero18} & & & & & \\
-    \citealp{du18} & & & \checkmark & & \\
-    \citealp{silvestro19} & & & \checkmark & & \\
+    \citealp{yang97} & & \checkmark & & & & \\
+    \citealp{mau99} & & & & \checkmark & & \\
+    \citealp{huelsenbeck00} & & & & & & \\
+    \citealp{drummond02} & & & \checkmark & & & \checkmark \\
+    \citealp{pybus03} & & & & & & \\
+    \citealp{lunter03} & & & & & & \\
+    \citealp{drummond05} & & & & & & \\
+    \citealp{drummond06} & & & & & & \\
+    \citealp{best07} & & & & & & \\
+    \citealp{than08} & & & & & & \\
+    \citealp{heled08} & & & & & & \\
+    \citealp{drummond08} & & & & & & \\
+    \citealp{lemey09} & & & & & & \\
+    \citealp{heled10} & & & & & & \\
+    \citealp{drummond10} & & & & & & \\
+    \citealp{wu11} & & & & & & \\
+    \citealp{liu11} & & & & \checkmark & & \\
+    \citealp{eastman11} & & & & \checkmark & & \\
+    \citealp{stadler12} & & & & & & \\
+    \citealp{heath12a} & & & & & & \\
+    \citealp{heath12b} & & & & & & \\
+    \citealp{li12} & & & & & & \\
+    \citealp{hohna12} & & & & & & \\
+    \citealp{heled12} & & & & & & \\
+    \citealp{wu13} & & & & & & \\
+    \citealp{stadler13} & & & & & & \\
+    \citealp{landis13a} & & & & & & \\
+    \citealp{landis13b} & & & & & & \\
+    \citealp{vaughan14} & & & & & & \\
+    \citealp{kuhnert14} & & & & & & \\
+    \citealp{gavryushkina14} & & & & & & \\
+    \citealp{heath14} & & & & & & \\
+    \citealp{popinga15} & & & & & & \\
+    \citealp{heled15} & & & & & & \\
+    \citealp{uyeda14} & & & & \checkmark & & \\
+    \citealp{kuhnert16} & & & & & & \\
+    \citealp{kostikova16} & & & & \checkmark & & \\
+    \citealp{vaughan17} & & & & & & \\
+    \citealp{ogilvie17} & & & & & & \\
+    \citealp{bouckaert17} & & & & & \checkmark & \\
+    \citealp{zhang17} & & & & & & \\
+    \citealp{caetano17} & & & & & & \\
+    \citealp{carretero18} & & & & & & \\
+    \citealp{du18} & & & & \checkmark & & \\
+    \citealp{silvestro19} & & & & \checkmark & & \\
     \hline
   \end{tabular}
   \end{table}
@@ -227,18 +246,18 @@ model implementations as the reference software being validated.
 
 \subsection*{Computing the likelihood and comparing against an expected value}
 
-The simplest validation test for an implementation of a likelihood
-function is to evaluate the likelihood of a parameter value given some
-data.
+The simplest validation test for a likelihood implementation is to
+evaluate the likelihood of a parameter value given some
+data, and then compare it to some expected value.
 Ideally, the expected value will have been analytically derived from the
-model under simple conditions (e.g., a small phylogenetic tree,
+model under simple conditions (e.g., a small phylogenetic tree while
 equating some of the parameters to zero or unity, etc.).
 This forms the basis of what software engineers refer to as ``unit testing''.
 We show a unit test example for the Yule model in listing \ref{lst:yuleunit}.
 
-\singlespacing
 {\small
-\begin{lstlisting}[language=Java, caption=Unit test for Yule model
+\singlespacing
+\begin{lstlisting}[language=Java, caption=Java unit test for Yule model
   likelihood function given a small phylogenetic tree.,label={lst:yuleunit}]
   
 package test;
@@ -260,6 +279,88 @@ public class YuleLikelihoodTest extends TestCase {
  }
 \end{lstlisting}
 }
+
+As discussed in the main text, another possibility is to use MCMC to
+sample from the model without data, and evaluate the resulting
+distribution with respect to some analytically derived summary
+statistic.
+If such quantity has not been derived, one can compare the
+distribution sampled with MCMC with a distribution obtained through
+direct simulation (i.e., from $S(M)$).
+Below, we provide an \texttt{.xml} BEAST 2 control file that carries
+out the latter procedure for the Yule model:
+
+{\small
+\singlespacing
+\begin{lstlisting}[language=XML, caption=BEAST 2 control file for
+  generating two distributions under the Yule model (one obtained by
+  sampling through MCMC and the other with direct simulation)., label={lst:yuleunit}]
+  
+  <beast version="2.0" namespace="beast.core:
+  beast.evolution.alignment:
+  beast.evolution.tree:
+  beast.math.distributions:
+  beast.evolution.speciation:
+  beast.core.util:beast.core.parameter">
+
+  <run spec="MCMC" chainLength="1000000">
+    <state id="state">
+      <stateNode idref="tree"/>
+      <stateNode idref="birthDiffRateParam"/>
+    </state>
+
+    <distribution spec="CompoundDistribution" id="fullModel">
+      <distribution spec="YuleModel" id="yuleModel">
+        <tree spec="Tree" id="tree">
+          <taxonset spec="TaxonSet">
+            <taxon spec="Taxon" id="t1"/>
+            <taxon spec="Taxon" id="t2"/>
+            <taxon spec="Taxon" id="t3"/>
+            <taxon spec="Taxon" id="t4"/>
+            <taxon spec="Taxon" id="t5"/>
+          </taxonset>
+        </tree>
+
+        <birthDiffRate spec="RealParameter" id="birthDiffRateParam" value="1.0"/>
+      </distribution>
+
+      <distribution spec="beast.math.distributions.Prior" id="birthDiffRatePrior">
+        <distr spec="Exponential" id="xExpParamDist" mean="1"/>
+        <x idref="birthDiffRateParam"/>
+      </distribution>
+    </distribution>
+
+    <operator spec="beast.experimenter.DirectSimulatorOperator" weight="1" state="@state">
+      <simulator id="DirectSimulator" spec="beast.core.DirectSimulator" nSamples="1">
+        <distribution idref="fullModel"/>
+      </simulator>
+    </operator>
+
+    <logger id="tracelog" logEvery="1000" fileName="$(filebase).log">
+      <log idref="birthDiffRateParam"/>
+      <log id="clockRate" spec="beast.util.Script" expression="0.5/TreeHeight">
+        <x id="TreeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
+      </log>
+      <log idref="TreeHeight"/>
+    </logger>
+
+    <logger id="treelog" logEvery="1000" fileName="$(filebase).trees">
+      <log idref="tree"/>
+    </logger>
+
+    <logger id="screenlog" logEvery="1000">
+      <log idref="birthDiffRateParam"/>
+    </logger>
+  </run>
+</beast>
+\end{lstlisting}
+}
+
+\subsubsection{Sanity checks when validating a model}
+
+
+
+(we point the interested reader to {\color{red}{non-wiki citations here}} for derivations of equations 6)
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST

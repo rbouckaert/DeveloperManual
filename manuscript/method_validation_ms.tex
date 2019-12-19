@@ -219,10 +219,10 @@ conveniently ignored (i.e., $\text{P}(\theta|D) \propto
 In practice, the algorithm that generates the Markov chain under MCMC is called
 Metropolis-Hastings \citep{mh}, and it samples the posterior distribution by
 means of a transition mechanism. 
-If the resulting chain is long enough, aperiodic, irreducible and
-positive recurrent, then the sampled posterior distribution will
-approximate the true, target distribution $\text{P}(\theta|D)$
-\citep{mau99,gelman}.
+If the proposal distribution is aperiodic, irreducible and
+positive recurrent, and resulting chain is long enough, then the
+sampled posterior distribution will approximate the true, target
+distribution $\text{P}(\theta|D)$ \citep{smith93,tierney94,gelman}.
 
 We focus on MCMC as the chosen technique for obtaining $\text{P}(\theta|D)$
 under an implementation of model $M$,
@@ -460,25 +460,24 @@ There is a wide variation on the validation stringencies different
 methods and models are subjected to in the course of their
 development \citep{darriba18}.
 From a short literature review on Bayesian methods applied to
-phylogenetics {\color{red}{(Table X)}}, we summarize {\color{red}{three [could be more
+phylogenetics (Table S1), we summarize {\color{red}{four [could be more
     after literature review]}} main validation categories,
 in increasing order of stringency and comprehensiveness,
 that model implementations can adhere to:
 
 \begin{enumerate}[i.]
-  \item the likelihood function a model
-implements evaluates to some value expected from theory or from a
-second independent implementation (``unit testing'' and/or MCMC-simulation, see
-below),
-  \item the model correctly estimates a small set of parameter
+  \item the model produces reasonable estimates on a real data set,
+  \item the model likelihood evaluates to some theoretical
+    expectation and/or approximates an expected distribution,
+  \item the model correctly recovers a small set of parameter
 values -- for one or more parameters (i.e., a small ``grid'' of
-values) -- used in simulated data sets from $S(M)$, and
+values) -- from data sets simulated with $S(M)$, and
   \item the model
 correctly estimates parameter values from data sets simulated from
 parameter priors, as indicated by the estimated posterior coverage of parameters
 and their correlation with true values (``calibrated validation'', see
-below). {\color{red}{If we want to talk about the next level, from
-    those two other guys, we can add it as the 4th possibility and
+below). {\color{red}{If we want to talk about the next level -- using
+    other HPDs, we can add it as the 5th possibility and
     expand on it below}}
 \end{enumerate}
 
@@ -521,12 +520,35 @@ below). {\color{red}{If we want to talk about the next level, from
 % \subsection*{Verifying the correctness of a model implementation}
 
 \vspace{.25cm}
-\noindent \emph{Testing whether the likelihood function evaluates to some
-  expected value}
+\noindent \emph{The model produces a reasonable estimate on a real
+  data set}
 
-A good starting point when validating the implementation of a probabilistic
-model is the comparison between the value of its likelihood function given
-specific parameter values ($P(D|\theta)$) to some expected result.
+One initial yet insufficient step in validating a model implementation
+is verifying whether it produces reasonable inferences with a real
+data set.
+Depending on the particular biological question at hand, it is very
+hard or arguably impossible to know what the true, expected answer is,
+and so ``reasonable'' will always be up for debate.
+A reasonable inference could be one confirming a result from a previous study
+using the same data and model, or different data and model
+altogether, but contradictory inferences do not necessarily imply a model
+was incorrectly implemented.
+For this reason, this validation procedure cannot consist of a proper
+correctness check, but should instead be seen as an exploratory
+analysis or a sanity check (the latter would require massive
+evidence supporting a particular hypothesis).
+Accordingly, a large fraction of publications to date employ this
+strategy as a final step to illustrate the workings of a method more
+than to validate it (but see Table S1 in the supplementary material).
+
+\vspace{.5cm}
+\noindent \emph{The model likelihood evaluates to some
+  expected value or approximates an expected distribution}
+
+A good starting point in formally verifying the correctness of a
+probabilistic model implementation is the comparison between the
+likelihood of a parameter value given some data ($P(D|\theta)$) to
+some expected result.
 When models are sufficiently simple, or by focusing
 on a subcase of a complex model, it is often straightforward to derive
 what this expected result should be (see Box 1).
@@ -593,10 +615,9 @@ languages are used), the more robust the test is (see box 1).
   %   E\left[U(\theta,D)U(\theta,D)^T + \frac{\partial^2}{\partial\theta^2}\text{log} \text{P}(D|\theta)\right]=0.
   % \end{equation}
 
-  (we point the interested reader to {\color{red}{non-wiki citations here}} for derivations of equations 6).
-  One can then evaluate this expectation from a simulated data set
-  (generated by $S(M)$) and assess whether it is sufficiently close to
-  zero (for more details, see the supplementary material).
+  This theoretical expectation can then be compared to the one
+  computed from a simulated data set (generated by $S(M)$; see the
+  supplementary material for more details).
 
   \vspace{.25cm}
   \emph{Comparing empirical vs. target posterior distributions}
@@ -687,9 +708,18 @@ mechanism (and of $S(M)$ if analytical expectations are hard to derive).
 %   same.
 % \end{itemize}
 
-\vspace{.25cm}
+\vspace{.5cm}
 \noindent \emph{Testing whether correct parameter values are estimated
   from data sets simulated at a (grid of) point(s) in parameter space}
+
+Perhaps the most common approach for validating a probabilistic model
+implementation involves simulating data sets under specific parameter
+values (for one or more parameters), and tabulating the resulting
+estimates depending on how close they were to the known, true values.
+This procedure is particularly valuable in the context of point estimates
+characteristic of maximum-likelihood methods (e.g.,
+\citealp{mccormack09,han13,mendes17}), but of smaller if not unclear
+utility in the Bayesian framework.
 
 \subsection{Validating operators}
 
