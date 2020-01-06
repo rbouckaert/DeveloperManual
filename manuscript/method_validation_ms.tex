@@ -754,6 +754,19 @@ model parameters.
 Here, the choice of prior is arbitrary, but ideally should reflect
 what is currently known about the natural phenomenon being modeled.
 
+\begin{figure}
+  \includegraphics[width=\textwidth]{../figures/yule_calval.pdf}
+  \caption{Calibrated validation analyses of a simple Bayesian
+    hierarchical model. (a) The graphical representation of the model used in
+    the analyses, where $\lambda$ is the Yule birth-rate, $n$ is the
+    number of species, and $\tau$ is the set of speciation times. Panels (b-d)
+    show true $\lambda$ values plotted against their mean posteriors. (b) Trees
+    with $50<n<200$, (c) Trees with $5<n<10$, (d) Model is
+    misspecified (log-normal prior rather than exponential).
+  }
+  \label{fig:yulecalval}
+\end{figure}
+
 The advantage of this approach is that if the same Bayesian model (which
 includes likelihood \emph{and} priors) is used for both
 simulation and inference, there are clear expectations under a
@@ -762,22 +775,73 @@ Namely, out of a large number of simulations, the coverage of a
 parameter should match the width of the HPD of choice
 (coverage is defined as the number of times the HPD
 interval contained the true value out of the total number of
-simulations; \citealp{dawid82}; Fig. X).
+simulations; \citealp{dawid82}).
+For example, in the case of the commonly used 95\%-HPD interval, the true value
+should often be inside the HPD between 90--98\% of the time (Table
+\ref{tab:coverage}).
+
+\begin{table}
+\begin{center}
+\begin{tabular}{lc}
+\hline
+k & $\text{P}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
+\hline
+90 & 0.0167 \\ % & 0.0282 & 0.9718\\
+91 & 0.0349 \\ % & 0.0631 & 0.9369\\
+92 & 0.0649 \\ % & 0.1280 & 0.8720\\
+93 & 0.1060 \\ % & 0.2340 & 0.7660\\
+94 & 0.1500 \\ % & 0.3840 & 0.6160\\
+95 & 0.1800 \\ % & 0.5640 & 0.4360\\
+96 & 0.1781 \\ % & 0.7422 & 0.2578\\
+97 & 0.1396 \\ % & 0.8817 & 0.1183\\
+98 & 0.0812 \\ % & 0.9629 & 0.0371\\
+99 & 0.0312 \\ % & 0.9941 & 0.0059\\
+100 & 0.0059 \\ % & 1.0000 & 0.0000\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Under a correctly implemented model, coverage (the number $k$
+  of true simulated values that fall within their corresponding 95\%-HPDs) is binomially
+  distributed, with $p=0.95$. 
+\label{tab:coverage}}
+\end{table}
+
+Figure \ref{fig:yulecalval} shows the results of a calibrated
+validation analysis for a simple Bayesian model.
+Here, the full model is comprised of an exponential prior on the birth-rate
+$\lambda$, with the Yule likelihood (i.e., a pure-birth process)
+modelling speciation times $\tau$ (Fig. \ref{fig:yulecalval}a).
+We plot 100 ``true'' $\lambda$ values (drawn from the exponential prior)
+against their posterior means estimated through MCMC from the
+corresponding trees simulated under the Yule model
+(Fig. \ref{fig:yulecalval}b-d).
+Note that coverage is good for the first and second calibrated
+validation analyses (the vast majority of 95\%-HPDs
+include the true values, as shown by the blue vertical lines; Fig
+\ref{fig:yulecalval}b-c), for which the model was correctly
+specified.
+Coverage is not good in the third analysis, where the model was
+mispecified on purpose (a log-normal prior was used in inference,
+rather than an exponential; Fig. \ref{fig:yulecalval}d).
+
 Beyond coverage, one can also determine how good estimates can be,
 potentially under several simulation scenarios, by investigating the
 correlation between true parameter values and their posterior means.
 A high correlation should be expected when the data carries a lot of
-signal, with mean posteriors falling around the prior mean if not
-(Fig. X; we provide further guidelines and code examples for
-calibrated validation in the supplementary material).
+signal (Fig. \ref{fig:yulecalval}b).
+Conversely, small trees containing reduced signal should yield a lower
+correlations (Fig. \ref{fig:yulecalval}c).
 
-Finally, we note that a calibrated validation test is a multifarious
+
+Finally, we emphasize that a calibrated validation test is a multifarious
 analysis, as it not only verifies the correctness of a model
 likelihood (both $S(M)$ and $I(M)$), but also of all the components
 involved in the sampling of the posterior.
 For this reason, calibrated validation is the most thorough,
 integrated procedure one can carry out when the goal is to verify
-implementation correctness.
+implementation correctness
+We provide further guidelines and code examples for
+calibrated validation in the supplementary material).
 
 \subsection*{Validating the MCMC transition mechanism (operators)}
 
@@ -922,41 +986,16 @@ not uniform(0,1) but Dirichlet(4,4,4,4) is better.
 {\bf Substitution model parameters}\label{substitution-model-parameters}:
 Default priors seem OK for most substitution models.
 
-
-
 \section{Coverage trouble shooting}\label{trouble-shooting}
 
-With 100 trials, the occasional 91 is acceptable (the 95\% HPD = 90 to 98 probability the
-implementation is correct -- see Table \ref{tab:coverage}) but coverage below 90 almost surely indicate
-an issue with the model or operator implementation. Also, coverage of 99
-or 100 should be looked at with suspicion -- it may indicate overly wide
-uncertainty intervals.
+% With 100 trials, the occasional 91 is acceptable (the 95\% HPD = 90 to 98 probability the
+% implementation is correct -- see Table \ref{tab:coverage}) but coverage below 90 almost surely indicate
+% an issue with the model or operator implementation. Also, coverage of 99
+% or 100 should be looked at with suspicion -- it may indicate overly wide
+% uncertainty intervals.
 
 
-\begin{table}
-\begin{center}
-\begin{tabular}{rlll}
-\hline
-k & $p(x=k)$ & $p(x\le k)$ & $p(x\ge k)$\\
-\hline
-90 & 0.0167 & 0.0282 & 0.9718\\
-91 & 0.0349 & 0.0631 & 0.9369\\
-92 & 0.0649 & 0.1280 & 0.8720\\
-93 & 0.1060 & 0.2340 & 0.7660\\
-94 & 0.1500 & 0.3840 & 0.6160\\
-95 & 0.1800 & 0.5640 & 0.4360\\
-96 & 0.1781 & 0.7422 & 0.2578\\
-97 & 0.1396 & 0.8817 & 0.1183\\
-98 & 0.0812 & 0.9629 & 0.0371\\
-99 & 0.0312 & 0.9941 & 0.0059\\
-100 & 0.0059 & 1.0000 & 0.0000\\
-\hline
-\end{tabular}
-\end{center}
-\caption{If correctly implemented, the number of items covered is distributed binomial with p=0.95, N=100.
-Source \url{https://www.di-mgt.com.au/binomial-calculator.html}.
-\label{tab:coverage}}
-\end{table}
+
 
 
 
