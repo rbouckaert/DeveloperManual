@@ -238,11 +238,14 @@ such as MCMC operators.
   \end{table}
 \end{center}
 
+\vspace{-1.5cm}
+
 \section*{Validation examples}
 Below we provide code examples for the validation procedures mentioned
 in the main text.
 The code excerpts are written in Java or xml, as they use BEAST 2
-model implementations as the reference software being validated.
+\citep{beast25} model implementations as the reference software being
+validated.
 
 \subsection*{Computing the likelihood and comparing against an expected value}
 
@@ -256,6 +259,7 @@ This forms the basis of what software engineers refer to as ``unit testing''.
 We show a unit test example for the Yule model in listing \ref{lst:yuleunit}.
 
 {\small
+\vspace{2cm}
 \singlespacing
 \begin{lstlisting}[language=Java, caption=Java unit test for Yule model
   likelihood function given a small phylogenetic tree.,label={lst:yuleunit}]
@@ -356,17 +360,17 @@ out the latter procedure for the Yule model:
 \end{lstlisting}
 }
 
-\subsubsection{Sanity checks when validating a model}
-
-
+\subsubsection*{Sanity checks when validating a model}
 
 (we point the interested reader to {\color{red}{non-wiki citations here}} for derivations of equations 6)
+
+This text is linked with a live document available on
+\href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
 %----------------------------------------------------------------------------------------
 
-\section*{References}
 \clearpage
 
 \bibliography{refs}
