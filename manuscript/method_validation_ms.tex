@@ -126,32 +126,53 @@
 
 \section*{Introduction}
 The last two decades have seen the biological sciences undergo a major revolution.
-Critical technological innovations such as the advent of massive parallel sequencing and the accompanying improvements in computational power and storage have flooded biology with unprecedented amounts of data ripe for analysis.
+Critical technological innovations such as the advent of massive
+parallel sequencing and the accompanying improvements in computational
+power and storage have flooded biology with unprecedented amounts of
+data ripe for analysis.
 Not only has intraspecific data from multiple individuals allowed
 progress in disparate fields like medicine and epidemiology
-\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{martin13,brawand14,jarvis14,novikova16,pease2016,kawahara19,upham19}.
-However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care with which to analyze it.
-Almost at par with with data accumulation is the rate at which new computational tools are being proposed, as evidenced by journals entirely dedicated to method advances, methodological sections in biological journals, and computational biology degrees being offered by institutions around the world.
+\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics
+\citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology
+\citep[e.g.][]{rosenblum13,bates18}, but now a large number of species
+across the tree of life have had their genomes sequenced, furthering
+our understanding of species relationships and diversification
+\citep[e.g.,][]{martin13,brawand14,jarvis14,novikova16,pease2016,kawahara19,upham19}.
+However, as the old adage goes, with great power comes great
+responsibility: never has the data available to the average biologist
+been so abundant, but also never has one been so aware of both its
+complexity and the necessary care with which to analyze it.
+Almost at par with with data accumulation is the rate at which new
+computational tools are being proposed, as evidenced by journals
+entirely dedicated to method advances, methodological sections in
+biological journals, and computational biology degrees being offered
+by institutions around the world.
 
-One extreme case is the discipline of evolutionary biology (on which we focus our attention).
+One extreme case is the discipline of evolutionary biology (on which
+we focus our attention).
 While it could be said that many decade-old questions and hypotheses
 in evolutionary biology have aged well and stood up the test of time
 (e.g., the Red Queen hypothesis,
 \citealt{vanvalen73,lively87,morran11,gibson15}; the
-Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis
-practices have changed drastically in recent years, to the
-point they would likely seem obscure to an evolutionary biologist last active 40 years ago.
-In particular, evolutionary biology has become highly statistical, with the development and utilization of models now being commonplace.
+Bateson-Dobzhansky-Muller model,
+\citealt{dob36,muller40,hopkins12,roda17}), data analysis practices
+have changed drastically in recent years, to the point they would
+likely seem obscure to an evolutionary biologist last active 40 years
+ago.
+In particular, evolutionary biology has become highly statistical,
+with the development and utilization of models now being commonplace.
 
 Models are employed in the sciences for many reasons, and fall within
 a biological abstraction continuum \citep{servedio14}, going from
-fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models
-that formalize verbal models (e.g., \citealt{maynard78,reinhold99,mendes18}), to probabilistic models that interact
-directly with data (i.e., models with a likelihood function such as \citealt{yule24,felsenstein73,hky,hudson90}).
+fully verbal, highly abstract models (e.g., \citealt{vanvalen73}),
+through proof-of-concept models that formalize verbal models (e.g.,
+\citealt{maynard78,reinhold99,mendes18}), to probabilistic models that
+interact directly with data (i.e., models with a likelihood function
+such as \citealt{yule24,felsenstein73,hky,hudson90}).
 Though mathematical models are in general more frequently used in
 evolutionary biology, there has been a sharp surge in instances of the
-latter cases (i.e., probabilistic models) in conjunction with computational tools implementing them
-(Fig. 1).
+latter cases (i.e., probabilistic models) in conjunction with
+computational tools implementing them (Fig. 1).
 
 Despite the increasing pervasiveness of probabilistic models in the
 biological sciences, tools implementing such models show large
@@ -163,12 +184,13 @@ development, and the challenges inherent to software research funding
 The bioinformatics community is thus in dire need of resources that
 provide guidance for code improvement and validation.
 
-Here, we summarize best practices in probabilistic  model validation for method
+Here, we summarize best practices in probabilistic model validation for method
 developers, with an emphasis on Bayesian methods.
-We hope our guidelines can help raise the standards for software
-package releases required by users, developers and reviewers alike,
-and consequently lead to computational tools that are more efficient, better documented, and most
-importantly, correctly implemented.
+This manuscript is accompanied by a supplementary text that elaborates
+on and provides code examples for these practices (with the BEAST 2
+platform as a reference; \citealp{beast25}).
+This supplementary text is linked to a live document available on
+\href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
 
 % \begin{figure}
 %   \includegraphics[width=\linewidth]{fig1}
@@ -1095,7 +1117,20 @@ necessary on the part of method developers.
 
 \section*{Concluding remarks}
 
-TODO
+As more data is generated and made publicly available, the more will
+researchers in the life sciences require computational methods with
+which to analyze it.
+If such methods are not correctly implemented, conclusions drawn from
+the data will be of reduced or void of any significance.
+Here we discuss guidelines for the validation of computational methods
+implementing Bayesian probabilistic models.
+This manuscript is also followed by a supplementary text further
+illustrating these guidelines that is linked with a live document
+available on \href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
+We hope our guidelines can help raise the standards for software
+package releases required by users, developers and reviewers alike,
+and consequently lead to computational tools that are more efficient,
+better documented, and most importantly, correctly implemented.
 
 % When publishing well calibrated studies, all XML files, log files and
 % scripts for manipulating them should be made available, so the study can
