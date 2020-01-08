@@ -300,20 +300,25 @@ If such quantity has not been derived, one can compare the
 distribution sampled with MCMC with a distribution obtained through
 direct simulation (i.e., from $S(M)$).
 Below, we provide an \texttt{.xml} BEAST 2 control file that carries
-out the latter procedure for the Yule model:
+out MCMC for the Yule model (listing
+\ref{lst:yulemcmc}), using a direct simulator ($S(M)$) as the proposal
+mechanism.
+The advantage of using a direct simulator to propose new parameter values is
+that one can then be sure that problems, if any, involve the model
+implementation. 
 
 {\small
 \singlespacing
 \begin{lstlisting}[language=XML, caption=BEAST 2 control file for
-  generating two distributions under the Yule model (one obtained by
-  sampling through MCMC and the other with direct simulation)., label={lst:yuleunit}]
+  sampling a distribution under the Yule model with MCMC., label={lst:yulemcmc}]
   
   <beast version="2.0" namespace="beast.core:
   beast.evolution.alignment:
   beast.evolution.tree:
   beast.math.distributions:
   beast.evolution.speciation:
-  beast.core.util:beast.core.parameter">
+  beast.core.util:
+  beast.core.parameter">
 
   <run spec="MCMC" chainLength="1000000">
     <state id="state">
@@ -362,6 +367,64 @@ out the latter procedure for the Yule model:
 
     <logger id="screenlog" logEvery="1000">
       <log idref="birthDiffRateParam"/>
+    </logger>
+  </run>
+</beast>
+\end{lstlisting}
+}
+
+The distribution sampled using the control file provided in listing
+\ref{lst:yulemcmc} can then be compared to a distribution generated
+with a direct simulator.
+The control file specifying the latter task is shown in listing
+\ref{lst:yuledirect}.
+
+{\small
+\singlespacing
+\begin{lstlisting}[language=XML, caption=BEAST 2 control file for
+  generating a distribution under the Yule model with direct simulation., label={lst:yuledirect}]
+  
+  <beast version="2.0" namespace="beast.core:
+  beast.evolution.alignment:
+  beast.evolution.tree:
+  beast.math.distributions:
+  beast.evolution.speciation:
+  beast.core.util:
+  beast.core.parameter">
+
+  <run spec="DirectSimulator" nSamples="100">
+    <distribution spec="CompoundDistribution" id="fullModel">
+    <distribution spec="YuleModel" id="yuleModel">
+      <tree spec="Tree" id="tree">
+        <taxonset spec="TaxonSet">
+          <taxon spec="Taxon" id="t1"/>
+          <taxon spec="Taxon" id="t2"/>
+          <taxon spec="Taxon" id="t3"/>
+          <taxon spec="Taxon" id="t4"/>
+          <taxon spec="Taxon" id="t5"/>
+        </taxonset>
+      </tree>
+
+      <birthDiffRate spec="RealParameter" id="birthDiffRateParam" value="1.0"/>
+    </distribution>
+
+    <distribution spec="beast.math.distributions.Prior" id="birthDiffRatePrior">
+      <distr spec="Exponential" id="xExpParamDist" mean="1"/>
+        <x idref="birthDiffRateParam"/>
+      </distribution>
+
+    </distribution>
+
+    <logger logEvery="1" fileName="$(filebase).log">
+      <log idref="birthDiffRateParam"/>
+      <log id="clockRate" spec="beast.util.Script" expression="0.5/TreeHeight">
+        <x id="TreeHeight" spec="beast.evolution.tree.TreeHeightLogger" tree="@tree"/>
+      </log>
+      <log idref="TreeHeight"/>
+    </logger>
+
+    <logger logEvery="1" fileName="$(filebase).trees">
+      <log idref="tree"/>
     </logger>
   </run>
 </beast>
