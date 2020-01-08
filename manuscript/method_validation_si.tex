@@ -90,7 +90,6 @@
   moredelim=[is][\textcolor{pgrey}]{\%\%}{\%\%}
 }
 
-
 \lstdefinelanguage{XML}
 {
   basicstyle=\ttfamily,
@@ -104,6 +103,12 @@
   keywordstyle=\color{black},
   identifierstyle=\color{blue}
 }
+
+% \renewcommand{\thepage}{S\arabic{page}}
+% \renewcommand{\thesection}{S\arabic{section}}
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\theequation}{S\arabic{equation}}
 
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
@@ -144,6 +149,9 @@
 %----------------------------------------------------------------------------------------
 %	ARTICLE CONTENTS
 %----------------------------------------------------------------------------------------
+
+This text is linked with a live document available on
+\href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
 
 \section*{Validation procedures in the literature}
 
@@ -360,12 +368,100 @@ out the latter procedure for the Yule model:
 \end{lstlisting}
 }
 
-\subsubsection*{Sanity checks when validating a model}
+\subsubsection*{Other validation procedures}
 
-(we point the interested reader to {\color{red}{non-wiki citations here}} for derivations of equations 6)
+As mentioned in the main text (Box 2), one additional procedure
+that can be carried out to validate a model is to verify whether:
 
-This text is linked with a live document available on
-\href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
+\begin{equation}\label{eq:sf}
+  \text{E}[U(\theta,D)] = \int U(\theta,D)\text{P}(D|\theta)dD = 0,
+\end{equation}
+
+\noindent where $U(\theta,D)=\frac{\partial}{\partial\theta}\log
+\text{P}(D|\theta)$ is the gradient of the log-likelihood function with
+respect to $\theta$, also known as the score function.
+
+Verifying if Eq. \ref{eq:sf} holds is done by first computing the
+integral from multiple directly simulated data points, at one or
+more arbitrary coordinate(s) in parameter space.
+Second, it should be determined whether the computed value is or not
+significantly different from zero, which can be done by fitting two
+multivariate normal distributions to it (one with its mean fixed
+to 0, the other with an estimated mean).
+The fit of those two distributions can then be compared with a
+standard likelihood-ratio test with one degree of freedom.
+
+Below, we provide an \texttt{.xml} BEAST 2 control file that carries out the
+computation of the integral in Eq. \ref{eq:sf} for the birth-death
+model (listing \ref{lst:sf}), and the fitting of multivariate normal distributions.
+When executed, this control file will result in a p-value indicating if
+the expectation should be considered significantly different from zero
+given some chosen significance level.
+
+{\small
+\singlespacing
+\begin{lstlisting}[language=XML, caption=BEAST 2 control file for
+  generating two distributions under the Yule model (one obtained by
+  sampling through MCMC and the other with direct simulation)., label={lst:sf}]
+  
+  <beast version="2.0" namespace="beast:
+  beast.core:
+  beast.core.parameter:
+  beast.evolution.tree:
+  beast.evolution.speciation:
+  beast.simulation:
+  beast.validation:
+  beast.validation.statistics:
+  beast.validation.tests:
+  master.model:
+  master.conditions:
+  master.postprocessors">
+
+  <run spec="StochasticValidationTest" alpha="0.1" nSamples="10000" printEvery="1000">
+    <sampler spec="TreeSamplerFromMaster" verbosity="0" reverseTime="false" simulationTime="3.0" id="masterTree">
+      <model spec="Model">
+        <population spec="Population" populationName="X" id="X"/>
+        <population spec="Population" populationName="D" id="D"/>
+        <reaction spec="Reaction" reactionName="Speciation" rate="0.5">
+          X -> 2X
+        </reaction>
+        <reaction spec="Reaction" reactionName="Extinction" rate="0.2">
+          X -> D
+        </reaction>
+      </model>
+
+      <initialState spec="InitState">
+        <lineageSeed spec="Individual" population="@X"/>
+      </initialState>
+
+      <inheritancePostProcessor spec="LineageFilter" populationName="X"/>
+      <inheritancePostProcessor spec="LineageSampler" pSample="0.6" samplingTime="3.0"/>
+      <postSimCondition spec="LeafCountPostSimCondition" nLeaves="4" exact="true" />
+    </sampler>
+
+    <statistic spec="NumericalScoreFunctionStatistics" state="@masterTree" id="grad">
+      <parameter spec="RealParameter" id="birthDiffRate" value="0.3"/>
+      <!-- Relative death rate excluded because of non-identifiability -->
+      <parameter spec="RealParameter" id="sampleProbability" value="0.6"/>
+      <likelihood spec="BirthDeathGernhard08Model" birthDiffRate="@birthDiffRate" relativeDeathRate="0.4" sampleProbability="@sampleProbability" originHeight="3.0" tree="@masterTree" />
+    </statistic>
+
+    <test spec="MultivariateNormalZeroMeanTest" id="test"/>
+
+    <sampleLogger spec="Logger" fileName="birth-death-sampling-grad.txt" log="@grad"/>
+    <resultLogger spec="Logger" fileName="birth-death-sampling-result.txt" log="@test"/>
+    <sampleLogger spec="Logger" fileName="birth-death-sampling-tree.trees" log="@masterTree"/>
+  </run>
+</beast>
+\end{lstlisting}
+}
+
+Note that Eq. \ref{eq:sf} should be expected only for parameters
+(being differentiated with respect to in the score function) that
+do not affect the bounds of integration.
+Under the birth-death model, for example, the origin time is a parameter
+that determines the bounds of integration for the first speciation
+time (i.e., the root), so Eq. \ref{eq:sf} does not hold in this case.
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
