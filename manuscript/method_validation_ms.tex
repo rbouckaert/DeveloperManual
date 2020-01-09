@@ -207,8 +207,9 @@ This supplementary text is linked to a live document available on
 
 The central component of a probabilistic model is its likelihood
 function, $\text{P}(D|\theta)$, which establishes the
-interface between an abstract representation of reality (defined by parameters $\theta$), and the
-empirical world (from which data $D$ is obtained).
+interface between an abstract representation of reality (defined by
+parameters $\theta$), and the empirical world (from which data $D$ is
+obtained).
 In a frequentist statistical framework, the likelihood function is the sole
 component of a probabilistic model.
 Here, tasks like parameter estimation and model comparison are conducted
@@ -228,8 +229,8 @@ Crucially, note that a Bayesian model includes a prior, $\text{P}(\theta)$:
 when models are compared, for example, $\text{P}(\theta)$ needs to be taken
 into account when computing the model evidence $\text{P}(D)$.
 
-Under simple-enough models, the probability density function of the posterior distribution can sometimes be analytically
-derived.
+Under simple-enough models, the probability density function of the
+posterior distribution can sometimes be analytically derived.
 Models routinely used in biology are nonetheless often complex enough
 to preclude such closed-form solutions, mainly due to the
 intractability of the integral that appears in the marginal
@@ -265,30 +266,37 @@ distributions might be very different from the target distribution.
 
 \subsection*{Validating model $M$}
 
-When a model $M$ is implemented for the first time, usually both an
-inferential engine, $I(M)$, and a simulator, $S(M)$, need to be devised.
-These generate the aforementioned posterior distribution,
-$\text{P}_{\text{I}}(\theta|D)$ (we introduce subscript ``I'' for
-\textbf{i}nference), and a ``target'' distribution $\text{P}_{\text{S}}(\theta|D)$ (``S''
-for \textbf{s}imulation), respectively.
-We refer to the distribution produced through simulation as the
-target distribution because simulators are used to establish an
-expected, ``true'' distribution to be approximated by sampling through MCMC.
-Ultimately, we want $\text{P}_{\text{I}}(\theta|D)$ to reach stationarity at
-$\text{P}_{\text{S}}(\theta|D)$.
+When a model $M$ is implemented for the first time, usually both a
+simulator, $S(M)$, and an
+inferential engine, $I(M)$, need to be devised.
+The simulator requires a $\theta$ value -- or prior distribution on $\theta$,
+$\text{P}(\theta)$ -- and generates data $D$.
+The inferential engine is used in the estimation of $\theta$ from the
+data (simulated or real) and the prior, and generates
+$\text{P}_{\text{I}}(\theta|D)$ (``I'' for \textbf{i}nference) through MCMC.
 
-\subsubsection*{Validating the simulator, $S(M)$}\label{verify-correctness-of-simulator-implementation}
+In the context model validation, $S(M)$ can be interpreted as generating
+$\theta$ directly depending on the scope of the validation procedure
+(we alert the reader to this distinction because it can be a source of
+confusion; see below).
+In such case there is no data and $S(M)$ samples $\text{P}(\theta)$,
+which then serves as the target distribution to be approximated by
+$I(M)$.
+Here, we ultimately want $\text{P}_{\text{I}}(\theta)$ to reach stationarity at
+$\text{P}(\theta$).
 
-As mentioned above, the main purpose of a simulator $S(M)$ in the context of model
-validation is to generate a known distribution,
-$\text{P}_{\text{S}}(\theta|M)$, that should act as the target distribution during
-Bayesian inference.
+\subsubsection*{Validating the simulator,
+  $S(M)$}\label{verify-correctness-of-simulator-implementation}
+
+As mentioned above, the main purpose of a simulator $S(M)$ in the
+context of model validation is to generate data from a given $\theta$
+value or a known (prior) distribution on $\theta$, $\text{P}(\theta)$.
 However, simulators themselves need to be validated.
 In the case of models that have well-known parametric distributions as their
 likelihood functions (see Box 1), one can validate $S(M)$ by
 drawing a very large sample of points and comparing summary statistics
-(e.g., mean, variance, etc.) from the sample against their true value counterparts (i.e., the
-values used in the simulation procedure). 
+(e.g., mean, variance, etc.) from the sample against their true value
+counterparts (i.e., the values used in the simulation procedure). 
 
 Alternatively, summary statistic expectations derived under other kinds of models can also be compared
 to those computed from simulated datasets.
@@ -566,7 +574,7 @@ than to validate it (but see Table S1 in the supplementary material).
 
 A good starting point in formally verifying the correctness of a
 probabilistic model implementation is the comparison between the
-likelihood of a parameter value given some data ($P(D|\theta)$) to
+likelihood of a parameter value given some data ($\text{P}(D|\theta)$) to
 some expected result.
 When models are sufficiently simple, or by focusing
 on a subcase of a complex model, it is often straightforward to derive
@@ -642,11 +650,12 @@ languages are used), the more robust the test is (see box 1).
   \emph{Comparing empirical vs. target posterior distributions}
 
   Given a correctly implemented simulator for model $M$, $S(M)$, one
-  can generate a target distribution $\text{P}_{\text{S}}(\theta|D)$
-  that should be approximated by $\text{P}_{\text{I}}(\theta|D)$ at stationarity.
+  can generate a $\text{P}(\theta)$ distribution that should be approximated
+  by $\text{P}_{\text{I}}(\theta)$ at stationarity.
+  Note that in this context, there is no data.
   If chains are run long enough (as suggested by large effective
-  sample sizes, ESS's), $\text{P}_{\text{S}}(\theta|D)$ and
-  $\text{P}_{\text{I}}(\theta|D)$ can be compared, and large
+  sample sizes, ESS's), $\text{P}(\theta)$ and
+  $\text{P}_{\text{I}}(\theta)$ can be compared, and large
   discrepancies between them can be taken as evidence of an error in the
   likelihood function implementation (assuming all other inferential
   components are working properly).
@@ -665,22 +674,24 @@ model being validated.
 This sampling distribution is often obtained through MCMC, with
 newly proposed parameter values being accepted in direct proportion to
 their likelihood under the model (i.e., this distribution comes from
-$I(M)$ rather than $S(M)$).
-Given a correct implementation of the Yule model, for example, the
-distribution of tree heights (for some $\lambda$ value) should peak around the
-value given by from equation \ref{eq:yule}.
-
-When analytical expectations are not available, the distribution
-sampled from $I(M)$ with MCMC can be compared to a distribution
-generated by $S(M)$ (see box 2).
+$I(M)$ without using any data, just a fixed $\theta$ value).
+Given a correct implementation of the Yule model,
+for example, the distribution of tree heights (for some $\lambda$
+value) should peak around the value given by from equation \ref{eq:yule}.
 This procedure is more comprehensive than unit testing because of its
 dependence on MCMC, which means a valid result requires correct
 implementations of both the likelihood function and the proposal mechanism.
-Here, using $S(M)$ itself as the proposal density is convenient because
-it allows directing the validation task to just the model, otherwise
-the potential malfunctioning of model and/or proposal mechanism are conflated
-(see listing 2 in the supplementary material for an example, and the
-section on validating operators below).
+
+When analytical expectations are not available, the distribution
+sampled from $I(M)$ with MCMC can be compared to $\text{P}(\theta)$
+(see box 2).
+If $S(M)$ is available, it can conveniently be used as the proposal
+density (i.e., $S(M)$ generates $\theta$),
+which then allows directing the validation task to just the model.
+If other proposal densities are used, the potential malfunctioning of
+model and/or proposal mechanism are conflated (see listing 2 in the
+supplementary material for an example, and the section on validating
+operators below).
 % (and of $S(M)$ if analytical expectations are hard to derive).
 
 % One such instance is the well-established Kingman's coalescent model \citep{kingman82}
