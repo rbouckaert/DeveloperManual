@@ -683,16 +683,14 @@ dependence on MCMC, which means a valid result requires correct
 implementations of both the likelihood function and the proposal mechanism.
 
 When analytical expectations are not available, the distribution
-sampled from $I(M)$ with MCMC can be compared to $\text{P}(\theta)$
-(see box 2).
-If $S(M)$ is available, it can conveniently be used as the proposal
-density (i.e., $S(M)$ generates $\theta$),
-which then allows directing the validation task to just the model.
-If other proposal densities are used, the potential malfunctioning of
-model and/or proposal mechanism are conflated (see listing 2 in the
-supplementary material for an example, and the section on validating
-operators below).
-% (and of $S(M)$ if analytical expectations are hard to derive).
+sampled from $I(M)$ with MCMC can be compared to a target distribution
+($\text{P}(\theta)$) sampled with $S(M)$ (see box 2).
+$S(M)$ can also be itself conveniently used by $I(M)$ as the proposal
+density during MCMC (i.e., $S(M)$ generates $\theta$; see listing 2 in
+the supplementary material for an example),
+which then allows isolating the validation task to the model.
+If other proposal densities are used, mismatched distributions can be
+due to malfunctioning of either or both model and proposal mechanism.
 
 % One such instance is the well-established Kingman's coalescent model \citep{kingman82}
 % from population genetics, the likelihood function of which is given by:

@@ -305,12 +305,13 @@ out MCMC for the Yule model (listing
 mechanism.
 The advantage of using a direct simulator to propose new parameter values is
 that one can then be sure that problems, if any, involve the model
-implementation. 
+implementation and not that of the operators. 
 
 {\small
 \singlespacing
 \begin{lstlisting}[language=XML, caption=BEAST 2 control file for
-  sampling a distribution under the Yule model with MCMC., label={lst:yulemcmc}]
+  sampling a distribution under the Yule model with MCMC (using a
+  direct simulator as the proposal mechanism)., label={lst:yulemcmc}]
   
   <beast version="2.0" namespace="beast.core:
   beast.evolution.alignment:
