@@ -915,7 +915,7 @@ chains with a stationary distribution that will hopefully match
 the target distribution, should the chain be long enough.
 
 In the context of MCMC, unless a direct simulator $S(M)$ is
-available to be used as a proposal mechanism, model and operator
+available to be used as a proposal mechanism (see above), model and operator
 validation can be seen as two sides of the same coin.
 Outside of unit-testing, validating models requires carrying out MCMC
 (see items (ii) and (iv) in the previous section, for example), which
@@ -930,10 +930,9 @@ compares the stationary distribution (with respect to one or more summary
 statistics) obtained using the operator(s)
 being tested, $\text{P}_{\text{I}}(\theta|D)$, with an expected
 distribution (see listing 4 in supplementary material).
-This second, expected distribution can be obtained through direct
-simulation (i.e., $\text{P}_{\text{S}}(\theta|D)$), or through MCMC
-with a mutually exclusive set of correctly implemented operators (see
-item (a) in supplementary table S1).
+This second, expected distribution can be $\text{P}(\theta)$ or
+obtained through MCMC with a mutually exclusive set of correctly
+implemented operators (see item (a) in supplementary table S1).
 
 Finally, a calibrated validation study also serves the purpose of
 validating the transition mechanism.
