@@ -269,21 +269,23 @@ distributions might be very different from the target distribution.
 When a model $M$ is implemented for the first time, usually both a
 simulator, $S(M)$, and an
 inferential engine, $I(M)$, need to be devised.
-The simulator requires a $\theta$ value -- or prior distribution on $\theta$,
-$\text{P}(\theta)$ -- and generates data $D$.
-The inferential engine is used in the estimation of $\theta$ from the
+Conventionally, the simulator is seen as requiring a $\theta$ value -- or prior distribution on $\theta$,
+$\text{P}(\theta)$ -- to generate data $D$.
+The inferential engine is then used in the estimation of $\theta$ from the
 data (simulated or real) and the prior, and generates
-$\text{P}_{\text{I}}(\theta|D)$ (``I'' for \textbf{i}nference) through MCMC.
+$\text{P}(\theta|D)$ through MCMC.
+
+% (``I'' for \textbf{i}nference)
 
 In the context model validation, $S(M)$ can be interpreted as generating
-$\theta$ directly depending on the scope of the validation procedure
-(we alert the reader to this distinction because it can be a source of
-confusion; see below).
-In such case there is no data and $S(M)$ samples $\text{P}(\theta)$,
-which then serves as the target distribution to be approximated by
-$I(M)$.
-Here, we ultimately want $\text{P}_{\text{I}}(\theta)$ to reach stationarity at
-$\text{P}(\theta$).
+$\theta$ directly, depending on the scope of the validation procedure
+and on how model $M$ is defined -- that is, on what we call a
+parameter. 
+If we determine $S(M)$ samples $\text{P}_{\text{S}}(\theta)$ directly (i.e.,
+there is no data $D$; ``S'' for \textbf{s}imulation), then $I(M)$
+samples $\text{P}_{\text{I}}(\theta)$ (``I'' for \textbf{i}nference),
+and we ultimately want $\text{P}_{\text{I}}(\theta)$ to reach
+stationarity at $\text{P}_{\text{S}}(\theta$) (see box 2). 
 
 \subsubsection*{Validating the simulator,
   $S(M)$}\label{verify-correctness-of-simulator-implementation}
@@ -293,13 +295,13 @@ context of model validation is to generate data from a given $\theta$
 value or a known (prior) distribution on $\theta$, $\text{P}(\theta)$.
 However, simulators themselves need to be validated.
 In the case of models that have well-known parametric distributions as their
-likelihood functions (see Box 1), one can validate $S(M)$ by
+likelihood functions (see box 1), one can validate $S(M)$ by
 drawing a very large sample of points and comparing summary statistics
 (e.g., mean, variance, etc.) from the sample against their true value
 counterparts (i.e., the values used in the simulation procedure). 
 
-Alternatively, summary statistic expectations derived under other kinds of models can also be compared
-to those computed from simulated datasets.
+Alternatively, summary statistic expectations derived under other
+kinds of models can also be compared to those computed from simulated datasets.
 One such model is the Yule process \citep{yule24}, also known as a pure-birth model.
 The Yule process is a continuous-time Markov process that has been
 classically employed in phylogenetics, as a way to model the number of
@@ -326,8 +328,7 @@ This is contrast with other simulation strategies, such as conducting
 MCMC under a model with fixed parameter values and no data.
 This latter approach is predicated on the existence of a correct
 implementation of both $I(M)$ and proposal functions, and for this
-reason is more appropriately used in the validation of these components rather than in
-the validation of $S(M)$ (see below).
+reason cannot be seen as a way to validate a direct simulator.
 
 \begin{center}
   \begin{table}
@@ -574,11 +575,11 @@ than to validate it (but see Table S1 in the supplementary material).
 
 A good starting point in formally verifying the correctness of a
 probabilistic model implementation is the comparison between the
-likelihood of a parameter value given some data ($\text{P}(D|\theta)$) to
+likelihood of a parameter value given some data, $\text{P}(D|\theta)$, to
 some expected result.
 When models are sufficiently simple, or by focusing
 on a subcase of a complex model, it is often straightforward to derive
-what this expected result should be (see Box 1).
+what this expected result should be (see box 1).
 Using the Yule model again as an example, the probability of observing
 a phylogenetic tree $T$ given $n$ internal nodes and birth-rate
 $\lambda$ (i.e., the Yule's model likelihood function;
@@ -650,11 +651,11 @@ languages are used), the more robust the test is (see box 1).
   \emph{Comparing empirical vs. target posterior distributions}
 
   Given a correctly implemented simulator for model $M$, $S(M)$, one
-  can generate a $\text{P}(\theta)$ distribution that should be approximated
-  by $\text{P}_{\text{I}}(\theta)$ at stationarity.
-  Note that in this context, there is no data.
+  can directly generate a $\text{P}_{\text{S}}(\theta)$ distribution that
+  should be approximated by $\text{P}_{\text{I}}(\theta)$ at stationarity.
+  Note that under this validation scope, there is no data.
   If chains are run long enough (as suggested by large effective
-  sample sizes, ESS's), $\text{P}(\theta)$ and
+  sample sizes, ESS's), $\text{P}_{\text{S}}(\theta)$ and
   $\text{P}_{\text{I}}(\theta)$ can be compared, and large
   discrepancies between them can be taken as evidence of an error in the
   likelihood function implementation (assuming all other inferential
@@ -683,13 +684,14 @@ dependence on MCMC, which means a valid result requires correct
 implementations of both the likelihood function and the proposal mechanism.
 
 When analytical expectations are not available, the distribution
-sampled from $I(M)$ with MCMC can be compared to a target distribution
-($\text{P}(\theta)$) sampled with $S(M)$ (see box 2).
+sampled from $I(M)$ with MCMC, $\text{P}_{\text{I}}(\theta)$, can be
+compared to a target distribution sampled with $S(M)$
+($\text{P}_{\text{S}}(\theta)$, see box 2).
 $S(M)$ can also be itself conveniently used by $I(M)$ as the proposal
-density during MCMC (i.e., $S(M)$ generates $\theta$; see listing 2 in
-the supplementary material for an example),
-which then allows isolating the validation task to the model.
-If other proposal densities are used, mismatched distributions can be
+density during MCMC (see listing 2 in the supplementary material for
+an example).
+This allows isolating the validation task to the model:
+when other proposal densities are used, mismatched distributions can be
 due to malfunctioning of either or both model and proposal mechanism.
 
 % One such instance is the well-established Kingman's coalescent model \citep{kingman82}
@@ -748,7 +750,8 @@ due to malfunctioning of either or both model and proposal mechanism.
 
 Perhaps the most common approach to date for validating a
 probabilistic model involves simulating data sets under specific parameter
-values (for one or more parameters), carrying out inference, and tabulating
+values -- the scope here requires a simulator $S(M)$ used to simulate
+\emph{data} under model $M$ -- carrying out inference, and tabulating
 estimates depending on how close they were to the known, true values.
 This procedure is particularly valuable in the context of point estimates
 that ignore uncertainty, characteristic of maximum-likelihood methods (e.g.,
@@ -883,8 +886,8 @@ calibrated validation in the supplementary material.
 \subsection*{Validating the MCMC transition mechanism (operators)}
 
 At the heart of MCMC as an approach to sample a target distribution
-$\text{P}(\theta|D)$ is the Metropolis-Hastings algorithm
-\citep{mh}.
+(conventionally, $\text{P}(\theta|D)$) is
+the Metropolis-Hastings algorithm \citep{mh}.
 This algorithm uses a transition mechanism (i.e., a set of
 ``operators'') characterized by a proposal density $q(\theta'|\theta)$
 that perturbs parameter values $\theta$ toward new values $\theta'$.
@@ -928,11 +931,13 @@ implemented prior to MCMC.
 In the latter case, the principle behind validation is the same: one
 compares the stationary distribution (with respect to one or more summary
 statistics) obtained using the operator(s)
-being tested, $\text{P}_{\text{I}}(\theta|D)$, with an expected
-distribution (see listing 4 in supplementary material).
-This second, expected distribution can be $\text{P}(\theta)$ or
-obtained through MCMC with a mutually exclusive set of correctly
-implemented operators (see item (a) in supplementary table S1).
+being tested, $\text{P}_{\text{I}}(\theta)$, with an expected
+distribution, $\text{P}_{\text{S}}(\theta)$ (see listing 5 in
+supplementary material). 
+This second, expected distribution can be obtained through MCMC with a
+mutually exclusive set of correctly implemented operators capable of
+generating an ergodic chain (see item
+(a) in supplementary table S1). 
 
 Finally, a calibrated validation study also serves the purpose of
 validating the transition mechanism.

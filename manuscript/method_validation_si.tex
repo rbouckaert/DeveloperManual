@@ -297,11 +297,12 @@ sample from the model without data, and evaluate the resulting
 distribution with respect to some analytically derived summary
 statistic.
 If such quantity has not been derived, one can compare the
-distribution sampled with MCMC with a distribution obtained through
-direct simulation (i.e., from $S(M)$).
+distribution sampled with MCMC (under this scope,
+$\text{P}_{\text{I}}(\theta)$) with a distribution obtained through 
+direct simulation with $S(M)$ ($\text{P}_{\text{S}}(\theta)$).
 Below, we provide an \texttt{.xml} BEAST 2 control file that carries
 out MCMC for the Yule model (listing
-\ref{lst:yulemcmc}), using a direct simulator ($S(M)$) as the proposal
+\ref{lst:yulemcmc}), using $S(M)$ as the proposal
 mechanism.
 The advantage of using a direct simulator to propose new parameter values is
 that one can then be sure that problems, if any, involve the model
@@ -376,7 +377,7 @@ implementation and not that of the operators.
 
 The distribution sampled using the control file provided in listing
 \ref{lst:yulemcmc} can then be compared to a distribution generated
-with a direct simulator.
+with direct simulator $S(M)$.
 The control file specifying the latter task is shown in listing
 \ref{lst:yuledirect}.
 
@@ -526,6 +527,27 @@ do not affect the bounds of integration.
 Under the birth-death model, for example, the origin time is a parameter
 that determines the bounds of integration for the first speciation
 time (i.e., the root), so Eq. \ref{eq:sf} does not hold in this case.
+
+\subsection*{Calibrated validation}
+
+A well-calibrated model $M$ is a model that was subjected to a calibrated
+validation procedure: simulating data multiple times from prior
+distributions on parameters, $\text{P}(\theta)$, and then
+inferring parameter values using those same prior distributions.
+Here, appropriate coverage and a high correlation between inferred and
+simulated parameter values strongly suggest the model was correctly
+implemented (see main text for a more thorough description of the
+procedure and an example).
+
+Using BEAST 2 as the reference software platform, model calibrated
+validation can be done with custom scripts (when a simulator $S(M)$ is
+unavailable in BEAST 2), or using the Experimenter
+package.
+Using custom scripts requires multiple BEAST 2 control \texttt{.xml}
+files to be written and then independently run.
+We provide a walkthrough example of both strategies on
+{\color{red}{PUT LINK HERE}}, and {\color{red}{PUT LINK HERE}},
+respectively.
 
 \section*{Validating operators}
 
