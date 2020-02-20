@@ -530,9 +530,36 @@ Make sure to have the [Experimenter](https://github.com/rbouckaert/Experimenter)
 
 ## Step 1. Set up XML for desired model and sample from prior
 
-First, you set up a BEAST analysis in an XML file in the configuration that you want to test. Set the `sampleFromPrior="true"` flag on the element with MCMC in it, and sample from the prior. Make sure that the number of samples in the trace log and tree log is the same and that they are sampled at a frequency such that there will be N useful samples (say N=100).
+First, you set up a BEAST analysis in an XML file in the configuration that you want to test. If you are using MCMC, set the `sampleFromPrior="true"` flag on the element with MCMC in it, and sample from the prior. 
+
+Alternatively, use a `DirectSimulator` as in this example: [testDirectSimulator.xml](https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulator.xml).
+
+Make sure that the number of samples in the trace log and tree log is the same and that they are sampled at a frequency such that there will be N useful samples (say N=100).
 
 ## Step 2. Generate (MCMC) analysis for each of the samples (with single alignment)
+
+`CoverageTestXMLGenerator2` Generate XML for performing coverage test (using `CoverageCalculator`). A template XML file should contain `SimulatedAlignments` with a tree, branch rate model and site model specified. These can be parameterised by using string of the form `$(n)` where `n` should match exactly the columns in the trace log file, or it can be `$(tree)` which is replaced by the species tree as specified in the `-treeFile` option. For individual gene trees use the `-geneTreeFile` option (detailed below). Example input files can be found [here](https://github.com/christiaanjs/beast-validation/tree/master/examples/CoverageTestXMLGenerator2).
+
+It has the following options:
+
+- workingDir (File): working directory where input files live and output directory is created (optional)
+- outDir (String): output directory where generated XML goes (as sub dir of working dir) (optional, default: mcmc)
+- logFile (LogFile): trace log file containing model parameter values to use for generating sequence data (optional)
+- treeFile (TreeFile): tree log file containing trees to generate sequence data on (optional)
+- geneTreeFile (File): (optional) configuration file with gene tree identifiers and log file names, one per line separated by a tab,for example 
+```
+gene1	/xyz/abc/gene1.trees
+gene2	/xyz/abc/gene2.trees
+```
+In the XML, any instance of `$(gene1)` will be replaced by a tree from the file `/xyz/abc/gene1.trees`, and likewise for `$(gene2)`.
+- xmlFile (XMLFile): XML template file containing analysis to be merged with generated sequence data (optional)
+- skip (Integer): numer of log file lines to skip (optional, default: 1)
+- help	 show arguments
+
+
+
+
+<!--
 
 You can use `CoverageTestXMLGenerator` to generate BEAST XML files using HKY with or without gamma rate heterogeneity from a template XML file (If you require another model for generting sequence data, you might want to craft your own class based on the `CoverageTestXMLGenerator` class). The XML file used to sample from the prior can be used for this (when setting the sampleFromPrior flag to false). You can run `CoverageTestXMLGenerator` using the BEAST applauncher utility (or via the `File/Launch Apps` meny in BEAUti). 
 
@@ -548,7 +575,7 @@ You can use `CoverageTestXMLGenerator` to generate BEAST XML files using HKY wit
 - burnin `<integer>`	percentage of trees to used as burn-in (and will be ignored) (default: 1)
 - useGamma [true|false]	use gamma rate heterogeneity (default: true)
 - help	 show arguments
-
+-->
 
 ```
 NB: make sure to set sampleFromPrior="false" in the XML.
@@ -559,6 +586,11 @@ NB: to ensure unique file name, add a parameter to logFileName, e.g.
 logFileName="out$(N).log"
 ```
 With this setting, when you run BEAST with `-D N=1` the log file will `be out1.log`.
+
+
+```
+NB each SimulatedAlignment should have its own tree, sitemodel and branch rate mdoel, and should not share any of them with the remaining XML. This ensures that the start state and actual parameter values used to generate alignments are independent. If the true state and start state are the same, the analysis may be biased towards
+```
 
 
 ## Alternative Step 2. Generate (MCMC) analysis for each of the samples (support for multiple alignments)
