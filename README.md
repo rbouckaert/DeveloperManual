@@ -479,6 +479,7 @@ source [https://www.di-mgt.com.au/binomial-calculator.html](https://www.di-mgt.c
 ## Common causes of low coverage
 
 * ESS too low
+* `loganalyser` was called with `out*.log` instead of `out?.log out??.log out???.log`. As a result, the `loganalyser` output and trace log of true values are in different order. Rerun `loganalyser` to make sure the output is in the right order.
 * improper priors used: all priors should be proper, that is integrate to 1. Examples of improper priors are the 1/X and uniform prior with infinite upper and/or lower bounds.
 * priors are outside the range usually used in applying the model, especially the next case:
 * trees cannot be reconstructed reliably (height should not be too small or large).
@@ -620,6 +621,11 @@ Use the loganalyser utility that comes with BEAST in the bin directory. It is im
 ```
 
 where `out` the base name of your output log file.
+
+```
+NB if loganalyser is called with `out*.log`, results may end up in order `1,10,11,...,19,2,20,21,...` because file systems order items alphabetically. This makes matching with the true values impossible.
+```
+
 
 ## Step 5. Run `CoverageCalculator` to summarise coverage of parameters
 
