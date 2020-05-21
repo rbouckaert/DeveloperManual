@@ -294,6 +294,9 @@ A useful test for an MCMC sampler for a model (likelihood + operators) is if it 
 [An example XML for this test on the birth-death-sampling tree prior](https://github.com/christiaanjs/beast-validation/blob/master/examples/birth-death-sampling-prior-sampling-test.xml) can be found in the BEAST validation examples.
 
 
+### The dreaded "likelihood incorrectly calculated" error message
+
+If you see this error message during an MCMC run, there probably is an error in the way that a `CalculationNode` in your model is caching its state. More information is on the [beast site blog post](https://www.beast2.org/2019/04/29/likelihood-incorrectly-calculated.html).
 
 ## Setting up a direct simulation in BEAST
 
