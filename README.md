@@ -382,6 +382,71 @@ Conversion requires the following steps:
 
 
 
+
+## Dealing with properties of branches in trees
+
+When you have meta data associated with branche of trees, like population sizes or clock rates, it is usually easy to verify that the meta data that is inferred is compatible for the leaf nodes. Leaf nodes are in a tree with $n$ taxa are numbered $0,...,n-1$, and at the start of a BEAST run these numbers are assigned and do not change during the MCMC execution. So, if you have a parameter associated with branches, the first $n$ values will be associated with the leaf branches, and can be logged in a tracelog and compared with values used to generate the data, just like any other parameter.
+
+However, the branches that do not end in a leaf are numbered $n,...,2n-2$ with potentially root branch $2n-1$. Furthermore, branches are not associated with clades, and their numbers can change throughout the MCMC run. This means that comparing value $n$ of a parameter with the logged value at dimension $n$ may not match the correct values.
+
+One way to verify the correctness of estimates of metadata on branches is do a well calibrated simulation study that
+
+* logs the tree + metadata used to generate the alignment.
+* create a summary tree with topology equal to the generating tree.
+* run `MCCTreeComparator` to summarise results.
+
+### 1. logging generating tree + metadata 
+
+In the BEAST XML template, add a tree logger that logs the tree used to generate the alignment, e.g like so:
+
+```
+    <logger id="sim.treelog.t:alignment" spec="Logger" fileName="sim.$(filebase).trees" logEvery="1000000000" mode="tree">
+        <log id="sim.TreeWithMetaDataLogger.t:alignment" spec="beast.phoneme.BranchMetadDataLogger" tree="@sim.Tree.t:alignment">
+        	<metadata idref="sim.permutation.s:alignment"/>
+        </log>
+    </logger>
+
+```
+
+We only need this to be logged once, to the `logEvery` value can be set very high.
+
+### 2. create a summary tree with topology equal to the generating tree
+
+Say, we stored the generating trees in files `sim.analysis-0.trees`, `sim.analysis-1.trees`, etc. numbered 0 through to 99. Treeannotator (part of BEAST) can be used to summarise trees and their metadata on the tree topology used to generate the data using the `-target` option. On unix-like systems, the following command will generate summary trees for each of the 100 runs:
+
+```
+for i in {0..99}; do
+	treeannotator -b 10 -target sim.analysis-$i.trees analysis-$i.trees analysis-$i.tree
+done
+```
+
+### 3. run `MCCTreeComparator` to summarise results.
+
+`MCCTreeComparator` is a tool that is part of the beast-validation package, which produces coverage summaries for branch metadata.
+
+
+MCCTreeComparator has the following options:
+
+* tree (TreeFile): source tree file with meta data (required)
+* mcc (TreeFile): MCC source tree file (required)
+* from (Integer): start value to loop over (optional, default: 0)
+* to (Integer): end value (inclusive) to loop over. If less than 0, no loop is performed. If more than 0, the part $(n) in the file path will be replaced by an integer, starting at 'from' and ending in 'to' (optional, default: 99)
+* out (OutFile): output file, or stdout if not specified (optional, default: [[none]])
+
+
+The output is a small report containing coverage information for total, leaf branches and internal brances separately. For real valued metadata it is the percentage of clades where the generating value is in the 95\% HPD that is estimated (like clade height). For categorical values (below p1, p2, p3 and p4) it is the percentage of clades where the generating value is in the 95% credible set. The `height` and `posterior` entries show an 'N/A' for not applicable for leaf branch matches.
+
+
+|metadata 	|% matches	|% leaf branch matches	|% internal branch matches|
+|:---|---:|---:|---:|
+|height	|95	|N/A	|95|
+|p1	|99.3	|99.5	|99|
+|p2	|99.6	|99.83	|99.25|
+|p3	|99.9	|100	|99.75|
+|p4	|99.1	|99.83	|98|
+|posterior	|99.6	|N/A	|99.6|
+
+
 # Practical considerations
 
 Validation only covers cases in as far as the prior covers it -- most studies will not cover all possible cases, since the state space is just to large. Usually, informative priors are required for validation to work, since broader priors (e.g. some of the default tree priors in BEAST) lead to identifiability issues, for example, due to saturation of mutations along branches of a tree. 
