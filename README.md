@@ -298,6 +298,41 @@ A useful test for an MCMC sampler for a model (likelihood + operators) is if it 
 
 If you see this error message during an MCMC run, there probably is an error in the way that a `CalculationNode` in your model is caching its state. More information is on the [beast site blog post](https://www.beast2.org/2019/04/29/likelihood-incorrectly-calculated.html).
 
+
+One way to hunt down this error is by using checksums on calculation nodes (thanks <a href="https://github.com/NicoNeureiter">Nico<a>!). Code in the inner loop of the MCMC class is only executed when the `debugFlag` is set, which happens when running java with `-Dbeast.debug=true`.
+
+At the start of an iteration of the MCMC, we store a checksum of each `CalculationNode`    If the step is rejected, we check whether all the checksums are equal to the stored ones.
+
+If the checksums are not the same, clearly something went wrong when trying to restore the previous state and we throw an exception. There are (at least) two reasons why this might happen:
+
+* The store/restore methods are incorrect or missing.
+* A fat `CalculationNode` was changed in an operator proposal, before `store()` is called (this may be particularly hard to find).
+
+In the current implementation the checksum method defaults to returning a constant 0, which means no exceptions will be thrown. Furthermore the checks are only performed when the `debugFlag` is set. Hence, check sum calculation will not interfere with running analyses. BEAST2 developers who want to use the checks can override the `getChecksum()` method for the `StateNode`s and fat `CalculationNode`s they want to check. 
+
+Here are two example implementations:
+
+Tree checksum -- as a simple checksum for the Tree class we could take a hash value of the root height:
+
+```
+    @Override
+    public int getChecksum() {
+        return Double.hashCode(getRoot().getHeight());
+    }
+```
+
+However, bugs that don't affect the root height could still slip through and we could make the test more elaborate by hashing all heights and information about the topology as well.
+
+TreeLikelihood checksum -- in the case of the tree likelihood we can simply use a hash value of `getCurrentLogP()` as a checksum:
+
+```
+    @Override
+    public int getChecksum() {
+        return Double.hashCode(getCurrentLogP());
+    }
+```
+
+
 ## Setting up a direct simulation in BEAST
 
 Using the direct simulator can be done as follows
