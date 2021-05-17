@@ -501,7 +501,17 @@ One way to enforce this is by
 * putting an MRCA prior on the height of the tree, for coalescent models.
 Note that the latter hampers direct simulator implementations.
 
-For clock models with mean clock rate != 1, simulate trees with clock rates times tree height approximately 0.5.
+For clock models with mean clock rate != 1, simulate trees with clock rates times tree height approximately 0.5. This can be enforced using a prior on the clock rate times tree height, like so (note that this does not work with direct simulator implementations):
+
+```
+<prior id="ClockPrior.t:dna" name="distribution">
+    <x id="evodistance" spec="beast.util.Script" argnames="clock height" expression="clock * height">
+    	<x idref="clockRate.c:dna"/>
+    	<x id="height" spec="beast.evolution.tree.TreeHeightLogger" tree="@Tree.t:dna"/>
+    </x>
+    <LogNormal mean="0.5" sigma="0.05" name="distr" meanInRealSpace="true"/>
+</prior>
+```
 
 Published mutation rates can range from $O(1e-2)$ substitutions per site per year for  viruses such as HIV [@cuevas2015extremely], to $O(1e-11)$ for conserved regions of nuclear DNA (e.g PyrE2 locus in Haloferax volcanii [@lynch2010evolution]).
 
@@ -841,7 +851,8 @@ where `<resample>` is the resample frequency (= chain length/minium ESS), and `<
 
 `SBCAnalyser` can be run with the BEAST app launcher, and outputs a report and (if an output directory is specified). It has the following arguments:
 
-* SBCAnalyser has the following inputs:
+SBCAnalyser has the following inputs:
+
 * log `<filename>`: log file containing actual values (required)
 * skip `<integer>`: numer of log file lines to skip (optional, default: 1)
 * logAnalyser `<filename>`: file produced by loganalyser tool using the -oneline option, containing estimated values (required)
