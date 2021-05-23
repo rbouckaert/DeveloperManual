@@ -275,7 +275,6 @@ The direct simulator operator (see `DirectSimulatorOperator` above) can be used 
 
 The BEAST 2 [Experimenter](https://github.com/rbouckaert/Experimenter) package can assist (see section "Using the Experimenter package" below).
 
-
 ## MCMC sampling to verify correctness of operator implementations
 
 A useful test for an MCMC sampler for a model (likelihood + operators) is if it can produce the same distribution as direct simulation. For phylogenetic models, this would usually be the tree prior. The core components of this test:
@@ -331,6 +330,15 @@ TreeLikelihood checksum -- in the case of the tree likelihood we can simply use 
         return Double.hashCode(getCurrentLogP());
     }
 ```
+
+## Efficiency of operators
+
+In summary:
+
+* use Bactrian kernels if you can (currently in the BEASTLabs package).
+* use AdaptableOperatorSampler from the ORC package if you have multiple
+
+See [blog post](http://www.beast2.org/2021/05/24/developing-operators.html) for details.
 
 
 ## Setting up a direct simulation in BEAST
