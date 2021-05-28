@@ -208,6 +208,16 @@ freqParameter.4                                  0.0
 
 Though some values have very low p-values, meaning they differ significantly, it is recommended to verify this using Tracer to make sure that the test is not unduly influenced by outliers.
 
+## Improving efficiency of model implementations
+
+If you have an implementation of a model that shows up in a profiler as being time consuming, it may be worth spending time to improve the computational efficiency of the model. To verify correctness of the new model you can just add both implementations to the likelihood or prior (whatever is appropriate) in the XML and log both of them. If they show different values in the log that is evidence something different is happening in the new implementation.
+
+Obviously, it will be sampling from a more peaked distribution since the contribution of the model is counted twice, but if correctness is what you are interested in this would work.
+
+Makes sure to log with frequency << 10000, since every 10000 steps these likelihoods will be calculated from scratch.
+
+
+
 
 ## Score based model validation
 
