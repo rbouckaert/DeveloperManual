@@ -1,29 +1,6 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Journal Article
-% LaTeX Template
-% Version 1.4 (15/5/16)
-%
-% This template has been downloaded from:
-% http://www.LaTeXTemplates.com
-%
-% Original author:
-% Frits Wenneker (http://www.howtotex.com) with extensive modifications by
-% Vel (vel@LaTeXTemplates.com) and Fabio Mendes (f.mendes@auckland.ac.nz)
-%
-% License:
-% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%----------------------------------------------------------------------------------------
-%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
-%----------------------------------------------------------------------------------------
-
-%\documentclass[oneside,twocolumn]{article}
 \documentclass[oneside]{article}
 
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
-
 \usepackage{graphicx} % FKM: for figures
 \usepackage{color} % FKM: for colored text
 \usepackage{float} % FKM: for forcing figure placement
@@ -32,6 +9,7 @@
 \usepackage{setspace} % FKM: line spacing
 \usepackage[margin=1in]{geometry} % FKM: margins
 
+
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 % \linespread{1.05} % Line spacing - Palatino needs more space between lines
@@ -39,6 +17,14 @@
 \usepackage[small,labelfont=bf,up,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
 \usepackage{amsmath} % Text in equations
+\usepackage{titlesec} % Allows customization of titles
+\usepackage{titling} % Customizing the title section
+\usepackage[hidelinks]{hyperref} % For hyperlinks in the PDF
+\usepackage{tikz}
+\usepackage{standalone}
+
+\usepackage{subcaption} % for subfigures side by side
+\captionsetup[subfigure]{singlelinecheck=false} % to put (a) and (b) at the top-left of subfigures
 
 \usepackage[shortlabels]{enumitem} % customized lists (shortlabels
                                 % necessary to have i., ii., etc., in enumerate)
@@ -48,8 +34,6 @@
 \renewcommand{\abstractnamefont}{\normalfont\bfseries} % Set the "Abstract" text to bold
 \renewcommand{\abstracttextfont}{\normalfont\small\itshape} % Set the abstract itself to small italic text
 
-\usepackage{titlesec} % Allows customization of titles
-
 \usepackage{fancyhdr} % Headers and footers
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
@@ -57,12 +41,12 @@
 \fancyhead[C]{Authors et al. $\bullet$ August 2018 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
-\usepackage{titling} % Customizing the title section
 
-\usepackage[hidelinks]{hyperref} % For hyperlinks in the PDF
 
 \usepackage{natbib}
 \bibliographystyle{apalike}
+
+\usepackage{libertine}
 
 \setlength\columnsep{20pt}
 
@@ -72,17 +56,18 @@
 
 \setlength{\droptitle}{-4\baselineskip} % Move the title up
 
-\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
-\posttitle{\end{center}} % Article title closing formatting
-\title{How to validate your probabilistic model implementation} % Article title
-\author{\textsc{An author here$^{1,2*}$}, \textsc{Another author
-    here$^{1*}$}, \\ \textsc{Yet another author here$^{1*}$},
-  \textsc{Last author here$^{1*}$} \\
-\small $^1$School of Computer Science, The University of Auckland\\
-\small $^2$School of Biological Sciences, The University of Auckland\\
+%\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
+%\posttitle{\end{center}} % Article title closing formatting
+
+\title{How to validate a Bayesian model} % Article title
+\author{\textsc{F\'{a}bio K. Mendes$^{1*}$}, \textsc{Remco Bouckaert$^{2*}$},\\
+\textsc{Christiaan Swanepoel$^{2}$}, \textsc{Alexei J. Drummond$^{1,2}$} \\
+\small $^1$School of Biological Sciences, The University of Auckland\\
+\small $^2$School of Computer Science, The University of Auckland\\
 \small
-\href{mailto:f.mendes@auckland.ac.nz}{Corresponding authors$^*$: f.mendes@auckland.ac.nz,}
-\href{mailto:f.mendes@auckland.ac.nz}{another.email@auckland.ac.nz}
+\href{mailto:f.mendes@auckland.ac.nz}{Corresponding authors$^*$:
+  f.mendes@auckland.ac.nz, remco@cs.auckland.ac.nz}
+% \href{mailto:f.mendes@auckland.ac.nz}{another.email@auckland.ac.nz}
 %\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
 %\textsc{Jane Smith}\thanks{Corresponding author} \\[1ex] % Second author's name
 %\normalsize University of Utah \\ % Second author's institution
@@ -93,9 +78,9 @@
 \begin{abstract}
   \noindent Biology has become a highly mathematical discipline in
   which probabilistic models play a central role,
-  and as a result its research is now dependent on computational tools
-  capable of carrying out complex analyses.
-  These tools must be not only efficient, but also correctly
+  and as a result research in the biological sciences is now dependent on
+  computational tools capable of carrying out complex analyses.
+  These tools must not only be efficient, but also correctly
   implemented.
   Both goals are difficult to achieve for several reasons, such as the
   multidisciplinary nature of method development, and a still
@@ -104,9 +89,9 @@
   Here we provide guidelines for the validation of probabilistic model
   implementations, focusing on Bayesian approaches.
   This manuscript summarizes good practices for assessing the correctness of
-  simulation and inference procedures under a model, and is
-  accompanied by a living document with examples to aid researchers
-  developing Bayesian methods.
+  simulation and inference procedures under a model, and is available in
+  the traditionally static print version as well as in a reproducible and
+  executable form.
 \end{abstract}
 \centering [Probabilistic models, Bayesian models, model validation, coverage]
 }
@@ -131,18 +116,18 @@ parallel sequencing and the accompanying improvements in computational
 power and storage have flooded biology with unprecedented amounts of
 data ripe for analysis.
 Not only has intraspecific data from multiple individuals allowed
-progress in disparate fields like medicine and epidemiology
+progress in fields like medicine and epidemiology
 \citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics
 \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology
-\citep[e.g.][]{rosenblum13,bates18}, but now a large number of species
+\citep[e.g.,][]{rosenblum13,bates18}, but now a large number of species
 across the tree of life have had their genomes sequenced, furthering
 our understanding of species relationships and diversification
 \citep[e.g.,][]{martin13,brawand14,jarvis14,novikova16,pease2016,kawahara19,upham19}.
 However, as the old adage goes, with great power comes great
 responsibility: never has the data available to the average biologist
 been so abundant, but also never has one been so aware of both its
-complexity and the necessary care with which to analyze it.
-Almost at par with with data accumulation is the rate at which new
+complexity and the necessary care needed to analyze it.
+Almost on par with with data accumulation is the rate at which new
 computational tools are being proposed, as evidenced by journals
 entirely dedicated to method advances, methodological sections in
 biological journals, and computational biology degrees being offered
@@ -157,8 +142,8 @@ in evolutionary biology have aged well and stood up the test of time
 Bateson-Dobzhansky-Muller model,
 \citealt{dob36,muller40,hopkins12,roda17}), data analysis practices
 have changed drastically in recent years, to the point they would
-likely seem obscure to an evolutionary biologist last active 40 years
-ago.
+likely seem exotic and obscure to an evolutionary biologist active
+forty years ago.
 In particular, evolutionary biology has become highly statistical,
 with the development and utilization of models now being commonplace.
 
@@ -166,13 +151,12 @@ Models are employed in the sciences for many reasons, and fall within
 a biological abstraction continuum \citep{servedio14}, going from
 fully verbal, highly abstract models (e.g., \citealt{vanvalen73}),
 through proof-of-concept models that formalize verbal models (e.g.,
-\citealt{maynard78,reinhold99,mendes18}), to probabilistic models that
-interact directly with data (i.e., models with a likelihood function
-such as \citealt{yule24,felsenstein73,hky,hudson90}).
-Though mathematical models are in general more frequently used in
-evolutionary biology, there has been a sharp surge in instances of the
-latter cases (i.e., probabilistic models) in conjunction with
-computational tools implementing them.
+\citealt{maynard78,reinhold99,mendes18}), to models that
+interact directly with data through explicit mathematical
+functions \citep{yule24,felsenstein73,hky,hudson90}).
+Within the latter category, probabilistic models have seen a sharp surge
+in popularity within evolutionary biology, in conjunction
+with computational tools implementing them.
 
 Despite the increasing pervasiveness of probabilistic models in the
 biological sciences, tools implementing such models show large
@@ -186,11 +170,9 @@ provide guidance for code improvement and validation.
 
 Here, we summarize best practices in probabilistic model validation for method
 developers, with an emphasis on Bayesian methods.
-This manuscript is accompanied by a supplementary text that elaborates
-on and provides code examples for these practices (with the BEAST 2
-platform as a reference; \citealp{beast25}).
-This supplementary text is linked to a live document available on
-\href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
+This manuscript is also presented in a reproducible and executable version
+[LINK TO STENCILA VERSION], and is accompanied by code examples for these practices
+(with the BEAST 2 platform as a reference; \citealp{beast25}).
 
 % \begin{figure}
 %   \includegraphics[width=\linewidth]{fig1}
@@ -203,132 +185,294 @@ This supplementary text is linked to a live document available on
 
 %------------------------------------------------
 
-\section*{Probabilistic model validation}
+\section*{Probabilistic models}
 
-The central component of a probabilistic model is its likelihood
-function, $\text{P}(D|\theta)$, which establishes the
-interface between an abstract representation of reality (defined by
-parameters $\theta$), and the empirical world (from which data $D$ is
-obtained).
-In a frequentist statistical framework, the likelihood function is the sole
-component of a probabilistic model.
-Here, tasks like parameter estimation and model comparison are conducted
-by maximizing the likelihood function across parameter
-space.
+Probabilistic models mathematically formalize natural phenomena
+having an element of randomness.
+This is done through probability distributions describing both the observed
+empirical data -- seen as the result of one or more random
+instantiations of the modeled process -- as well the model parameters,
+which abstract relevant, but usually unknown aspects
+of the phenomenon at hand.
+The historical, stochastic, and highly dimensional nature of evolutionary
+processes makes the utility of probabilistic models in evolutionary
+biology self-evident. 
 
-In Bayesian inference, on the other hand, a probabilistic model $M$
-defines a posterior probability distribution for its parameters,
-$\text{P}(\theta|D) = \frac{\text{P}(D|\theta)\text{P}(\theta)}{\text{P}(D)}$, in which our prior
-knowledge or beliefs about the natural world -- represented by the prior
-distribution $\text{P}(\theta)$ -- are confronted and updated by the data through the
-likelihood function.
-$\text{P}(D) = \int_\theta \text{P}(D|\theta)\text{P}(\theta)d\theta$, the probability of
-the data, is also known as the marginal likelihood or the model
+The central component of a probabilistic model, $\text{P}(D|\theta)$,
+describes the probability distribution over the data given the model
+parameters.
+This probability mass function (pmf; or its continuous
+countepart, the probability density function $f(D|\theta)$) is sometimes
+referred to as the likelihood function.
+As illustrated in the next sections, probabilistic models can be
+hierarchical, in which case there may be several likelihood functions.
+% (Fig. \ref{fig:graphmodel}).
+In a frequentist statistical framework, $\text{P}(D|\theta)$ is the sole
+component of a probabilistic model, and is maximized across parameter ($\theta$) space during parameter estimation and model comparison.
+
+In the present study we focus on Bayesian inference, however, 
+where a probabilistic model $\mathcal{M}$ defines a posterior probability
+distribution for its parameters, $\text{P}(\theta|D) =
+\frac{\text{P}(D|\theta)\text{P}(\theta)}{\text{P}(D)}$.
+Here, our prior inferences or beliefs about the natural world -- represented by
+the prior distribution $\text{P}(\theta)$ -- are confronted and updated by
+the data through the likelihood function (or multiple likelihood functions).
+$\text{P}(D) = \int_\theta \text{P}(D|\theta)\text{P}(\theta)d\theta$, the
+probability of the data, is also known as the marginal likelihood or the model
 evidence.
-Crucially, note that a Bayesian model includes a prior, $\text{P}(\theta)$:
+Crucially, a Bayesian model includes a prior, $\text{P}(\theta)$:
 when models are compared, for example, $\text{P}(\theta)$ needs to be taken
 into account when computing the model evidence $\text{P}(D)$.
 
-Under simple-enough models, the probability density function of the
-posterior distribution can sometimes be analytically derived.
-Models routinely used in biology are nonetheless often complex enough
-to preclude such closed-form solutions, mainly due to the
-intractability of the integral that appears in the marginal
+Models routinely used in evolutionary biology are often characterized by
+continuous parameters, and are normally complex enough to preclude
+analytical solutions for the posterior density $f(\theta|D)$, mainly
+due to the intractability of the integral appearing in the marginal
 likelihood.
-In those cases, techniques like Markov chain Monte Carlo (MCMC) are
-routinely employed to sample the posterior distribution, as it uses
-the fact that $\text{P}(D)$ evaluates to a constant that can be
-conveniently ignored (i.e., $\text{P}(\theta|D) \propto
-\text{P}(\theta|D)\text{P}(\theta)$).
-In practice, the algorithm that generates the Markov chain under MCMC is called
-Metropolis-Hastings \citep{mh}, and it samples the posterior distribution by
-means of a transition mechanism. 
+In those cases, one can make use of the fact that $f(D)$
+is a constant that can be ignored (i.e., $f(\theta|D)
+\propto f(\theta|D)f(\theta)$), and use 
+techniques like Markov chain Monte Carlo (MCMC) to sample the posterior
+distribution.
+This is because the MCMC algorithm that generates the Markov chain,
+called the Metropolis-Hastings \citep{metropolis53,mh} algorithm, only requires the
+posterior to be evaluated up to a constant.
+
+In practice, the Metropolis-Hastings algorithm samples the posterior
+distribution (also referred to as the ``target'' distribution) by means of a
+transition mechanism. 
 If the proposal distribution generated by this mechanism is
 irreducible, positive recurrent, and aperiodic, and the resulting
-chain is long enough, then the sampled posterior distribution will approximate the true, target
-distribution $\text{P}(\theta|D)$ \citep{smith93,tierney94,gelman}.
+chain is long enough, then the sampled posterior distribution will approximate
+the target distribution $f(\theta|D)$ \citep{smith93,tierney94,gelman}.
 
-We focus on MCMC as the chosen technique for obtaining $\text{P}(\theta|D)$
-under an implementation of model $M$,
-and a thorough validation effort thus entails verifying the
-correctness of (i) the model (i.e., $\text{P}(D|\theta)\text{P}(\theta)$), and (ii)
+We will spend time considering MCMC in particular as it is the commonly
+chosen technique for obtaining $f(\theta|D)$ under an implementation of
+model $\mathcal{M}$.
+A thorough validation effort thus entails verifying the
+correctness of (i) the model (i.e., $f(D|\theta)f(\theta)$), and (ii)
 the components involved in the MCMC transition mechanism.
-This is not to say the latter are part of the model (they are
-\emph{not}), as it is possible to sample $\text{P}(\theta|D)$ with importance sampling, Hamiltonian
-Monte Carlo \citep{hmc}, or even by converting the sampling problem into an
-optimization one \citep{zhang18}.
+We note that the latter are not part of the model, however, and it is 
+possible to sample $f(\theta|D)$ with other techniques such as importance
+sampling, Hamiltonian Monte Carlo \citep{hmc}, or even by converting the
+sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
 
 Finally, we stress that we are interested in practices for verifying model
 \emph{correctness}.
+There are other tests employed to ensure that a particular MCMC analysis
+is converging as anticipated.
 Determining that one or more independent Markov chains converged on very
 similar posterior distributions is not a correctness test, as those
 distributions might be very different from the target distribution.
 
-\subsection*{Validating model $M$}
+\subsection*{Validating a Bayesian model}
 
-When a model $M$ is implemented for the first time, usually both a
-simulator, $S(M)$, and an
-inferential engine, $I(M)$, need to be devised.
-Conventionally, the simulator is seen as requiring a $\theta$ value -- or prior distribution on $\theta$,
-$\text{P}(\theta)$ -- to generate data $D$.
-The inferential engine is then used in the estimation of $\theta$ from the
-data (simulated or real) and the prior, and generates
-$\text{P}(\theta|D)$ through MCMC.
+\subsubsection*{Validating the simulator, $S[\mathcal{M}]$}\label{verify-correctness-of-simulator-implementation}
 
-% (``I'' for \textbf{i}nference)
+When a probabilistic model $\mathcal{M}$ is implemented for the first
+time, a simulator $S[\mathcal{M}]$ must be devised and itself
+validated before we can validate an inferential engine $I[\mathcal{M}]$.
+It is $I[\mathcal{M}]$ that will be employed by users in empirical
+analyses.
+A simulator conventionally requires a parameter value as input (i.e.,
+a $\theta$ value, where $\boldsymbol{\theta}$ might represent more than one
+parameter), or a prior distribution on those values,
+$f(\boldsymbol{\theta})$. 
+The simulator then outputs a sample of random variable(s), which
+for hierarchical models will include not only an instantiation of data
+$\text{D}$, but also of a subset of the parameters in
+$\boldsymbol{\theta}$.
 
-In the context model validation, $S(M)$ can be interpreted as generating
-$\theta$ directly, depending on the scope of the validation procedure
-and on how model $M$ is defined -- that is, on what we call a
-parameter. 
-If we determine $S(M)$ samples $\text{P}_{\text{S}}(\theta)$ directly (i.e.,
-there is no data $D$; ``S'' for \textbf{s}imulation), then $I(M)$
-samples $\text{P}_{\text{I}}(\theta)$ (``I'' for \textbf{i}nference),
-and we ultimately want $\text{P}_{\text{I}}(\theta)$ to reach
-stationarity at $\text{P}_{\text{S}}(\theta$) (see box 2). 
+In the case of hierarchical models, it is sometimes useful
+to consider $S[\mathcal{M}]$ as a collection of component
+simulators, each characterized by a different sampling distribution.
+In figure X, for example, $S[\mathcal{M}]$ can be seen as an ensemble
+comprised by (i) $S[f(\boldsymbol{\theta})]$ (where $\boldsymbol{\theta} = \{\lambda, r, r_m,
+y_0\}$), which jointly simulates all parameters in $\boldsymbol{\theta}$,
+(ii) $S[f(\Phi|\lambda)]$, which simulates a Yule tree $\Phi$, (iii)
+$S[f(\mathbf{A}|\Phi,r)]$, which simulates a multiple sequence
+alignment $\mathbf{A}$, and (iv) $S[f(\mathbf{M}|\Phi,r_m,y_0])$,
+which simulates a continuous character vector $\mathbf{M}$ for all
+species in $\Phi$.
+Being able to isolate the building blocks of a hierarchical model simulator 
+helps divide and conquer the validation task, especially when some, but
+not all of the sampling distributions are well-known parametric distributions,
+or when they result from well characterized stochastic processes (see below).
 
-\subsubsection*{Validating the simulator,
-  $S(M)$}\label{verify-correctness-of-simulator-implementation}
+One way of validating a probabilistic model simulator is by 
+sampling a large number of points, calculating summary statistics from the
+sample, and comparing those statistics to either their true value
+counterparts (i.e., the values used as input in the simulation), or to
+their analytical expectations.
+In Box 1, we illustrate this procedure for a known parametric distribution,
+the multivariate normal distribution characterizing the phylogenetic
+Brownian motion model \citep{felsenstein73}.
 
-As mentioned above, the main purpose of a simulator $S(M)$ in the
-context of model validation is to generate data from a given $\theta$
-value or a known (prior) distribution on $\theta$, $\text{P}(\theta)$.
-However, simulators themselves need to be validated.
-In the case of models that have well-known parametric distributions as their
-likelihood functions (see box 1), one can validate $S(M)$ by
-drawing a very large sample of points and comparing summary statistics
-(e.g., mean, variance, etc.) from the sample against their true value
-counterparts (i.e., the values used in the simulation procedure). 
+\vspace{.5cm}
 
-Alternatively, summary statistic expectations derived under other
-kinds of models can also be compared to those computed from simulated datasets.
-One such model is the Yule process \citep{yule24}, also known as a pure-birth model.
-The Yule process is a continuous-time Markov process that has been
-classically employed in phylogenetics, as a way to model the number of
-species in a clade \citep{yule24,aldous01}.
-Under the Yule process, for example, the expected tree height,
-$\text{E}[t_{MRCA}]$ for a tree with $n$ tips is:
+% Start: BM BOX
+\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
+  title=Box 1: Models characterized by well-known parametric distributions, fonttitle=\bfseries]
+  \small 
+  One commonly used model in macroevolution for the study
+of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. X;
+\citealt{felsenstein73}).
+The pdf characterizing this model's sampling distribution is in fact
+the pdf of the multivariate normal (MVN) probability distribution:
 
 \begin{equation}
-  \text{E}[t_{MRCA}] = \sum_{i=2}^{n}\frac{1}{1\lambda}
+  \begin{split}
+    \text{log }f(\mathbf{y} \mid \boldsymbol{y_0}, r, \boldsymbol{T}) = -\frac{1}{2} \Big[ n\text{log}(2\pi) + \text{log}|r \boldsymbol{T}| \Big] & \\
+    -\frac{1}{2} \Big[ (\mathbf{y} - \boldsymbol{y_0})^T (r \boldsymbol{T})^{-1} (\mathbf{y} - \boldsymbol{y_0}) \Big],
+  \label{eq:bm}
+  \end{split}
+\end{equation}
+
+\noindent where $\mathbf{y}$ corresponds to the observed trait values representing
+$n$ species, $\boldsymbol{y_0}$ is the trait value at the root of the tree, $r$ is the variance
+of the process (also known as the evolutionary rate, and sometimes represented by
+$\sigma^2$), and $r\boldsymbol{T}$ is the variance-covariance matrix.
+$\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree
+$\Phi$'s branch lengths; see Fig. 1 below).
+
+\vspace{.25cm}
+The probability density function in equation \ref{eq:bm} describes the distribution
+that would result from an infinite number of BM ``experiments'' (each experiment
+being non-mean-reverting, and representing an independent evolutionary trajectory).
+Under this model $\boldsymbol{\theta} = \{\boldsymbol{y_0}, r, \boldsymbol{T}\}$ and $D = \{\mathbf{y}\}$
+(but note that sometimes researchers treat $\Phi$ and consequently $\boldsymbol{T}$ as
+data).
+
+\begin{center}
+\includegraphics[width=11cm]{../figures/bmsim.pdf}
+\label{fig:bmsim}
+\captionof{figure}{A sample of 200 draws from a MVN distribution, each
+  representing the evolutionary trajectory of one continuous trait along
+  the species tree on the left. The root trait value, $\boldsymbol{y_0}$, and the
+  evolutionary rate of the process, $r$, were set to 0.0 and 0.1, respectively. The panel on the right shows
+  histograms of trait values sampled from the MVN for each species, as
+well as their covariation.}
+\end{center}
+
+\vspace{.25cm}
+\emph{Validating a phylogenetic BM simulator}
+
+Because the MVN is a \textbf{known parametric
+  distribution}, it is trivial to verify the correctness of a
+phylogenetic BM model simulator, $S[f(\mathbf{y}|\boldsymbol{y_0},r,\boldsymbol{T})]$.
+Figure 1 shows the result of 200 simulations under the MVN
+with $\boldsymbol{y_0} = [0.0, 0.0, 0.0]$, $r = 0.1$, along the tree shown on
+the left, which determines the variance-covariance matrix:
+\begin{equation}
+  r\boldsymbol{T} = 0.1
+  \begin{bmatrix}
+    6 & 5 & 0\\
+    5 & 6 & 0\\
+    0 & 0 & 6
+  \end{bmatrix}
+  \label{eq:mat}
+\end{equation}
+
+One can then verify that the simulated mean trait values and their
+variances in each species fall within their 95\% confidence intervals
+95\% of the time.
+More specifically (i) $\boldsymbol{y_{\text{A}}}$, $\boldsymbol{y_{\text{B}}}$ and 
+$\boldsymbol{y_{\text{C}}}$ fall within $[]$ X, Y and Z times out of 200, and 
+(ii) $\text{Var}[\boldsymbol{y_{\text{A}}}]$,
+$\text{Var}[\boldsymbol{y_{\text{B}}}]$ and
+$\text{Var}[\boldsymbol{y_{\text{C}}}]$ 
+fall within $[]$ X, Y and Z times out of 200.
+%
+%\vspace{.25cm}
+%\emph{Validating a phylogenetic BM likelihood implementation}
+%
+% For a small tree, the likelihood of a set
+% of parameter values $\theta$ given some observed data is
+% straightforward to compute (following Eq. \ref{eq:bm}) and can be compared to
+% the output of a focal implementation.
+% Interestingly, the likelihood of the BM model can also be computed using a
+% dynamic-programming algorithm known in the phylogenetics literature
+% as the ``pruning'' or ``peeling'' algorithm \citep{felsenstein73}.
+% Thus, if a BM model is implemented correctly, the resulting likelihood
+% of $\theta$ should match the solution of equation 2 no matter
+% which algorithm is used.
+\end{tcolorbox}
+% End: BM BOX
+
+Another example is the Yule model (also known as the pure-birth model;
+\citealt{yule24}), a continuous-time Markov process that has been
+classically employed in phylogenetics to model the number of
+species in a clade \citep{yule24,aldous01}.
+Under a Yule process with a species birth rate of $\lambda$, the
+expected tree height, $\text{E}[t_{\text{root}}]$, for
+a tree with $n$ tips is:
+
+\begin{equation}
+  \text{E}[t_{\text{root}}] = \sum_{i=2}^{n}\frac{1}{1\lambda}.
   \label{eq:yule}
 \end{equation}
 
-\noindent where $\lambda$ is the species ``birth'' rate \citep{yule24}.
-This analytical expectation can then be compared to the expected tree
-height in several independent datasets of simulated phylogenetic trees.
-If $S(M)$ was correctly implemented, $\text{E}[t_{MRCA}]$ should be contained within $\pm 2$ standard errors of
-the mean in $\sim 95\%$ of all the simulated datasets under the Yule process.
+\noindent One can then verify if $\text{E}[t_{\text{root}}]$ is $95\%$
+of the time within $\pm 1.96$ standard errors of the average Yule-simulated tree
+height.
+Confirming that this is the case indicates $S[f(\Phi|\lambda)]$ is correctly
+implemented (Fig. \ref{fig:yulemean}).
 
-Here, we note that $S(M)$ represents a \emph{direct} simulator (Table
-\ref{tab:sim}) of model
-$M$ -- i.e., $S(M)$ allows one to directly draw truly independent
-samples from $M$.
+\begin{figure}
+  \centering
+  \vspace{0pt}
+  \begin{subfigure}[t]{0.5\textwidth}
+    \caption{}
+    \centering
+    \begin{tabular}{ c|c }
+    \hline
+    Birth rate ($\lambda$) & E[$t_{\text{root}}$] $\in$ 95\% CI (\%)\\
+    \hline  
+    0.5 & 94\\
+    0.6 & 91\\
+    0.7 & 98\\
+    0.8 & 95\\
+    0.9 & 96\\
+    1.0 & 92\\
+    \hline
+  \end{tabular}
+  \end{subfigure}
+  \vspace{0pt}
+  \hspace{1cm}
+  \begin{subfigure}[t]{0.4\textwidth}
+    \caption{}
+    \centering
+    \includestandalone[width=7cm]{../figures/yule_exp_height}    
+  \end{subfigure}
+  \hfill
+  \caption{Validation of Yule tree simulator.
+    (a) Number of simulated data sets (out of 100) for which the
+    expected tree height ($t_{\text{root}}$) was inside the 95\% CI
+    about its sample average.
+    Each data set consisted of 50 twenty-taxon simulated Yule trees.
+    (b) The area shaded in light blue represents the
+    95\% confidence interval about the average tree height, obtained
+    from the 5,000 Yule trees simulated in (a). Simulations were
+    carried out with the \texttt{TreeSim} R package \citep{stadler11}.}
+  \label{fig:yulemean}
+\end{figure}
+
+We note that $S[\mathcal{M}]$ represents a \emph{direct} simulator under
+model $\mathcal{M}$ (Table \ref{tab:sim}), meaning each and every sample
+generated by $S[\mathcal{M}]$ is
+independent.
 This is contrast with other simulation strategies, such as conducting
-MCMC under a model with fixed parameter values and no data.
-This latter approach is predicated on the existence of a correct
-implementation of both $I(M)$ and proposal functions, and for this
-reason cannot be seen as a way to validate a direct simulator.
+MCMC under model $\mathcal{M}$ with no data, given specific parameter
+($\boldsymbol{\theta}$) values.
+This latter approach may be the only option if $S[\mathcal{M}]$ has not
+been yet implemented, and it is predicated upon the existence of correct
+implementations of both an inferential engine $I[\mathcal{M}]'$ and of
+proposal functions.
+We distinguish $I[\mathcal{M}]'$ from $I[\mathcal{M}]$ because
+simulations are being carried out precisely to validate $I[\mathcal{M}]$.
+Unless MCMC simulations are done with $I[\mathcal{M}]'$ -- an independent
+implementation of $I[\mathcal{M}]$ -- they can introduce circularity 
+to the validation task.
 
 \begin{center}
   \begin{table}
@@ -353,93 +497,14 @@ reason cannot be seen as a way to validate a direct simulator.
   \end{table}
 \end{center}
 
+% If we determine $S(M)$ samples $\text{P}_{\text{S}}(\theta)$ directly (i.e.,
+% there is no data $D$; ``S'' for \textbf{s}imulation), then $I(M)$
+% samples $\text{P}_{\text{I}}(\theta)$ (``I'' for \textbf{i}nference),
+% and we ultimately want $\text{P}_{\text{I}}(\theta)$ to reach
+% stationarity at $\text{P}_{\text{S}}(\theta$) (see box 2). 
+
 % \begin{tcolorbox}[breakable, width=12cm, colback=gray!10, boxrule=0pt,
 %   break at=11cm/0cm, title=Box 1: Models with well-known parametric \emph{pdf}'s, fonttitle=\bfseries]
-\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
-  title=Box 1: Models with well-known parametric \emph{pdf}'s, fonttitle=\bfseries]
-  \small 
-  One commonly used model in macroevolution, specifically in the study
-of continuous traits, is a diffusion model known as
-Brownian motion (BM; \citealt{felsenstein73}).
-The log-likelihood function of this model is simply the multivariate
-normal (MVN) probability density function:
-
-\begin{equation}
-  \begin{split}
-    \text{log P}(\mathbf{y} \mid \mathbf{y_0}, r, \mathbf{T}) = -\frac{1}{2} \Big[ n\text{log}(2\pi) + \text{log}|r \mathbf{T}| \Big] & \\
-    -\frac{1}{2} \Big[ (\mathbf{y} - \mathbf{y_0})^T (r \mathbf{T})^{-1} (\mathbf{y} - \mathbf{y_0}) \Big],
-  \label{eq:bm}
-  \end{split}
-\end{equation}
-
-\noindent where $\mathbf{y}$ corresponds to the mean trait values in $n$ species,
-$\mathbf{y_0}$ is the trait value at the root of the species tree, $r$ is the variance of the process
-(also known as the evolutionary rate, and sometimes represented by $\sigma^2$), and $r\mathbf{T}$ is the
-variance-covariance matrix ($\mathbf{T}$ is a matrix whose elements
-come from the species tree branch lengths; see Fig. 1 below).
-
-\vspace{.25cm}
-The MVN density function describes the distribution that would result from an infinite
-number of BM process ``experiments'' (each experiment being non-mean-reverting, and
-representing an independent evolutionary trajectory).
-Under this model $\theta = \{\mathbf{y_0},
-r\}$ and $D = \{\mathbf{y, \mathbf{T}} \}$ (but note that $\mathbf{T}$ can
-be a parameter elsewhere in a hierarchical model of which BM is just a
-component).
-
-\begin{center}
-\includegraphics[width=11cm]{../figures/bmsim.pdf}
-\label{fig:bmsim}
-\captionof{figure}{A sample of 200 draws from a MVN distribution, each
-  representing the evolutionary trajectory of one continuous trait along
-  the species tree on the left. The root trait value, $\mathbf{y_0}$, and the
-  evolutionary rate of the process, $r$, were set to 0.0 and 0.1, respectively. The panel on the right shows
-  histograms of trait values sampled from the MVN for each species, as
-well as their covariation.}
-\end{center}
-
-\vspace{.25cm}
-\emph{Validating a BM simulator}
-
-Because the MVN is a \textbf{known parametric
-  distribution}, it is trivial to verify the correctness of a
-BM model simulator, $S(BM)$.
-Figure 1 shows the result of 200 simulations under the MVN
-with $\mathbf{y_0} = [0.0, 0.0, 0.0]$, $r = 0.1$, along the tree shown on
-the left, which determines the variance-covariance matrix:
-
-\begin{equation}
-  r\mathbf{T} = 0.1
-  \begin{bmatrix}
-    6 & 5 & 0\\
-    5 & 6 & 0\\
-    0 & 0 & 6
-  \end{bmatrix}
-  \label{eq:mat}
-\end{equation}
-
-One can then see that the simulated variances for the three species
-and the covariances between them closely match their true counterparts
-(Eq. 3 and the right panel in Fig. 1).
-Additionally, the simulated mean trait values in each species fall
-within $\pm 2$
-standard errors of the mean (see main text).
-
-\vspace{.25cm}
-\emph{Validating a BM likelihood implementation}
-
-For a small tree, the likelihood of a set
-of parameter values $\theta$ given some observed data is
-straightforward to compute (following Eq. \ref{eq:bm}) and can be compared to
-the output of a focal implementation.
-Interestingly, the likelihood of the BM model can also be computed using a
-dynamic-programming algorithm known in the phylogenetics literature
-as the ``pruning'' or ``peeling'' algorithm \citep{felsenstein73}.
-Thus, if a BM model is implemented correctly, the resulting likelihood
-of $\theta$ should match the solution of equation 2 no matter
-which algorithm is used.
-
-\end{tcolorbox}
 
 % To verify correctness of a simulator implementation \(S\) for model
 % \(M\) directly, the distributions \(p_S(\theta|M)\) should match
@@ -485,343 +550,9 @@ which algorithm is used.
 
 \subsubsection*{Validating the inferential engine, $I(M)$}
 
-There is a wide variation on the validation stringencies different
-methods and models are subjected to in the course of their
-development \citep{darriba18}.
-From a short literature review on Bayesian methods applied to
-phylogenetics (Table S1), we summarize {\color{red}{four [could be more
-    after literature review]}} main validation requirements,
-in increasing order of stringency and comprehensiveness,
-that model implementations can meet:
+\noindent \emph{Well-calibrated validation study}
 
-\begin{enumerate}[i.]
-  \item the model produces reasonable estimates on a real data set,
-  \item the model likelihood evaluates to some theoretical
-    expectation and/or approximates an expected distribution,
-  \item the model often recovers the right parameter
-    values -- for one or more parameters (i.e., a small hand-picked
-    ``grid'' of values) -- from data sets simulated with $S(M)$, and
-\item the model correctly estimates parameter values from data sets
-  simulated from prior distributions, as indicated by the estimated
-  posterior coverage of parameters and their correlation with true
-  values (``well-calibrated validation'', see below). {\color{red}{If
-      we want to talk about the next level -- using other HPDs, we can
-      add it as the 5th possibility and expand on it below}}
-\end{enumerate}
-
-% \begin{itemize}
-% \item the model appears to produce reasonable results on a data set of interest.
-% \item the model produces more reasonable results on a data set of interest than other models.
-% \item unit tests show correctness of direct simulator implementation, likelihood implementation and/or  
-% operator implementation(s).
-% \item sampling from prior conforms to expectations.
-% \item a simulation study shows parameters simulated under the model can be recovered by inference 
-% from simulated data for a fixed tree and fixed other parameters for a small number of illustrative cases.
-% \item as previous but with sampled tree and sampled parameters, so the process is repeated $N$ times 
-% and tree and parameters sampled from a reasonable prior.
-% \item a simulation study shows the model can recover parameters (most of the time) even when there 
-% are model violations in simulating the parameters.
-% \end{itemize}
-
-% New methods require usually require two parts: an implementation
-% \(I(M)\) of a model \(M\) and associated probability \(p_I(\theta|M)\)
-% of states \(\theta\), and MCMC operators \(R(\theta)\to\theta'\) for
-% creating proposals \(\theta'\) for moving through state space starting
-% in state \(\theta\) (though sometimes just an operator is validated that
-% is much more efficient than previously existing operators). This guide
-% contains some procedures to get some confidence that the model and
-% operators are correctly implemented. Ideally, we have an independent
-% implementation of a simulator \(S(M)\to\theta\) that allows (possibly
-% inefficiently) to sample from the target distribution \(p_S(\theta|M)\).
-% If so, we also need to verify that the simulator is correctly
-% implemented. In summary, we need to establish correctness of:
-
-% \begin{itemize}
-% \item
-%   the simulator implementation \(S(M)\to\theta\) (if any)
-% \item
-%   the model implementation \(I(M)\)
-% \item
-%   operator implementations \(R\)
-% \end{itemize}
-
-% \subsection*{Verifying the correctness of a model implementation}
-
-\vspace{.25cm}
-\noindent \emph{The model produces reasonable estimates on a real
-  data set}
-
-One initial yet insufficient step in validating a model implementation
-is verifying whether it produces reasonable inferences with a real
-data set.
-Depending on the particular biological question at hand, it is very
-hard or arguably impossible to know what the true, expected answer is,
-and so ``reasonable'' will always be up for debate.
-A reasonable inference could be one confirming a result from a previous study
-using the same data and model, or different data and model
-altogether, but contradictory inferences do not necessarily imply a model
-was incorrectly implemented.
-For this reason, this validation procedure cannot consist of a proper
-correctness check, but should instead be seen as an exploratory
-analysis or a sanity check (the latter would require massive
-evidence supporting a particular hypothesis).
-Accordingly, a large fraction of publications to date employ this
-strategy as a final step to illustrate the workings of a method more
-than to validate it (but see Table S1 in the supplementary material).
-
-\vspace{.5cm}
-\noindent \emph{The model likelihood evaluates to some
-  expected value or approximates an expected distribution}
-
-A good starting point in formally verifying the correctness of a
-probabilistic model implementation is the comparison between the
-likelihood of a parameter value given some data, $\text{P}(D|\theta)$, to
-some expected result.
-When models are sufficiently simple, or by focusing
-on a subcase of a complex model, it is often straightforward to derive
-what this expected result should be (see box 1).
-Using the Yule model again as an example, the probability of observing
-a phylogenetic tree $T$ given $n$ internal nodes and birth-rate
-$\lambda$ (i.e., the Yule's model likelihood function;
-\citealp{nee01}) is:
-
-\begin{equation}
-  \text{P}(T|n,\lambda) = (n-1)!\lambda^{n-2}e^{-\lambda L},
-  \label{eq:yulelik}
-\end{equation}
-
-\noindent where $L$ is the total length of the tree.
-Because likelihood functions are often computed in log-space, and
-because constants (e.g., the $(n-1)!$ term in Eq. \ref{eq:yulelik}) can be
-ignored during MCMC for efficiency, the log-likelihood function for the Yule model
-becomes:
-
-\begin{equation}
-\text{log P}(T|n,\lambda) = \text{log}(\lambda^{n-2}) - \lambda L.
-\end{equation}
-
-\noindent One can then easily compute the expected log-likelihood of an example
-tree given some $\lambda$ value by hand, and compare it against the
-value produced by the implementation being validated.
-This forms the basis of what software engineers refer to as ``unit
-testing'' (see the supplementary material for a unit test example
-under the BEAST 2 platform).
-Expected values can also be obtained from independent
-implementations of the likelihood function -- the more different the
-other implementation (e.g., different algorithms and programming
-languages are used), the more robust the test is (see box 1).
-
-\vspace{.25cm}
-\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
-  title=Box 2: Additional validation sanity-checks, fonttitle=\bfseries]
-  \small
-
-  In addition to the validation procedures described in the main text,
-  method developers can opt to conduct sanity checks that will not
-  provide evidence for model correctness, but that can nonetheless
-  reveal something is wrong with the implementation of a likelihood
-  function (i.e., checks that are necessary but not sufficient).
-  
-  \vspace{.25cm}
-  \emph{The score function}
-  
-  One such check is looking at properties of the score function,
-  $U(\theta,D)=\frac{\partial}{\partial\theta}\log
-  \text{P}(D|\theta)$.
-  $U(\theta,D)$ is the gradient of the log-likelihood function with
-  respect to $\theta$ (the parameters in the model), thus indicating
-  the slope of $\text{P}(D|\theta)$ and its behavior given very small
-  changes in $\theta$.
-  Given a data set $D$ generated from one or more $\theta$ values, it
-  should be expected from a correct model implementation that:
-
-  \begin{equation}\label{eq:scorefunction}
-    \text{E}[U(\theta,D)] = \int U(\theta,D)\text{P}(D|\theta)dD = 0,
-  \end{equation}
-
-  % \begin{equation}\label{eq:variancestatistic}
-  %   E\left[U(\theta,D)U(\theta,D)^T + \frac{\partial^2}{\partial\theta^2}\text{log} \text{P}(D|\theta)\right]=0.
-  % \end{equation}
-
-  This theoretical expectation can then be compared to the one
-  computed from a simulated data set (generated by $S(M)$; see the
-  supplementary material for more details).
-
-  \vspace{.25cm}
-  \emph{Comparing empirical vs. target posterior distributions}
-
-  Given a correctly implemented simulator for model $M$, $S(M)$, one
-  can directly generate a $\text{P}_{\text{S}}(\theta)$ distribution that
-  should be approximated by $\text{P}_{\text{I}}(\theta)$ at stationarity.
-  Note that under this validation scope, there is no data.
-  If chains are run long enough (as suggested by large effective
-  sample sizes, ESS's), $\text{P}_{\text{S}}(\theta)$ and
-  $\text{P}_{\text{I}}(\theta)$ can be compared, and large
-  discrepancies between them can be taken as evidence of an error in the
-  likelihood function implementation (assuming all other inferential
-  components are working properly).
-
-  \vspace{.15cm}
-  Such task can be done with a non-parametric test, for example, such
-  as the Kolgomorov-Smirnov test \citep{kolgomorov,smirnov,ks}, which
-  compares two empirical distribution functions (\emph{ecdf}'s) or an
-  \emph{ecdf} with a cumulative distribution function (\emph{cdf}).
-  We provide an example of this procedure in the supplementary material.
-\end{tcolorbox}
-
-Alternatively, a more comprehensive approach could involve comparing
-some expected quantity against its sampling distribution under the
-model being validated.
-This sampling distribution is often obtained through MCMC, with
-newly proposed parameter values being accepted in direct proportion to
-their likelihood under the model (i.e., this distribution comes from
-$I(M)$ without using any data, just a fixed $\theta$ value).
-Given a correct implementation of the Yule model,
-for example, the distribution of tree heights (for some $\lambda$
-value) should peak around the value given by from equation \ref{eq:yule}.
-This procedure is more comprehensive than unit testing because of its
-dependence on MCMC, which means a valid result requires correct
-implementations of both the likelihood function and the proposal mechanism.
-
-When analytical expectations are not available, the distribution
-sampled from $I(M)$ with MCMC, $\text{P}_{\text{I}}(\theta)$, can be
-compared to a target distribution sampled with $S(M)$
-($\text{P}_{\text{S}}(\theta)$, see box 2).
-$S(M)$ can also be itself conveniently used by $I(M)$ as the proposal
-density during MCMC (see listing 2 in the supplementary material for
-an example).
-This allows isolating the validation task to the model:
-when other proposal densities are used, mismatched distributions can be
-due to malfunctioning of either or both model and proposal mechanism.
-
-% One such instance is the well-established Kingman's coalescent model \citep{kingman82}
-% from population genetics, the likelihood function of which is given by:
-
-% \begin{equation}
-%   P(T \mid N_e) = \prod_{k=2}^{n} \Bigg( \frac{1}{N_e} \text{exp} \Bigg(
-%   \frac{k(k-1)t_k}{2N_e} \Bigg) \Bigg),
-%   \label{eq:2}
-% \end{equation}
-
-% \noindent where $n$ is the number of lineages we sampled, $t_k$ is the time during which $k$ lineages
-% coexist, and $N_e$ is the effective population size.
-% Here, the data is a genealogy $T$ that defines a set of intervals
-% between coalescence events.
-% Interestingly, while the height of $T$, $T_{MRCA}$ (the time to the most
-% recent common ancestor of all $n$ samples), is not part of the
-% likelihood function, it can be derived from the properties of the
-% model:
-
-% \begin{equation}
-%   \text{E}[T_{MRCA}] = 2 \bigg(1-\frac{1}{n}\bigg),
-%   \label{eq:3}
-% \end{equation}
-
-% \noindent \citep{hudson90}.
-
-% One way to verify the correctness of an implementation of the Kingman's
-% coalescent, for example, is then to simulate genealogies given some
-% $N_e$ and compare the genalogical heights with the result of equation
-% \ref{eq:3}.
-% In a Bayesian framework this procedure amounts to a direct validation of the
-% likelihood if one carries out MCMC without any data (i.e., sampling
-% from the prior), but also to a validation of all the machinery involved in MCMC.
-
-% If the model has a simulator built in, samples can be generated and compared with an 
-% independent direct simulator, producing two samples from the distribution. Comparing 
-% two distributions can be done by
-
-% \begin{itemize}
-% \item
-%   eye balling the marginal likelihoods in Tracer and making sure they
-%   are close enough.
-% \item
-%   testing whether parameters are covered 95\% of the time in the 95\%
-%   HPD interval of parameter distributions.
-% \item
-%   using a statistical test, e.g.~the Kolmogorov-Smirnov test, to verify
-%   the distributions \(p_I(\theta|M)\) and \(p_S(\theta|M)\) are the
-%   same.
-% \end{itemize}
-
-\vspace{.5cm}
-\noindent \emph{The model often recovers the right parameter values
-  from data sets simulated at a (grid of) point(s) in parameter space}
-
-Perhaps the most common approach to date for validating a
-probabilistic model involves simulating data sets under specific parameter
-values -- the scope here requires a simulator $S(M)$ used to simulate
-\emph{data} under model $M$ -- carrying out inference, and tabulating
-estimates depending on how close they were to the known, true values.
-This procedure is particularly valuable in the context of point estimates
-that ignore uncertainty, characteristic of maximum-likelihood methods (e.g.,
-\citealp{mccormack09,han13,mendes17}), but of smaller if not unclear
-utility in the Bayesian framework.
-
-Differently from frequentist methods, which rely on approximate bootstrap
-analyses, Bayesian models allow for exact statistical inference while
-simultaneously addressing uncertainty.
-As a result, parameter estimates come in the form of a posterior
-distribution that depends not only on the model likelihood, but
-also the priors of choice.
-Validating a Bayesian model by trying to recover
-hand-picked parameter values can be problematic because it is unclear
-which prior is to be used, and also how often one should
-expect a specific highest posterior density (HPD) interval to contain
-the true parameter values.
-
-Presumably, correct model implementations should yield HPDs that contain
-the true values more often than not, but determining what ``often'' means
-for complex models and priors is not trivial.
-Thus, there are no theoretical guarantees that a model is correctly
-implemented should most inferred 95\% HPDs include the true parameter
-values, for example, or vice-versa.
-This validation approach can still be useful in revealing regions
-in parameter space where inference is easier or harder (given different
-prior distributions), but we instead recommend procedures that are exact,
-such as calibrated validation studies (see below).
-
-\vspace{.5cm}
-\noindent \emph{The model correctly estimates parameter values from
-  data sets simulated from prior distributions, as indicated by the
-  estimated posterior coverage}
-
-Rather than simulating a fixed number of data sets for hand-picked
-parameter values (see above), we can let the prior density of
-different values dictate how often they are used in simulations.
-This forms the basis of a calibrated validation study: a large number
-of data sets are simulated directly from the prior distributions on
-model parameters.
-Here, the choice of prior is arbitrary, but ideally should reflect
-what is currently known about the natural phenomenon being modeled.
-
-\begin{figure}
-  \includegraphics[width=\textwidth]{../figures/yule_calval.pdf}
-  \caption{Calibrated validation analyses of a simple Bayesian
-    hierarchical model. (a) The graphical representation of the model used in
-    the analyses, where $\lambda$ is the Yule birth-rate, $n$ is the
-    number of species, and $\tau$ is the set of speciation times. The
-    prior is an exponential density with arbitrary mean of 0.01. Panels (b-d)
-    show true $\lambda$ values plotted against their mean posteriors
-    (the dashed line gives $f(x) = x$). (b) Trees
-    with $50<n<200$, (c) Trees with $5<n<10$, (d) Model is
-    misspecified (log-normal prior is used in inference, rather than exponential).
-  }
-  \label{fig:yulecalval}
-\end{figure}
-
-The advantage of this approach is that if the same Bayesian model (which
-includes likelihood \emph{and} priors) is used for both
-simulation and inference, there are clear expectations under a
-correctly implemented model.
-Namely, out of a large number of simulations, the coverage of a
-parameter should match the width of the HPD of choice
-(coverage is defined as the number of times the HPD
-interval contains the true value out of the total number of
-simulations; \citealp{dawid82}).
-For example, in the case of the commonly used 95\%-HPD interval, the true value
-should often be inside the HPD between 90--98\% of the time (Table
-\ref{tab:coverage}).
+\textcolor{red}{FKM will fill this section.}
 
 \begin{table}
 \begin{center}
@@ -849,45 +580,297 @@ k & $\text{P}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
 \label{tab:coverage}}
 \end{table}
 
-Figure \ref{fig:yulecalval} shows the results of a calibrated
-validation analysis for a simple Bayesian model.
-Here, the full model is comprised of an exponential prior (with an
-arbitrary mean of 0.01) on the birth-rate
-$\lambda$, with the Yule likelihood (i.e., a pure-birth process)
-modelling speciation times $\tau$ (Fig. \ref{fig:yulecalval}a).
-We plot 100 ``true'' $\lambda$ values (drawn from the exponential prior)
-against their posterior means estimated through MCMC from the
-corresponding trees simulated under the Yule model
-(Fig. \ref{fig:yulecalval}b-d).
-Note that coverage is good for the first and second calibrated
-validation analyses (the vast majority of 95\%-HPDs
-include the true values, as shown by the blue vertical lines; Fig
-\ref{fig:yulecalval}b-c), for which the model was correctly
-specified.
-Coverage is not good in the third analysis, where the model was
-mispecified on purpose (a log-normal prior was used in inference,
-rather than an exponential; Fig. \ref{fig:yulecalval}d).
-Beyond coverage, one can also determine how good estimates can be,
-potentially under several simulation scenarios, by investigating the
-correlation between true parameter values and their posterior means.
-Correlation should be high when the data carries a lot of
-signal (Fig. \ref{fig:yulecalval}b), and low otherwise (Fig. \ref{fig:yulecalval}c).
+\begin{figure}
+  \includegraphics[width=\textwidth]{../figures/yule_calval.pdf}
+  \caption{Calibrated validation analyses of a simple Bayesian
+    hierarchical model. (a) The graphical representation of the model used in
+    the analyses, where $\lambda$ is the Yule birth-rate, $n$ is the
+    number of species, and $\tau$ is the set of speciation times. The
+    prior is an exponential density with arbitrary mean of 0.01. Panels (b-d)
+    show true $\lambda$ values plotted against their mean posteriors
+    (the dashed line gives $f(x) = x$). (b) Trees
+    with $50<n<200$, (c) Trees with $5<n<10$, (d) Model is
+    misspecified (log-normal prior is used in inference, rather than exponential).
+  }
+  \label{fig:yulecalval}
+\end{figure}
 
-Calibrated validation is a multifarious
-analysis, as it not only verifies the correctness of a model
-likelihood (both $S(M)$ and $I(M)$), but also of all the components
-involved in the sampling of the posterior.
-For this reason, calibrated validation is the most thorough,
-integrated procedure one can carry out when the goal is to verify
-implementation correctness.
-We provide further guidelines and code examples for
-calibrated validation in the supplementary material.
+\noindent \emph{Simulation-based validation study}
+
+\textcolor{red}{FKM will run a SBV on a simple hierarchical model
+  here.}
+
+% There is a wide variation on the validation stringencies different
+% methods and models are subjected to in the course of their
+% development \citep{darriba18}.
+% From a short literature review on Bayesian methods applied to
+% phylogenetics (Table S1), we summarize {\color{red}{four [could be more
+%     after literature review]}} main validation requirements,
+% in increasing order of stringency and comprehensiveness,
+% that model implementations can meet:
+
+% \begin{enumerate}[i.]
+%   \item the model produces reasonable estimates on a real data set,
+%   \item the model likelihood evaluates to some theoretical
+%     expectation and/or approximates an expected distribution,
+%   \item the model often recovers the right parameter
+%     values -- for one or more parameters (i.e., a small hand-picked
+%     ``grid'' of values) -- from data sets simulated with $S(M)$, and
+% \item the model correctly estimates parameter values from data sets
+%   simulated from prior distributions, as indicated by the estimated
+%   posterior coverage of parameters and their correlation with true
+%   values (``well-calibrated validation'', see below). {\color{red}{If
+%       we want to talk about the next level -- using other HPDs, we can
+%       add it as the 5th possibility and expand on it below}}
+% \end{enumerate}
+
+% \vspace{.25cm}
+% \noindent \emph{The model produces reasonable estimates on a real
+%   data set}
+
+% One initial yet insufficient step in validating a model implementation
+% is verifying whether it produces reasonable inferences with a real
+% data set.
+% Depending on the particular biological question at hand, it is very
+% hard or arguably impossible to know what the true, expected answer is,
+% and so ``reasonable'' will always be up for debate.
+% A reasonable inference could be one confirming a result from a previous study
+% using the same data and model, or different data and model
+% altogether, but contradictory inferences do not necessarily imply a model
+% was incorrectly implemented.
+% For this reason, this validation procedure cannot consist of a proper
+% correctness check, but should instead be seen as an exploratory
+% analysis or a sanity check (the latter would require massive
+% evidence supporting a particular hypothesis).
+% Accordingly, a large fraction of publications to date employ this
+% strategy as a final step to illustrate the workings of a method more
+% than to validate it (but see Table S1 in the supplementary material).
+
+% \vspace{.5cm}
+% \noindent \emph{The model likelihood evaluates to some
+%   expected value or approximates an expected distribution}
+
+% A good starting point in formally verifying the correctness of a
+% probabilistic model implementation is the comparison between the
+% likelihood of a parameter value given some data, $\text{P}(D|\theta)$, to
+% some expected result.
+% When models are sufficiently simple, or by focusing
+% on a subcase of a complex model, it is often straightforward to derive
+% what this expected result should be (see box 1).
+% Using the Yule model again as an example, the probability of observing
+% a phylogenetic tree $T$ given $n$ internal nodes and birth-rate
+% $\lambda$ (i.e., the Yule's model likelihood function;
+% \citealp{nee01}) is:
+
+% \begin{equation}
+%   \text{P}(T|n,\lambda) = (n-1)!\lambda^{n-2}e^{-\lambda L},
+%   \label{eq:yulelik}
+% \end{equation}
+
+% \noindent where $L$ is the total length of the tree.
+% Because likelihood functions are often computed in log-space, and
+% because constants (e.g., the $(n-1)!$ term in Eq. \ref{eq:yulelik}) can be
+% ignored during MCMC for efficiency, the log-likelihood function for the Yule model
+% becomes:
+
+% \begin{equation}
+% \text{log P}(T|n,\lambda) = \text{log}(\lambda^{n-2}) - \lambda L.
+% \end{equation}
+
+% \noindent One can then easily compute the expected log-likelihood of an example
+% tree given some $\lambda$ value by hand, and compare it against the
+% value produced by the implementation being validated.
+% This forms the basis of what software engineers refer to as ``unit
+% testing'' (see the supplementary material for a unit test example
+% under the BEAST 2 platform).
+% Expected values can also be obtained from independent
+% implementations of the likelihood function -- the more different the
+% other implementation (e.g., different algorithms and programming
+% languages are used), the more robust the test is (see box 1).
+
+% \vspace{.25cm}
+% \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
+%   title=Box 2: Additional validation sanity-checks, fonttitle=\bfseries]
+%   \small
+
+%   In addition to the validation procedures described in the main text,
+%   method developers can opt to conduct sanity checks that will not
+%   provide evidence for model correctness, but that can nonetheless
+%   reveal something is wrong with the implementation of a likelihood
+%   function (i.e., checks that are necessary but not sufficient).
+  
+%   \vspace{.25cm}
+%   \emph{The score function}
+  
+%   One such check is looking at properties of the score function,
+%   $U(\theta,D)=\frac{\partial}{\partial\theta}\log
+%   \text{P}(D|\theta)$.
+%   $U(\theta,D)$ is the gradient of the log-likelihood function with
+%   respect to $\theta$ (the parameters in the model), thus indicating
+%   the slope of $\text{P}(D|\theta)$ and its behavior given very small
+%   changes in $\theta$.
+%   Given a data set $D$ generated from one or more $\theta$ values, it
+%   should be expected from a correct model implementation that:
+
+%   \begin{equation}\label{eq:scorefunction}
+%     \text{E}[U(\theta,D)] = \int U(\theta,D)\text{P}(D|\theta)dD = 0,
+%   \end{equation}
+
+%   This theoretical expectation can then be compared to the one
+%   computed from a simulated data set (generated by $S(M)$; see the
+%   supplementary material for more details).
+
+%   \vspace{.25cm}
+%   \emph{Comparing empirical vs. target posterior distributions}
+
+%   Given a correctly implemented simulator for model $M$, $S(M)$, one
+%   can directly generate a $\text{P}_{\text{S}}(\theta)$ distribution that
+%   should be approximated by $\text{P}_{\text{I}}(\theta)$ at stationarity.
+%   Note that under this validation scope, there is no data.
+%   If chains are run long enough (as suggested by large effective
+%   sample sizes, ESS's), $\text{P}_{\text{S}}(\theta)$ and
+%   $\text{P}_{\text{I}}(\theta)$ can be compared, and large
+%   discrepancies between them can be taken as evidence of an error in the
+%   likelihood function implementation (assuming all other inferential
+%   components are working properly).
+
+%   \vspace{.15cm}
+%   Such task can be done with a non-parametric test, for example, such
+%   as the Kolgomorov-Smirnov test \citep{kolgomorov,smirnov,ks}, which
+%   compares two empirical distribution functions (\emph{ecdf}'s) or an
+%   \emph{ecdf} with a cumulative distribution function (\emph{cdf}).
+%   We provide an example of this procedure in the supplementary material.
+% \end{tcolorbox}
+
+% Alternatively, a more comprehensive approach could involve comparing
+% some expected quantity against its sampling distribution under the
+% model being validated.
+% This sampling distribution is often obtained through MCMC, with
+% newly proposed parameter values being accepted in direct proportion to
+% their likelihood under the model (i.e., this distribution comes from
+% $I(M)$ without using any data, just a fixed $\theta$ value).
+% Given a correct implementation of the Yule model,
+% for example, the distribution of tree heights (for some $\lambda$
+% value) should peak around the value given by from equation \ref{eq:yule}.
+% This procedure is more comprehensive than unit testing because of its
+% dependence on MCMC, which means a valid result requires correct
+% implementations of both the likelihood function and the proposal mechanism.
+
+% When analytical expectations are not available, the distribution
+% sampled from $I(M)$ with MCMC, $\text{P}_{\text{I}}(\theta)$, can be
+% compared to a target distribution sampled with $S(M)$
+% ($\text{P}_{\text{S}}(\theta)$, see box 2).
+% $S(M)$ can also be itself conveniently used by $I(M)$ as the proposal
+% density during MCMC (see listing 2 in the supplementary material for
+% an example).
+% This allows isolating the validation task to the model:
+% when other proposal densities are used, mismatched distributions can be
+% due to malfunctioning of either or both model and proposal mechanism.
+
+% \vspace{.5cm}
+% \noindent \emph{The model often recovers the right parameter values
+%   from data sets simulated at a (grid of) point(s) in parameter space}
+
+% Perhaps the most common approach to date for validating a
+% probabilistic model involves simulating data sets under specific parameter
+% values -- the scope here requires a simulator $S(M)$ used to simulate
+% \emph{data} under model $M$ -- carrying out inference, and tabulating
+% estimates depending on how close they were to the known, true values.
+% This procedure is particularly valuable in the context of point estimates
+% that ignore uncertainty, characteristic of maximum-likelihood methods (e.g.,
+% \citealp{mccormack09,han13,mendes17}), but of smaller if not unclear
+% utility in the Bayesian framework.
+
+% Differently from frequentist methods, which rely on approximate bootstrap
+% analyses, Bayesian models allow for exact statistical inference while
+% simultaneously addressing uncertainty.
+% As a result, parameter estimates come in the form of a posterior
+% distribution that depends not only on the model likelihood, but
+% also the priors of choice.
+% Validating a Bayesian model by trying to recover
+% hand-picked parameter values can be problematic because it is unclear
+% which prior is to be used, and also how often one should
+% expect a specific highest posterior density (HPD) interval to contain
+% the true parameter values.
+
+% Presumably, correct model implementations should yield HPDs that contain
+% the true values more often than not, but determining what ``often'' means
+% for complex models and priors is not trivial.
+% Thus, there are no theoretical guarantees that a model is correctly
+% implemented should most inferred 95\% HPDs include the true parameter
+% values, for example, or vice-versa.
+% This validation approach can still be useful in revealing regions
+% in parameter space where inference is easier or harder (given different
+% prior distributions), but we instead recommend procedures that are exact,
+% such as calibrated validation studies (see below).
+
+% \vspace{.5cm}
+% \noindent \emph{The model correctly estimates parameter values from
+%   data sets simulated from prior distributions, as indicated by the
+%   estimated posterior coverage}
+
+% Rather than simulating a fixed number of data sets for hand-picked
+% parameter values (see above), we can let the prior density of
+% different values dictate how often they are used in simulations.
+% This forms the basis of a calibrated validation study: a large number
+% of data sets are simulated directly from the prior distributions on
+% model parameters.
+% Here, the choice of prior is arbitrary, but ideally should reflect
+% what is currently known about the natural phenomenon being modeled.
+
+% The advantage of this approach is that if the same Bayesian model (which
+% includes likelihood \emph{and} priors) is used for both
+% simulation and inference, there are clear expectations under a
+% correctly implemented model.
+% Namely, out of a large number of simulations, the coverage of a
+% parameter should match the width of the HPD of choice
+% (coverage is defined as the number of times the HPD
+% interval contains the true value out of the total number of
+% simulations; \citealp{dawid82}).
+% For example, in the case of the commonly used 95\%-HPD interval, the true value
+% should often be inside the HPD between 90--98\% of the time (Table
+% \ref{tab:coverage}).
+
+
+% Figure \ref{fig:yulecalval} shows the results of a calibrated
+% validation analysis for a simple Bayesian model.
+% Here, the full model is comprised of an exponential prior (with an
+% arbitrary mean of 0.01) on the birth-rate
+% $\lambda$, with the Yule likelihood (i.e., a pure-birth process)
+% modelling speciation times $\tau$ (Fig. \ref{fig:yulecalval}a).
+% We plot 100 ``true'' $\lambda$ values (drawn from the exponential prior)
+% against their posterior means estimated through MCMC from the
+% corresponding trees simulated under the Yule model
+% (Fig. \ref{fig:yulecalval}b-d).
+% Note that coverage is good for the first and second calibrated
+% validation analyses (the vast majority of 95\%-HPDs
+% include the true values, as shown by the blue vertical lines; Fig
+% \ref{fig:yulecalval}b-c), for which the model was correctly
+% specified.
+% Coverage is not good in the third analysis, where the model was
+% mispecified on purpose (a log-normal prior was used in inference,
+% rather than an exponential; Fig. \ref{fig:yulecalval}d).
+% Beyond coverage, one can also determine how good estimates can be,
+% potentially under several simulation scenarios, by investigating the
+% correlation between true parameter values and their posterior means.
+% Correlation should be high when the data carries a lot of
+% signal (Fig. \ref{fig:yulecalval}b), and low otherwise (Fig. \ref{fig:yulecalval}c).
+
+% Calibrated validation is a multifarious
+% analysis, as it not only verifies the correctness of a model
+% likelihood (both $S(M)$ and $I(M)$), but also of all the components
+% involved in the sampling of the posterior.
+% For this reason, calibrated validation is the most thorough,
+% integrated procedure one can carry out when the goal is to verify
+% implementation correctness.
+% We provide further guidelines and code examples for
+% calibrated validation in the supplementary material.
 
 \subsection*{Validating the MCMC transition mechanism (operators)}
 
 At the heart of MCMC as an approach to sample a target distribution
 (conventionally, $\text{P}(\theta|D)$) is
-the Metropolis-Hastings algorithm \citep{mh}.
+the Metropolis-Hastings algorithm \citep{metropolis53,mh}.
 This algorithm uses a transition mechanism (i.e., a set of
 ``operators'') characterized by a proposal density $q(\theta'|\theta)$
 that perturbs parameter values $\theta$ toward new values $\theta'$.
@@ -939,202 +922,13 @@ mutually exclusive set of correctly implemented operators capable of
 generating an ergodic chain (see item
 (a) in supplementary table S1). 
 
-Finally, a calibrated validation study also serves the purpose of
+Finally, a well-calibrated validation study also serves the purpose of
 validating the transition mechanism.
 Low coverage might indicate not only that the model was incorrectly
 implemented, but also that operators are not functioning as expected.
 Determining which of the two possibilities -- or whether both are
 happening -- is not a trivial task, and careful diagnostics are
 necessary on the part of method developers.
-
-% The direct simulator operator (see \texttt{DirectSimulatorOperator}
-% above) can be used as starting operator, and new operators added one by
-% one to verify correctness.
-
-% The BEAST 2
-% \href{https://github.com/rbouckaert/Experimenter}{Experimenter} package
-% can assist (see section ``Using the Experimenter package'' below).
-
-% \subsubsection{MCMC sampling to verify correctness of operator
-% implementations}\label{mcmc-sampling-to-verify-correctness-of-operator-implementations}
-
-% A useful test for an MCMC sampler for a model (likelihood + operators)
-% is if it can produce the same distribution as direct simulation. For
-% phylogenetic models, this would usually be the tree prior. The core
-% components of this test:
-
-% \begin{itemize}
-% \item
-%   Two samplers
-
-%   \begin{itemize}
-%   \item
-%     a simulator (see the previous test for details)
-%   \item
-%     \texttt{beast.core.SamplerFromMCMC}
-
-%     \begin{itemize}
-%     \item
-%       extends the normal BEAST MCMC class
-%     \item
-%       needs a model/likelihood and operators
-%     \item
-%       To test a single, potentially non-ergodic operator, a separate
-%       simulator could be used as a global operator with the
-%       \texttt{beast.simulation.OperatorFromSampler} class
-%     \end{itemize}
-%   \end{itemize}
-% \item
-%   A multivariate statistic
-
-%   \begin{itemize}
-%   \item
-%     \texttt{beast.validation.statistics.UltrametricTreeStatistics}
-%     provides some basic statistics on BEAST time trees
-%   \item
-%     For an example of statistics on more complex tree-like objects, see
-%     \href{https://github.com/tgvaughan/bacter/blob/master/src/bacter/util/ConversionGraphStatsLogger.java}{\texttt{bacter.util.ConversionGraphStatsLogger}}
-%   \end{itemize}
-% \item
-%   \texttt{beast.validation.tests.BootstrapMultivariateDistributionTest}:
-%   a test that bootstraps a multivariate generalisation of the
-%   Kolmogorov-Smirnov (KS) statistic to compare distributions (see
-%   {[}\texttt{stats-tricks.md}{]} for further details)
-% \end{itemize}
-
-% \href{https://github.com/christiaanjs/beast-validation/blob/master/examples/birth-death-sampling-prior-sampling-test.xml}{An
-% example XML for this test on the birth-death-sampling tree prior} can be
-% found in the BEAST validation examples.
-
-% \begin{figure}
-% \includegraphics[width=0.19\textwidth]{../figures/bargraph-ok-strong}
-% \includegraphics[width=0.19\textwidth]{../figures/bargraph-ok-medium}
-% \includegraphics[width=0.19\textwidth]{../figures/bargraph-ok-weak}
-% \includegraphics[width=0.19\textwidth]{../figures/bargraph-under}
-% \includegraphics[width=0.19\textwidth]{../figures/bargraph-over}
-% \caption{\label{fig:coverage}
-% Graphs show true value on x-axis and estimates on y-axis. Black line shows where x equals y axis, and where ideally most of the probability mass is concentrated. Black dots are means of estimates. Bars indicate 95\% HPDs where blue bars cover the true value and red ones do not. Ideally 95 out of 100 bars should be blue.
-% a) Strong coverage: true parameter can be inferred accurately.
-% b) Medium coverage: true parameter can be inferred, but with high uncertainty.
-% c) Weak coverage: true parameter cannot be inferred, even though 95\% HPD covers the true value sufficiently often.
-% d) True parameter is over estimated.
-% e) True parameter is under estimated.
-% }
-% \end{figure}
-
-
-% \section{Setting priors}\label{setting-priors}
-
-% For a well calibrated test, priors need to be selected. Ideally, these priors should 
-% cover the widest range of possible applications. However, in many software implementations,
-% the priors are set so wide that when used in a well calibrated test, many parameters cannot
-% be recovered. Here, we provide some guidelines on how to set priors for some parameters
-% that are frequently occurring in phylogenetic models.
-
-% \subsection{Trees \& clock model
-% parameters}\label{trees-clock-model-parameters}
-
-% The mutation rate \(\mu\) must have been such that the tree height
-% \(h_T\) cannot exceed \(1/\mu\) (in other words, \(\mu h_T\le 1\)),
-% otherwise there would be saturation, and sequences could not possibly
-% have sufficient information to align. At the other end of the spectrum,
-% where \(\mu h_T\) close to zero, very long sequences are required to
-% ensure there are enough mutations in order to be able to reconstruct the
-% tree distribution.
-
-% % TODO: formulate in terms of \(N_e\) instead of \(h_T\)?
-
-% For reasonable computation times, trees should never be over 1 substitutions high
-% to prevent unreliable reconstruction of the phylogeny. Ideally, they should
-% be about 0.5 substitutions high and sequences of about 1000 base pairs long will be
-% sufficient. If a wider range is chose,  sequences may need to be much longer to reliably 
-% reconstruct smaller trees. Adding gamma rate heterogeneity to the model can alleviate 
-% the requirement for longer sequences somewhat, but having trees fairly close 
-
-% One way to enforce a range on the tree height is to have
-%  a narrow prior on birth rates (for birth/death type tree priors), or enforcing 
-%  it directly by  putting an MRCA prior on the height of the tree, for coalescent
-%  models. Note that the latter hampers direct simulator implementations.
-
-% For clock models with mean clock rate not equal to 1, simulate trees with clock
-% rates times tree height approximately 0.5.
-
-% Published mutation rates can range from \(O(1e-2)\) substitutions per
-% site per year for viruses such as HIV (\cite{cuevas2015extremely}), to
-% \(O(1e-11)\) for conserved regions of nuclear DNA (e.g PyrE2 locus in
-% Haloferax volcanii (\cite{lynch2010evolution})). So, for releases, tree priors for clock
-% and trees should be made less informative in order to cater for a wider 
-% range of tree heights and clock rates.
-
-% {\bf Gamma rate heterogeneity}\label{gamma-rate-heterogeneity}:
-% To prevent saturation, adding categories with slow rates will go some
-% way to allow covering a larger range of clock rates. Using gamma rate
-% heterogeneity with shape values in the range 0.1 to 1 allows this, so
-% adopt a gamma shape prior accordingly.
-
-% {\bf Proportion invariable sites}\label{proportion-invariable-sites}:
-% Since each site evolves with non-zero rate, use of proportion invariable
-% sites is modelling the process badly, and therefore not recommended.
-
-% {\bf Frequencies}\label{frequencies}:
-% Priors ideally should be set in realistic ranges, e.g.~frequency priors
-% not uniform(0,1) but Dirichlet(4,4,4,4) is better.
-
-% {\bf Substitution model parameters}\label{substitution-model-parameters}:
-% Default priors seem OK for most substitution models.
-
-% \section{Coverage trouble shooting}\label{trouble-shooting}
-
-% With 100 trials, the occasional 91 is acceptable (the 95\% HPD = 90 to 98 probability the
-% implementation is correct -- see Table \ref{tab:coverage}) but coverage below 90 almost surely indicate
-% an issue with the model or operator implementation. Also, coverage of 99
-% or 100 should be looked at with suspicion -- it may indicate overly wide
-% uncertainty intervals.
-
-% Common causes of low coverage are ESS too low,
-% trees cannot be reconstructed reliably (height should not be too small or large),
-% Hastings ratio in operators incorrectly implemented, and
-% bugs in model likelihood implementation.
-% So, the first thing to check when coverage is too low, is the ESS used for
-% estimates.
-% One reason coverage can be lower is if the ESSs are too small, which can
-% be easily checked by looking at the minimum ESS for the log entry. If
-% these values are much below 200 the chain length should be increased to
-% be sure any low coverage is not due to insufficient convergence of the
-% MCMC chain.
-
-% \section{Stats tricks for validating models}
-
-
-% For a density $p$ on data $x$ (this could be a scalar, vector, or a tree) parameterised by the vector $\theta$, the expected value of the score function $U(\theta,x)=\frac{\partial}{\partial\theta}\log p(x;\theta)$ is 0:
-
-% \begin{equation}\label{eq:scorefunction}
-% E(U(\theta,x)) = \int U(\theta,x)p(x;\theta)dx = 0
-% \end{equation}
-
-% (this is the expected value over the data $x$ at the true parameters $\theta$). Also, the covariance of the score function is equal to the negative Hessian of the log-likelihood:
-
-% $$
-% \textrm{Var}(U(\theta, x))=-E\left(\frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)
-% $$
-
-% Or equivalently:
-
-% \begin{equation}\label{eq:variancestatistic}
-% E\left(U(\theta, x)U(\theta, x)^T + \frac{\partial^2}{\partial\theta^2}\log p(x;\theta)\right)=0 
-% \end{equation}
-
-% Proofs of these results are relatively straightforward\footnote{\url{https://en.wikipedia.org/wiki/Score_(statistics)}}. The proofs depend on some regularity conditions to interchange integration and differentiation\footnote{\url{https://en.wikipedia.org/wiki/Leibniz_integral_rule}}; roughly speaking, the parameters must not change the support of the data. This means they don't hold for some parameters of interest in phylogenetics e.g. the origin time in a birth-death tree prior.
-
-% These properties can be used in conjunction with a direct simulator as a necessary but not sufficient check that the likelihood is implemented correctly. The score function (\ref{eq:scorefunction}) and Hessian (\ref{eq:variancestatistic}) statistics can be calculated on samples from the simulator and a hypothesis test used to check that their mean is 0. In the multivariate case a potentially useful test is the likelihood ratio test for a multivariate normal with zero mean. If there are non-identifiable parameters there may be issues with performing this test as colinearity will lead to a singular sample covariance matrix.
-
-% In practice it is appropriate to compute the score function by calculating derivatives using finite differences\footnote{Implemented here: \url{https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/statistics/NumericalScoreFunctionStatistics.java}}.
-
-% \subsection{Comparing multivariate distributions}
-
-% Often we want to evaluate whether two multivariate samples are drawn from the same distribution. For example, when testing that an MCMC sampler produces the same distribution as direct simulation. There is no obvious choice of statistical machinery for performing this test. A popular univariate test for whether two samples are drawn from the same distributions is the Kolmogorov-Smirnov (KS) test\footnote{\url{https://en.wikipedia.org/wiki/Kolmogorov\%E2\%80\%93Smirnov_test\#Two-sample_Kolmogorov\%E2\%80\%93Smirnov_test}}, which uses a statistic based on the maximum difference between empirical cumulative distribution functions (ECDFs). The asymptotic distribution of this statistic has been derived. One way to adapt this to multivariate samples would be to test the marginals, but this would miss differences in correlations between variables.
-
-% We can extend this test to multivariate distributions using multivariate ECDFs\footnote{\url{https://en.wikipedia.org/wiki/Cumulative_distribution_function\#Multivariate_case}}. However, the asymptotic distribution of this statistic is not known. One approach would be to generate a sampling distribution of the statistic under the null hypothesis (distributions being the same) with the non-parameteric bootstrap, pooling samples from both distributions. Calculating the ECDF for each bootstrap sample is expensive but can be made more efficient by pre-computing indicators of pairwise 'less than's between samples\footnote{Implemented here: \url{https://github.com/christiaanjs/beast-validation/blob/master/src/beast/validation/tests/BootstrapMultivariateDistributionTest.java}}.
 
 \section*{Concluding remarks}
 
@@ -1152,16 +946,6 @@ We hope our guidelines can help raise the standards for software
 package releases required by users, developers and reviewers alike,
 and consequently lead to computational tools that are more efficient,
 better documented, and most importantly, correctly implemented.
-
-% When publishing well calibrated studies, all XML files, log files and
-% scripts for manipulating them should be made available, so the study can
-% be replicated exactly as is. A practical way to do this is through a
-% \href{http://github.com}{github} repository.
-
-% Version numbers of BEAST and packages used should be noted.
-
-% For released software, default priors should be made as uninformative as 
-% possible and/or provide some guidance on how to set them -- users will use defaults.
 
 \subsection*{Funding}
 F.K.M. and A.J.D. were supported by Marsden grant 16-UOA-277. R.B. was
