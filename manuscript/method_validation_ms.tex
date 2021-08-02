@@ -60,6 +60,8 @@
 %\posttitle{\end{center}} % Article title closing formatting
 
 \title{How to validate a Bayesian model} % Article title
+%LM: strictly speaking, we're 'validating' the inference machinery.
+%% Validating a model involves epistemic considerations that are, as far as I understand, outside the scope of this paper.
 \author{\textsc{F\'{a}bio K. Mendes$^{1*}$}, \textsc{Remco Bouckaert$^{2*}$},\\
 \textsc{Christiaan Swanepoel$^{2}$}, \textsc{Alexei J. Drummond$^{1,2}$} \\
 \small $^1$School of Biological Sciences, The University of Auckland\\
@@ -445,6 +447,7 @@ implemented (Fig. \ref{fig:yulemean}).
     \includestandalone[width=7cm]{../figures/yule_exp_height}    
   \end{subfigure}
   \hfill
+  %LM TODO: think about uncertainty intervals for coverage.
   \caption{Validation of Yule tree simulator.
     (a) Number of simulated data sets (out of 100) for which the
     expected tree height ($t_{\text{root}}$) was inside the 95\% CI
@@ -554,6 +557,9 @@ to the validation task.
 
 \textcolor{red}{FKM will fill this section.}
 
+\cite{Talts2018} propose.
+PROOF of posterior CIs
+
 \begin{table}
 \begin{center}
 \begin{tabular}{lc}
@@ -595,11 +601,55 @@ k & $\text{P}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
   \label{fig:yulecalval}
 \end{figure}
 
-\noindent \emph{Simulation-based validation study}
+\noindent \emph{Simulation-based
+% validation
+calibration
+study}
 
 \textcolor{red}{FKM will run a SBV on a simple hierarchical model
   here.}
 
+The basic idea is to draw $\theta^{(i)}, i = 1, \ldots, M$ from its prior, $\pi(\theta)$, simulate some data $y^{(i)}$ from $p(y^{(i)} \mid \theta^{(i)})$, use the computational machinery under evaluation to recover $p(\theta \mid y^{(i)})$ and then produce a sample $\boldsymbol\theta_s^{(i)}$ of size $L$.
+Then one computes the rank $r^{(i)}$ of  $\theta^{(i)}$ in  $\boldsymbol\theta_s^{(i)}$.
+\cite{Talts2018} show (Theorem 1 therein) that if the algorithm works as intended the distribution of the ranks will follow a uniform distribution on $[1, L + 1]$.
+
+\begin{enumerate}
+\setcounter{enumi}{-1}
+ \item Generate a reference tree from the prior $\bar{\tau}_0  \sim \pi_T(\tau | \boldsymbol \gamma)$;
+ 
+ \textbf{for} each iteration in 1:N, \textbf{do}:
+ 
+ \item Generate $\bar{\tau} \sim \pi_T(\tau | \boldsymbol \gamma)$;
+ \item Compute the distance $\bar{\delta} = d_\sigma(\bar{\tau},\bar{\tau}_0)$ according to the metric of choice;
+ \item Generate some (aligment) data $\tilde{y} \sim p(y | \bar{\tau}, \boldsymbol\alpha)$;
+ \item Draw (approximately) $\boldsymbol \tau_s = \{\tau_s^{(1)}, \tau_s^{(2)}, \ldots, \tau_s^{(L)}\}$ from the posterior $\pi(\tau | \tilde{y})$;
+ \item Compute distances $\boldsymbol \delta_s = \{ \delta_1, \delta_2, \ldots, \delta_L \}$  with $\delta_i = d_\sigma(\tau_s^{(i)}, \bar{\tau}_0)$;
+ \item Compute the rank $r(\boldsymbol\delta_s, \bar{\delta}) = \sum\limits_{i=1}^L \mathbb{I}(\delta_i < \bar{\delta})$.
+\end{enumerate}
+
+% Note that a tree by itself does not allow one to simulate the observables (alignments). %TODO decide whether to include this
+% Obviously, one might choose to keep $\boldsymbol \alpha$ fixed during the procedure, but it this will not exactly assess the validity of the joint sampler. 
+% This is particularly important for phylogenetics because the relationship between phylogeny and other parameters non-linear.
+
+One important general point about phylogenetic space is that it does not possess a canonical representation.
+The BHV parametrisation is quite useful in that allows unique geodesics and admits central limit theorems, so maybe there is some theoretical justification for using BHV path lengths as the univariate representation -- i.e. the $\delta$ -- in phylo-SBC.
+
+\paragraph{Functionals}
+
+The key to effective SBC is choosing functionals that reflect relevant estimators of the quantities of interest.
+As with any other high-dimensional model, we explore different functionals of $\tau$ in order to study different aspects of the estimation procedure.
+Unlike many models, however, phylogenies are very hard to summarise using univariate measures.
+We exploit the metric nature of the space of phylogenies and compute distances with respect to a reference phylogeny $\tau_0$ under different tree distances.
+In this study I have used the following functionals:
+\begin{itemize}
+ \item The largest branch length in $\tau$, $M(\tau)$;
+ \item The length of the phylogeny, i.e.,  the sum of branch lengths $S(\tau)$;
+ \item The length of the external branch leading to taxon $s_1$, $T_1(\tau)$;
+ \item The Robinson-Foulds distance between $\tau$ and $\tau_0$, $\operatorname{RF}_0(\tau)$;
+ \item The Billera-Holmes-Vogtman (BHV) distance between $\tau$ and $\tau_0$, $\operatorname{BHV}_0(\tau)$;
+\end{itemize}
+
+  
 % There is a wide variation on the validation stringencies different
 % methods and models are subjected to in the course of their
 % development \citep{darriba18}.
