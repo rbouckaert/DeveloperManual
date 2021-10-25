@@ -641,6 +641,7 @@ When $M=100$ and $\alpha = 0.95$, the confidence interval for the number of simu
   
 \cite{Talts2018} show that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian intervals.
 In particular, they show (Theorem 1 therein) that if the algorithm works as intended the distribution of the rank $r^{(i)}$ of  $\theta^{(i)}$ in  $\boldsymbol\theta_s^{(i)}$ will follow a uniform distribution on $[1, L + 1]$.
+Adherence to this distribution can be investigated through histograms~\citep{Talts2018} and the empirical cumulative distribution function (ECDF) and its confidence bands~\citep{Sailynoja2021}.
 In phylogenetics, however, we are usually interested in the phylogeny, for which there is no canonical total-ordering structure. 
 To get around this difficulty, we propose computing phylogenetic distances, for which total-ordering holds and thus for which ranks make sense.
 The general algorithm for simulation-based calibration for phylogenetics can be described briefly as
@@ -685,7 +686,6 @@ In this study I have used the following functionals:
 In order to illustrate how a typical phylogenetic SBC analysis might work, we discuss a simple example where [REMCO will describe this in detail].
 
 Figure~\ref{fig:sbc} shows the results for the functionals discussed in the previous section, i.e., tree length, maximum branch length and the length of the first external branch as purely continuous parameters and the Billera-Holmes-Vogtman (BHV), Robinson-Foulds (RF) and Kendall-Coljin phylogenetic distances.
-
 As can be seen, the sampler yielded samples that do not point to any anomaly; the ECDFs lie well inside their confidence ellipses and the observed ranks also lie inside their confidence bands.
 
 \begin{figure}
@@ -708,6 +708,11 @@ As can be seen, the sampler yielded samples that do not point to any anomaly; th
    We show the empirical cumulative distribution function (ECDF) for each functional described in Section~\ref{sec:sbc} in panel (a), whereas the distribution of the attained ranks is shown in panel (b).}
   \label{fig:sbc}
 \end{figure}
+
+The plots in Figure~\ref{fig:phylo_calibration} also show that the HPDs do cover the generating parameters with probability compatible with what is expected theoretically.
+In this instance, the tests would fail to detect problems with the algorithm.
+These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity.
+A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
 
 \begin{figure}
  \includegraphics[width=\textwidth]{../figures/coverage.pdf}
