@@ -1094,12 +1094,12 @@ supported by Marsden grant .
 \label{appendix::sec:proofs}
 
 For a number $M$ of simulations, simulate
-$$
+
 \begin{align}
 \theta^{(i)} &\sim \pi(\cdot) \\
 y^{(i)} \mid \theta^{(i)} &\sim f(\cdot \mid \theta^{(i)})
 \end{align}
-$$
+
 Now  for brevity, define $a^{(i)} := a(y^{(i)}, \alpha)$ and $b^{(i)} := b(y^{(i)}, \alpha)$ and recall $I_{\alpha}\left(y^{(i)}\right)$ is such that 
 $$
 Q\left(b^{(i)} \mid y^{(i)}\right) - Q\left(a^{(i)} \mid y^{(i)}\right) = p_1 - p_2 = \alpha,
@@ -1112,7 +1112,7 @@ $$
 i.e. the attained coverage of the Bayesian intervals.
 Let $F_U(x) = x$ be the CDF of a $\operatorname{Uniform(0, 1)}$ random variable. 
 We may re-write the limit as
-$$
+
 \begin{align}
 \lim_{M \to \infty} S_M &= \lim_{M \to \infty} M^{-1}\sum_{i=1}^M \mathbb{I}\left(\theta^{(i)} \in I_{\alpha}\left(y^{(i)}\right) \right),\\
 &=  \lim_{M \to \infty} M^{-1}\sum_{i=1}^M \left\{ \mathbb{I}\left(\theta^{(i)} \leq b^{(i)} \right) - \mathbb{I}\left(\theta^{(i)} \leq a^{(i)} \right) \right\},\\
@@ -1120,7 +1120,7 @@ $$
 &=  \lim_{M \to \infty} M^{-1}\sum_{i=1}^M \mathbb{I}\left(Q_{y^{(i)}}^{-1}\left(\theta^{(i)}\right) \leq p_1 \right) -   \lim_{M \to \infty} M^{-1}\sum_{i=1}^M\mathbb{I}\left(Q_{y^{(i)}}^{-1}\left(\theta^{(i)}\right) \leq p_2 \right),\\
 &= F_U(p_1) - F_U(p_2) = \alpha,
 \end{align}
-$$
+
 where the last line follows from the fact that the CDF of $\theta^{(i)}$ is uniformly distributed on $(0, 1$) (Theorem 1 in \cite{Cook2006}) and almost sure convergence of the ECDF to the true CDF (Glivenko-Cantelli theorem).
 
 \end{document}

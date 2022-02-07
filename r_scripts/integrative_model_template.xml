@@ -1,0 +1,77 @@
+<beast version="2.0" namespace="beast.core:beast.evolution.alignment:beast.evolution.tree:beast.evolution.operators:beast.math.distributions:beast.evolution.speciation:beast.core.util:beast.core.parameter">
+
+  <run spec="MCMC" chainLength="5000000">
+    <state id="state">
+      <stateNode idref="birthDiffRate"/>
+      <stateNode idref="bmRate"/>
+      <stateNode idref="tree"/>
+    </state>
+
+    <distribution spec="CompoundDistribution" id="posterior">
+      <!-- START likelihood -->
+      <distribution spec="CompoundDistribution" id="likelihood" useThreads="false">
+	<distribution spec="YuleModel" id="yuleModel">
+	  <tree spec="beast.util.TreeParser" id="tree" adjustTipHeights="false" newick="[TreeHere]" offset="0" singlechild="false">
+
+	    <taxonset spec="TaxonSet">
+	    [TaxonSetHere]
+	    </taxonset>
+	  </tree>
+
+	  <birthDiffRate spec="RealParameter" id="birthDiffRate" value="1.0"/>
+	</distribution>
+
+	<distribution id="BMMVN" spec="contraband.mvnlikelihood.BMMVNLikelihoodOneTrait">	  
+	  <tree idref="tree"/>
+
+	  <oneTraitData id="oneTraitData" spec="parameter.RealParameter" keys="[spNamesHere]" value="[spTraitValuesHere]"/>
+	  
+	  <sigmaSq id="bmRate" dimension="1" spec="parameter.RealParameter">1.0</sigmaSq>
+	  
+	  <rootValue id="bmRootValue" dimension="1" spec="parameter.RealParameter">0.0</rootValue>
+	</distribution>	 
+      </distribution>
+      <!-- END likelihood -->
+
+      <!-- START prior -->
+      <distribution spec="CompoundDistribution" id="prior">
+	<distribution id="birthDiffRatePrior" spec="beast.math.distributions.Prior" x="@birthDiffRate">
+	  <distr id="birthDiffRateLN" spec="beast.math.distributions.LogNormalDistributionModel" S="[birthDiffRateStdDevHere]" M="[birthDiffRateMeanHere]"/>
+	</distribution>
+
+	<distribution id="bmRatePrior" spec="beast.math.distributions.Prior" x="@birthDiffRate">
+	  <distr id="bmRateLN" spec="beast.math.distributions.LogNormalDistributionModel" S="[bmRateStdDevHere]" M="[bmRateMeanHere]"/>
+        </distribution>
+      </distribution>
+      <!-- END prior -->
+    </distribution>
+
+    <operator id="birthDiffRateScaler" spec="ScaleOperator" parameter="@birthDiffRate" scaleFactor="0.75" weight="1.0"/>
+    <operator id="bmRateScaler" spec="ScaleOperator" parameter="@bmRate" scaleFactor="0.75" weight="1.0"/>
+    <operator id="YuleModelTreeScaler" spec="ScaleOperator" scaleFactor="0.5" tree="@tree" weight="3.0"/>
+    <operator id="YuleModelTreeRootScaler" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@tree" weight="3.0"/>
+    <operator id="YuleModelUniformOperator" spec="Uniform" tree="@tree" weight="10.0"/>
+    <operator id="YuleModelSubtreeSlide" spec="SubtreeSlide" tree="@tree" weight="10.0"/>
+    <operator id="YuleModelNarrow" spec="Exchange" tree="@tree" weight="10.0"/>            
+    <operator id="YuleModelWide" spec="Exchange" isNarrow="false" tree="@tree" weight="3.0"/>
+    <operator id="YuleModelWilsonBalding" spec="WilsonBalding" tree="@tree" weight="3.0"/>
+
+    <logger id="tracelog" logEvery="25000" fileName="[FileNameHere].log" model="@posterior" sanitiseHeaders="true" sort="smart">
+      <log idref="birthDiffRate"/>
+      <log idref="bmRate"/>
+    </logger>
+    
+    <logger id="treelog" logEvery="25000" fileName="[FileNameHere].trees">
+      <log idref="tree"/>
+    </logger>
+
+    <logger id="screenlog" logEvery="25000">
+      <log idref="posterior"/>
+      <log idref="likelihood"/>
+      <log idref="prior"/>
+      <log idref="birthDiffRate"/>
+      <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+    </logger>
+  </run>
+  
+</beast>

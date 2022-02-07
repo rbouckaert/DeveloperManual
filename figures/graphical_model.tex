@@ -1,0 +1,44 @@
+\documentclass[border=3mm]{standalone} % For LaTeX2e
+\usepackage{tikz}
+\usepackage{bm}
+\usepackage{scalefnt}
+\usepackage{xcolor}
+\usetikzlibrary{bayesnet}
+
+\begin{document}
+
+\definecolor{myblue}{HTML}{2ab7ca}
+\definecolor{myred}{HTML}{fe4a49}
+\definecolor{myyellow}{HTML}{fed766}
+\definecolor{mygreen}{HTML}{7bc043}
+
+\begin{tikzpicture}[
+cstyle/.style={rectangle,draw=black,font=\Large},
+dstyle/.style={draw=myblue!80,fill=myblue!30,font=\Large},
+vstyle/.style={draw=myyellow!80,fill=myyellow!30,font=\Large},
+detstyle/.style={draw=myred!80,fill=myred!30,font=\Large},
+every label/.style={font=\large},
+font=\large
+]
+
+  \node[latent, vstyle] (speciestree) {$\Phi$};
+  \node[latent, vstyle, above right=2.25cm and 0.5of speciestree] (b) {$\lambda$};
+  \node[const, cstyle, inner sep=2.5pt, left=.75cm of b] (origin) {$\mathcal{O} = 100.0$};
+  % \node[const, above right=0.5cm and 0.85cm of speciestree] (n) {$n$};
+  
+  \factor[above=of b] {LN-b} {above:LN(-3.25,0.2)} {} {} ;
+  \factoredge {} {LN-b} {b} ;
+  \factor[above=.75cm of speciestree] {Yule} {left:Yule} {} {} ; % Yule pdf
+  \factoredge {b,origin}  {Yule}  {speciestree} ;
+
+  \node[latent, vstyle, right=0.75cm of speciestree] (bmrate) {$r$};
+  \node[const, cstyle, inner sep=2.5pt, right=0.4cm of bmrate] (rootvalue) {$y_0 = 0.0$};
+  \node[latent, dstyle, below=1.5 cm of bmrate] (y) {$\boldsymbol{y}$};
+
+  \factor[above=of bmrate] {LN-bmrate} {above:LN(-2.5,0.5)} {} {} ;
+  \factoredge {} {LN-bmrate} {bmrate} ;
+  \factor[below=.75cm of bmrate] {BM} {left:PhyloBM} {} {} ; % BM pdf
+  \factoredge {speciestree,bmrate,rootvalue} {BM} {y} ;
+  
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,107 @@
+\documentclass[tikz,border=10pt]{standalone}
+
+\usetikzlibrary{shapes.geometric, arrows, positioning, decorations.markings, shapes.multipart}   
+\usepackage{amsmath}
+
+\begin{document}
+
+\definecolor{darkcerulean}{rgb}{0.03, 0.27, 0.49}
+\definecolor{cyanprocess}{rgb}{0.0, 0.72, 0.92}
+\definecolor{darktangerine}{rgb}{1.0, 0.66, 0.07}
+\definecolor{deeppink}{rgb}{1.0, 0.08, 0.58}
+\definecolor{lightseagreen}{rgb}{0.13, 0.7, 0.67}
+
+\tikzstyle{cloud} = [rectangle, rounded corners, draw=none, text centered, fill=red!30, text width=1.5cm, minimum height=.75cm]
+\tikzstyle{decision} = [diamond, draw=none, fill=darkcerulean!70, text=white, text centered]  
+\tikzstyle{document} = [rectangle, draw, fill=blue!30, text centered]   
+\tikzstyle{block} = [rectangle, draw=none, fill=cyanprocess!30, text centered]
+\tikzstyle{block1} = [rectangle, draw=none, fill=gray!20, text centered]
+\tikzstyle{block2} = [rectangle, draw=none, fill=lightseagreen!50, text centered]
+\tikzstyle{line} = [draw, -latex']  
+\tikzstyle{manual} = [shape=trapezium, draw, shape border rotate=90, trapezium left angle=90, trapezium right angle=80]
+\tikzstyle{io} = [trapezium, draw=none, trapezium right angle=120, fill=darktangerine!40]   % the draw command here is used to draw the boundary of mentioned shape. 
+ 
+% the command node distance is important as it determines the space or the length of the arrow between different blocks 
+\begin{tikzpicture}[node distance = 1.8cm, auto]  
+    
+    % the command given below are the place of nodes  
+    \node [cloud] (init) {Start};
+    \node [manual, text width=2.75cm, align=center] (prior) [below = 1cm of init] {Prior distribution, $f_\Theta(\cdot)$};
+    \node [block] (directsim0) [text width=2.75cm, below=1cm of prior] {$\text{S}\big[\mathcal{M}=f_\Theta(\cdot)\big]$};
+    \node [decision, text width=1.5cm, align=center] (decision0) [below = 1cm of directsim0] {$\text{S}[\mathcal{M}]$\\validated?};
+    \node [block1, text width = 2cm, align=center] [right = 1.5cm of decision0] (valsim0) {Validate $\text{S}[\mathcal{M}]$};
+    \node [io, text width=2.5cm, align=center] (params) [below = 1cm of decision0] {Parameters\\$\boldsymbol{\theta} = \{ \theta_1, ..., \theta_n \}$};
+    
+    % simulator
+    % \node [block] (lik) [text width=1cm, right=6.5cm of directdata] {$\text{I}(\mathcal{M})$};
+    \node [block] (directsim1) [text width=2.75cm, below=1cm of params] {$\text{S}\big[\mathcal{M}=f_{D|\Theta}(\cdot)\big]$};
+    \node [decision, text width=1.5cm, align=center] (decision1) [below = 1cm of directsim1] {$\text{S}[\mathcal{M}]$\\validated?};
+    % \coordinate [below = 0.75cm of decision1] (datacoord) {};
+    \node [block1, text width = 2cm, align=center] [right = 1.5cm of decision1] (valsim1) {Validate $\text{S}[\mathcal{M}]$};
+    % \draw[thick, dotted] ($(directsim.north west)+(-0.3,0.6)$) rectangle ($(lik.south east)+(0.3,-0.6)$);
+    
+    % data
+    % \node [decision, text width=1.5cm, align=center] (decision1) [below = 1cm of params] {Direct simulator available?};  
+    \node [io, text width=2cm, align=center] (directdata) [below = 1cm of decision1] {Data $\boldsymbol{d}=\{d_1, ..., d_n\}$}; 
+    % \node [io, text width=1cm, align=center] (mcmcdata) [below right = 1cm and 1cm of decision1] {Data $D'$}; 
+    
+    % inference
+    \node [block] (lik2) [below = 1cm of directdata] {$\text{I}\big[\mathcal{M}=f_{D|\Theta}(\cdot)f_\Theta(\cdot)\big]$}; 
+    \node [io, text width=3cm, align=center] (posterior) [below = 1cm of lik2] {Parameter samples\\$\boldsymbol{\theta_i^j} = \{\theta_i^1, ..., \theta_i^L\}$}; 
+    \node [block2] (cov) [text width=2cm, left = 1cm of posterior] {Calculate coverage};
+    \node [decision, text width=1.75cm, align=center] (decision2) [below = 0.5cm of posterior] {Coverage $\sim 95\%$?};
+    \node [block1, text width=2cm, align=center] [right = 1.5cm of decision2] (fix) {Repair $\text{I}[\mathcal{M}]$};
+    
+    \node [cloud] [below = 1cm of decision2] (done) {Stop};
+    
+    % lines
+    \path[line] (init) -- (prior);
+    \path[line] (prior) -- (directsim0);
+    \path[line] (directsim0) -- (decision0);
+    \path[line] (decision0) -- node [midway, right] {Yes} (params);
+    \path[line, draw=none, text width=1.5cm, align=center] (decision0) -- node [midway, left, xshift=0.25cm] {\footnotesize Sample $n$ times} (params);
+    \path[line] (decision0) -- node [midway, above] {No} (valsim0);
+    \path[line, rounded corners] (valsim0) |- (directsim0);
+    
+    \path[line] (params) -- (directsim1);
+    \path[line] (directsim1) -- (decision1);
+    \path[line] (decision1) -- node [midway, above] {No} (valsim1);
+    \path[line, rounded corners] (valsim1) |- (directsim1);
+    \path[line] (decision1) -- node [midway, right] {Yes} (directdata);
+    \path[line, draw=none, text width=1.5cm, align=center] (decision1) -- node [midway, left, xshift=0.25cm] {\footnotesize Sample $n$ times} (directdata);
+    
+    \path[line, rounded corners] (prior) --++ (-2,0cm) |- (lik2);
+    \path[line] (directdata) -- (lik2);
+    \path[line] (lik2) -- node [midway, text width=2.5cm] {\footnotesize for $i \in \{1, ..., n\}$ for $j \in \{1,...,L\}$} (posterior);
+    \path[line, rounded corners] (params) -| (cov.north);
+    \path[line] (posterior) -- (cov);
+    \path[line, rounded corners] (cov) |- (decision2);
+    \path[line] (decision2) -- node [midway] {No} (fix);
+    \path[line, rounded corners] (fix) |- (lik2);
+    \path[line] (decision2) -- node [midway] {Yes} (done);
+    
+    % \path[line] (params) -- (decision1);
+    
+    % \path[line] (decision1) -- node [midway, above, yshift=0.1cm] {No} (lik);
+    % \path[line] (directsim) -- (directdata);
+    % \path[line] (lik) -- node [midway, text width=2cm, align=center] {MCMC (from $f(\theta)$)} (mcmcdata);
+    % \path[line, rounded corners] (directdata.east) -| (decision1.north);
+    % \draw (decision2) -- node [midway, left] {Yes} (datacoord);
+    % \begin{scope}[decoration={markings, mark=at position 0.5 with {\arrow{latex'}}}]
+    % \draw[postaction={decorate}, rounded corners] (mcmcdata) |- (datacoord);
+    % \end{scope}
+    % \path[line] (decision1) -- node [above] {No} (valcoord);
+    % \path[line] (valcoord) -- (directsim);
+    % \path[line] (mcmcdata) -- (valcoord);
+    % \path[line] (datacoord) -- (lik2);
+    % \path[line] (lik2) -- node [midway, left] {MCMC} (posterior);
+    % \path[line] (posterior) -- (cov);
+    % \path[line, rounded corners] (cov) |- (decision2);
+    % \path[line, rounded corners] (decision2) -| node [midway, above, xshift=-.5cm] {No} (fix);
+    % \path[line, rounded corners, dashed] (fix.east) -| (lik);
+    % \path[line, rounded corners] (fix.north) |- (lik2);
+    % \path[line] (decision2) -- node [midway, left] {Yes} (done);
+      
+\end{tikzpicture}  
+
+\end{document}

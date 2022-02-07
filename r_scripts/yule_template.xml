@@ -1,0 +1,52 @@
+<beast version="2.0" namespace="beast.core:beast.evolution.alignment:beast.evolution.tree:beast.evolution.operators:beast.math.distributions:beast.evolution.speciation:beast.core.util:beast.core.parameter">
+
+  <run spec="MCMC" chainLength="5000000">
+    <state id="state">
+      <stateNode idref="birthDiffRate"/>
+    </state>
+
+    <distribution spec="CompoundDistribution" id="posterior">
+      <distribution spec="CompoundDistribution" id="likelihood" useThreads="false">
+	<distribution spec="YuleModel" id="yuleModel">
+	  <tree spec="beast.util.TreeParser" id="tree" adjustTipHeights="false" newick="[TreeHere]" offset="0" singlechild="false">
+
+	    <taxonset spec="TaxonSet">
+	    [TaxonSetHere]
+	    </taxonset>
+	  </tree>
+
+	  <birthDiffRate spec="RealParameter" id="birthDiffRate" value="1.0"/>
+	</distribution>	
+      </distribution>
+      
+      <distribution spec="CompoundDistribution" id="prior">
+	<distribution id="birthDiffRatePrior" spec="beast.math.distributions.Prior" x="@birthDiffRate">
+	  <!-- For exponential prior on birth-rate (normal yule and low signal yule) -->
+	  <distr id="birthDiffRateExp" spec="beast.math.distributions.Exponential" offset="0.0" mean="[birthDiffRateMeanHere]"/>
+
+	  <!-- For log-normal prior on birth-rate (wrong yule) -->
+	  <!-- <distr id="birthDiffRateLN" spec="beast.math.distributions.LogNormalDistributionModel" S="[birthDiffRateStdDevHere]" M="[birthDiffRateMeanHere]"/> -->
+        </distribution>
+      </distribution>
+    </distribution>
+
+    <operator id="birthDiffRateScaler" spec="ScaleOperator" parameter="@birthDiffRate" scaleFactor="0.75" weight="1.0"/>  
+
+    <logger id="tracelog" logEvery="25000" fileName="[FileNameHere].log" model="@posterior" sanitiseHeaders="true" sort="smart">
+      <log idref="birthDiffRate"/>      
+    </logger>
+    
+    <logger id="treelog" logEvery="25000" fileName="[FileNameHere].trees">
+      <log idref="tree"/>
+    </logger>
+
+    <logger id="screenlog" logEvery="25000">
+      <log idref="posterior"/>
+      <log idref="likelihood"/>
+      <log idref="prior"/>
+      <log idref="birthDiffRate"/>
+      <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+    </logger>
+  </run>
+  
+</beast>
