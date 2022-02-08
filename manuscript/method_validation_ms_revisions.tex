@@ -254,9 +254,8 @@ is a constant that can be ignored (i.e., $f(\theta|d)
 techniques like Markov chain Monte Carlo (MCMC) to sample the posterior
 distribution.
 This is because the MCMC algorithm that generates the Markov chain,
-called the Metropolis-Hastings \citep{metropolis53,mh} algorithm, only requires the
+called the Metropolis-Hastings algorithm \citep{metropolis53,mh}, only requires the
 posterior to be evaluated up to a constant.
-
 In practice, the Metropolis-Hastings algorithm samples the posterior
 distribution (also referred to as the ``target'' distribution) by means of a
 transition mechanism. 
@@ -265,24 +264,19 @@ irreducible, positive recurrent, and aperiodic, and the resulting
 chain is long enough, then the sampled posterior distribution will approximate
 the target distribution $f(\theta|d)$ \citep{smith93,tierney94,gelman}.
 
-We will spend time considering MCMC in particular as it is the commonly
-chosen technique for obtaining $f(\theta|d)$ under an implementation of
-model $\mathcal{M}$.
-A thorough validation effort thus entails verifying the
-correctness of (i) the model (i.e., $f(d|\theta)f(\theta)$), and (ii)
-the components involved in the MCMC transition mechanism.
-We note that the latter are not part of the model, however, and it is 
-possible to sample $f(\theta|d)$ with other techniques such as importance
-sampling, Hamiltonian Monte Carlo \citep{hmc}, or even by converting the
+% We will spend time considering MCMC in particular as it is the commonly chosen technique for obtaining $f(\theta|d)$ under an implementation of model $\mathcal{M}$.
+% A thorough validation effort thus entails verifying the correctness of (i) the model (i.e., $f(d|\theta)f(\theta)$), and (ii) the components involved in the MCMC transition mechanism.
+We note that the transition mechanism is not part of the model, however.
+It is possible in fact to sample $f(\theta|d)$ with other techniques such as
+importance sampling, Hamiltonian Monte Carlo \citep{hmc}, or even by converting the
 sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
-
-Finally, we stress that we are interested in practices for verifying model
-\emph{correctness}.
-There are other tests employed to ensure that a particular MCMC analysis
-is converging as anticipated.
-Determining that one or more independent Markov chains converged on very
-similar posterior distributions is not a correctness test, as those
-distributions might be very different from the target distribution.
+Below, we focus on practices for verifying model \emph{correctness} --
+while MCMC can be a critical component in model evaluation, and is
+a technique we employ here, we do not pay attention to this sampling
+machinery.
+Tests to ensure an MCMC analysis is converging as anticipated
+exist, but are outside the scope of this work.
+% Determining that one or more independent Markov chains converged on very similar posterior distributions is not a correctness test, as those distributions might be very different from the target distribution.
 
 \subsection*{Validating a Bayesian model}
 
@@ -389,7 +383,7 @@ consequently $\boldsymbol{T}$ as
 data).
 
 \begin{center}
-\includegraphics[width=11cm]{../figures/bmsim.pdf}
+\includegraphics[width=11cm]{../figures/bmsim.png}
 \label{fig:bmsim}
 \captionof{figure}{
   A sample of 1000 draws from a MVN distribution, each
