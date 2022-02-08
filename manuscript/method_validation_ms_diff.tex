@@ -1,7 +1,7 @@
 \documentclass[oneside]{article}
 %DIF LATEXDIFF DIFFERENCE FILE
 %DIF DEL method_validation_ms.tex             Wed Jan 26 09:35:43 2022
-%DIF ADD method_validation_ms_revisions.tex   Tue Feb  8 08:20:57 2022
+%DIF ADD method_validation_ms_revisions.tex   Tue Feb  8 08:27:08 2022
 
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
 \usepackage{graphicx} % FKM: for figures
@@ -91,7 +91,7 @@
 %LM: strictly speaking, we're 'validating' the inference machinery. %DIF > 
 %% Validating a model involves epistemic considerations that are, as far as I understand, outside the scope of this paper. %DIF > 
 %DIF -------
-\author{\textsc{F\'{a}bio K. Mendes\DIFdelbegin \DIFdel{$^{1*}$}\DIFdelend \DIFaddbegin \DIFadd{$^{1\dagger}$}\DIFaddend \RIGHTBRACE, \textsc{Remco Bouckaert\DIFdelbegin \DIFdel{$^{2*}$}\DIFdelend \DIFaddbegin \DIFadd{$^{2\dagger*}$}\DIFaddend \RIGHTBRACE,\\
+\author{\textsc{F\'{a}bio K. Mendes\DIFdelbegin \DIFdel{$^{1*}$}\DIFdelend \DIFaddbegin \DIFadd{$^{1\dagger*}$}\DIFaddend \RIGHTBRACE, \textsc{Remco Bouckaert\DIFdelbegin \DIFdel{$^{2*}$}\DIFdelend \DIFaddbegin \DIFadd{$^{2\dagger*}$}\DIFaddend \RIGHTBRACE,\\
 \textsc{\DIFdelbegin \DIFdel{Christiaan Swanepoel$^{2}$}\DIFdelend \DIFaddbegin \DIFadd{Luiz M. Carvalho$^{3\dagger}$}\DIFaddend \RIGHTBRACE, \textsc{Alexei J. Drummond\DIFdelbegin \DIFdel{$^{1,2}$}\DIFdelend \DIFaddbegin \DIFadd{$^{4}$}\DIFaddend \RIGHTBRACE \\
 \small $^1$\DIFdelbegin \DIFdel{School of Biological Sciences}\DIFdelend \DIFaddbegin \DIFadd{Department of Biology, Washington University in St. Louis}\\
 \small \DIFadd{$^2$School of Computer Science}\DIFaddend , The University of Auckland\\
@@ -826,17 +826,7 @@ to the validation task.
 \DIFadd{The more complex the natural phenomenon under study,
 the more difficult it will be to strike a good balance
 between model practicality and realism.
-}\begin{wrapfigure}{l}{6.85cm}
-  \label{fig:flowchart}
-  %DIF >  \includestandalone[width=6.75cm]{../figures/flowchart}
-  \includegraphics[width=6.75cm]{../figures/flowchart.pdf}
-  \caption{\DIFadd{The several steps involved in determining a Bayesian model is
-    well-calibrated. Note that even though we present simulation in two
-    , one for prior $f_\Theta(\cdot)$ and one for the likelihood
-    $f_D(\cdot|\theta)$, a Bayesian model $\mathcal{M}$ is 
-    defined by the density functions of both prior and likelihood.}}
-\end{wrapfigure}
-\DIFadd{The popular aphorism rings true: ``all models are wrong but some are useful''
+The popular aphorism rings true: ``all models are wrong but some are useful''
 \mbox{%DIFAUXCMD
 \citep{box79}}\hspace{0pt}%DIFAUXCMD
 .
@@ -866,7 +856,17 @@ the present contribution.
 Such model appraisals are normally carried out after a model is
 published, often in multiple contribution bouts, and are critical for a model's
 longevity.
-Analyses of model fit against data are normally accompanied by discussions on
+}\begin{wrapfigure}{l}{6.85cm}
+  \label{fig:flowchart}
+  %DIF >  \includestandalone[width=6.75cm]{../figures/flowchart}
+  \includegraphics[width=6.75cm]{../figures/flowchart.pdf}
+  \caption{\DIFadd{The several steps involved in determining a Bayesian model is
+    well-calibrated. Note that even though we present simulation in two
+    , one for prior $f_\Theta(\cdot)$ and one for the likelihood
+    $f_D(\cdot|\theta)$, a Bayesian model $\mathcal{M}$ is 
+    defined by the density functions of both prior and likelihood.}}
+\end{wrapfigure}
+\DIFadd{Analyses of model fit against data are normally accompanied by discussions on
 assumption validity, and more rarely by benchmarking and scrutinization of model
 behavior and implementation (e.g., \mbox{%DIFAUXCMD
 \citealp{maddison07,rabosky15,rabosky13,moore16,stadler10,luo20}}\hspace{0pt}%DIFAUXCMD

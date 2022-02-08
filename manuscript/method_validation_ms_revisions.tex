@@ -72,7 +72,7 @@
 \title{How to validate a Bayesian model} % Article title
 %LM: strictly speaking, we're 'validating' the inference machinery.
 %% Validating a model involves epistemic considerations that are, as far as I understand, outside the scope of this paper.
-\author{\textsc{F\'{a}bio K. Mendes$^{1\dagger}$}, \textsc{Remco Bouckaert$^{2\dagger*}$},\\
+\author{\textsc{F\'{a}bio K. Mendes$^{1\dagger*}$}, \textsc{Remco Bouckaert$^{2\dagger*}$},\\
 \textsc{Luiz M. Carvalho$^{3\dagger}$}, \textsc{Alexei J. Drummond$^{4}$} \\
 \small $^1$Department of Biology, Washington University in St. Louis\\
 \small $^2$School of Computer Science, The University of Auckland\\
@@ -612,16 +612,6 @@ to the validation task.
 The more complex the natural phenomenon under study,
 the more difficult it will be to strike a good balance
 between model practicality and realism.
-\begin{wrapfigure}{l}{6.85cm}
-  \label{fig:flowchart}
-  % \includestandalone[width=6.75cm]{../figures/flowchart}
-  \includegraphics[width=6.75cm]{../figures/flowchart.pdf}
-  \caption{The several steps involved in determining a Bayesian model is
-    well-calibrated. Note that even though we present simulation in two
-    , one for prior $f_\Theta(\cdot)$ and one for the likelihood
-    $f_D(\cdot|\theta)$, a Bayesian model $\mathcal{M}$ is 
-    defined by the density functions of both prior and likelihood.}
-\end{wrapfigure}
 The popular aphorism rings true: ``all models are wrong but some are useful''
 \citep{box79}.
 Very simple models are easier to implement in efficient inference tools, but will
@@ -641,6 +631,16 @@ the present contribution.
 Such model appraisals are normally carried out after a model is
 published, often in multiple contribution bouts, and are critical for a model's
 longevity.
+\begin{wrapfigure}{l}{6.85cm}
+  \label{fig:flowchart}
+  % \includestandalone[width=6.75cm]{../figures/flowchart}
+  \includegraphics[width=6.75cm]{../figures/flowchart.pdf}
+  \caption{The several steps involved in determining a Bayesian model is
+    well-calibrated. Note that even though we present simulation in two
+    , one for prior $f_\Theta(\cdot)$ and one for the likelihood
+    $f_D(\cdot|\theta)$, a Bayesian model $\mathcal{M}$ is 
+    defined by the density functions of both prior and likelihood.}
+\end{wrapfigure}
 Analyses of model fit against data are normally accompanied by discussions on
 assumption validity, and more rarely by benchmarking and scrutinization of model
 behavior and implementation (e.g., \citealp{maddison07,rabosky15,rabosky13,moore16,stadler10,luo20}).
