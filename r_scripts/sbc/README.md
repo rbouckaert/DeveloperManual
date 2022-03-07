@@ -7,12 +7,12 @@ This implements the techiniques in [Talts et al. (2018)](https://arxiv.org/abs/1
 Main scripts are
 
 - [`functionals_sbcPhylo.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/functionals_sbcPhylo.r): includes the functionals to be computed on a set of posterior draws (of trees)
-- [`process_posterior_draws.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/process_posterior_draws.r)
-- [`process_prior_draws.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/process_prior_draws.r)
-- [`generate_SBC.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/generate_SBC.r)
-- [`analyse_SBC.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/analyse_SBC.r) 
-- [`run_sbc_analysis.sh`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/run_sbc_analysis.sh)
-- [`clean.sh`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/clean.sh)
+- [`process_prior_draws.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/process_prior_draws.r): computes functionals on the data-generating trees and binds with data-generating continuous parameters.
+- [`process_posterior_draws.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/process_posterior_draws.r): does the same as above, but for the posterior samples.
+- [`generate_SBC.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/generate_SBC.r): runs the actual SBC machinery.
+- [`analyse_SBC.r`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/analyse_SBC.r): produces figures and tables.
+- [`run_sbc_analysis.sh`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/run_sbc_analysis.sh): shell script to run everything at once.
+- [`clean.sh`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/clean.sh): delete output files so one can start clean. 
 
 ### Steps to run an analysis
 
