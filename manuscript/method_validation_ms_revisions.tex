@@ -665,7 +665,8 @@ These two steps conclude the ``simulation'' stage of this validation
 protocol.
 With $\boldsymbol{d} = \{d_1,d_2,...,d_n\}$, we use the inferential machinery $\text{I}[\mathcal{M}]$ under evaluation to compute $f(\theta|d_i)$ for each $d_i$.
 Recall that we assume the posterior distribution defined by $f(\theta|d)$ over $\theta$ will be approximated with MCMC, an algorithm that generates a large sample of size $L$ of parameter values given a data set ($d_i$), $\boldsymbol{\theta}_i^{j}=\{\theta_i^1,\theta_i^2,...,
-\theta_i^L\}$.
+\theta_i^L\}$ \textcolor{red}{[potentially change that later to
+  $\boldsymbol{\theta}_i = \{\theta_i^j: j \in [1, L]\}$ or $\boldsymbol{\theta}_i = \{\theta_i^j: 1 \leq j \leq L\}$]}.
 At this point, we have concluded the inference stage of this validation pipeline.
 
 The third stage and final stage consists of investigating coverage properties
@@ -690,7 +691,7 @@ sampled from $f_\Theta(\cdot)$ and $f_D(\cdot|\theta)$, respectively:
 \noindent it can be shown that $\operatorname{Pr}\left(\theta_1 \in I_\alpha(d) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs
 have nominal coverage under the true generative model.
 A proof is provided in the supplementary material.
-\textcolor{purple}{@Fabio There's a notation change here. I do prefer this notation to what has come before, but we need to be consistent. So I added a proviso at the top of the paper to say that we drop the subscripts~\textbf{when convenient}.} 
+\textcolor{purple}{@Fabio There's a notation change here. I do prefer this notation to what has come before, but we need to be consistent. So I added a proviso at the top of the paper to say that we drop the subscripts~\textbf{when convenient}.} \textcolor{red}{@Luiz: perfect!}
 
 % \begin{figure}
 %   \includestandalone[width=8cm]{../figures/sbc_flowchart}
@@ -722,7 +723,7 @@ $k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
   of true simulated values that fall within their corresponding 95\%-HPDs)
   is binomially distributed with $n$ trials ($n=100$ in this case),
   and probability of success $p=0.95$.
-  \textcolor{purple}{@Fabio, is this table really necessary?}
+  \textcolor{purple}{@Fabio, is this table really necessary?}\textcolor{red}{@Luiz: I don't have strong feelings about it. I think originally, Remco added to one of the documents and I might have just copied and pasted here? I can't remember. Maybe Remco can give his opinion}
   }
 \label{tab:coverage}
 \end{table}
@@ -785,7 +786,7 @@ gauge how accurate our inferential tool can be for different
 parameters. 
 The more identifiable a parameter is, the higher should the
 correlation between its posterior mean and its generating ``true''
-value be.`
+value be.
 In our first example (Fig. \ref{fig:yulecalval}a), the species
 birth-rate $\lambda$ is largely identifiable for trees of the
 simulated size (Fig. \ref{fig:yulecalval}a).
@@ -799,6 +800,7 @@ We note that unidentifiability should not be taken as a sign that
 a model is incorrect -- in figure \ref{fig:yulecalval}c, coverage
 is still appropriate.
 \textcolor{purple}{@Fabio: I'm not sure I understand the claim here: what would be a more 'identifiable' parameter? Do you mean a parameter for which inferences converge faster to the true, data-generating value? This is a separate issue from identifiability; it has to do with the rate of strong consistency. I advise against using 'identifiability' in such a way.}
+\textcolor{red}{@Luiz: By ``identifiability'', I mean -- and I should really say ``we'', because that's how our group talks about it, but then again, we are not statisticians/mathematicians -- a parameter whose posterior mean can be different from the prior mean. Looking at the plots I was referring to, if you only use very small trees, your macroevolutionary parameters posteriors will match the prior. It is not even about ``converging faster'', right? They will never converge to the truth, as the data does not have enough signal for us to infer anything other than the prior. Is there a better word for identifiability in this context? If there is, please make whatever change you see fit (perhaps provide a textbook/paper citation on the appropriate/canonical lexicon?)}
 
 \vspace{.25cm}
 
@@ -811,8 +813,10 @@ more powerful to detect problems than just looking at the coverage of
 Bayesian HPD intervals.
 In particular, they show (Theorem 1 therein) that if the inference machinery
 $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank
-$r^j$ of the $j$-th sample from an MCMC chain ($\boldsymbol{\theta}^j = \{\theta^1, \theta^2, ..., \theta^L\}$)
+$r^j$ \textcolor{red}{@Luiz: do we even need to introduce this $r$ term here?}
+of the $j$-th sample from an MCMC chain ($\boldsymbol{\theta} = \{\theta^j, \theta^2, ..., \theta^L\}$)
 \textcolor{purple}{(@Fabio, this notation does not make sense: if $j$ is a superscript, it does not make sense for $1, 2,\ldots, L$ to also be superscripts)}
+\textcolor{red}{@Luiz: how about this: $\boldsymbol{\theta} = \{\theta^j: j \in [1, L]\}$? Or $\boldsymbol{\theta} = \{\theta^j: 1 \leq j \leq L\}$ }
 will follow a uniform distribution on $[1, L + 1]$.
 In other words, if the sampling algorithm is correctly implemented, we expect the ``true'' data-generating parameter to fall uniformly within the posterior samples.
 Adherence to this distribution can be investigated by constructing
@@ -848,12 +852,13 @@ We illustrate the SBC procedure on the model represented in figure
 }
 
 Importantly, the patterns of deviation from uniformity displayed by the rank histograms resulting from an incorrectly implemented inference machinery are also informative.
-Here, we will give a very brief overview of how to interpret the shape of the rank histograms; for more details, the reader is referred to Section 4.2 of~\cite{Talts2018}.
-If the histogram display a $\cup$ shape, with ``horns'', one of two things can be happening: either the posterior samples being used have high autocorrelation or that the posterior being sampled from is narrower than the true posterior.
-Determining which of these two possibilities is likely the cause can be achieved by thinning the posterior samples in order to reduce autocorrelation and see whether that changes the resulting histogram.
-Another possible shape for the histogram is the $\cap$ shape, where the ranks clump in the middle; this usually indicates that the posterior being targeted is wider (over-dispersed) than the true posterior.
+% Here, we will give a very brief overview of how to interpret the shape of the rank histograms; for more details, the reader is referred to Section 4.2 of~\cite{Talts2018}.
+If the histogram display a ``$\cup$'' shape, with ``horns'', one of two things can be happening: either the posterior samples are highly autocorrelated, or the posterior being sampled from is narrower than the true posterior.
+Distinguishing between these two possibilities can be achieved by thinning the posterior samples so as to reduce autocorrelation, which might or not change the resulting histogram.
+Another possible shape for the histogram is a ``$\cap$'' shape, where the ranks clump in the middle; this usually indicates that the posterior being targeted is wider (over-dispersed) than the true posterior.
 Finally, the histogram might be asymmetric, with a spike on either end. 
 In this situation, there likely is a location mismatch between the  posterior being sampled from and and the true posterior.
+For a more detailed treatment on how to interpret histogram shapes, we point the reader to section 4.2 of~\cite{Talts2018}.
 
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
   title=Box 1: Validating a phylogenetic model with respect to its
