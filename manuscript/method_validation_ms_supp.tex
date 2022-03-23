@@ -238,16 +238,16 @@ phylogenetic tree:
   \SetKwFunction{Distance}{CalculateDistance}
   \SetKwFunction{MCMC}{MCMC}
   \SetKwFunction{Rank}{GetRank}
-  \caption{Algorithm for carrying out a simulation-based validation procedure with respect to the phylogenetic tree parameter $\Phi$.}\label{alg:sbcphylo}
+  \caption{Algorithm for carrying out a simulation-based calibration procedure with respect to the phylogenetic tree parameter $\Phi$.}\label{alg:sbcphylo}
   $n \gets 100$\; \Comment*[r]{Number of data sets to simulate}
   $\phi_0 \gets$ \SampleTree{$\theta_\Phi$}\; \Comment*[r]{$\phi_0 \sim f(\Phi|\theta_\Phi)$}
   \For{$i \gets 1$ \KwTo $n$} {
     $\boldsymbol{\theta}_i \gets \text{S}[f(\theta)]$\; \Comment*[r]{$\boldsymbol{\theta_i} \sim f(\boldsymbol{\theta})$, with $\boldsymbol{\theta}_i = \{\theta_{i\Phi},\boldsymbol{\theta}_i^r\}$}
     $\phi_i \gets$ \SampleTree{$\theta_{i\Phi}$}\; \Comment*[r]{$\phi_i \sim f(\phi|\theta_{i\Phi})$}
     $d_i \gets$ \SampleData{$\phi_i,\boldsymbol{\theta}_i^r$}\; \Comment*[r]{$d_i \sim f(d|\phi_i,\boldsymbol{\theta}_i^r$}
-    $\boldsymbol{\theta}_i^j \gets$ \MCMC{$f(\theta|d_i)$}\; \Comment*[r]{$\boldsymbol{\theta}_i^j = \{\boldsymbol{\theta}_i^1, \boldsymbol{\theta}_i^2..., \boldsymbol{\theta}_i^L\}$, where $L$ is the number of MCMC samples}
+    $\boldsymbol{\theta}_i^j \gets$ \MCMC{$f(\theta|d_i)$}\; \Comment*[r]{$\boldsymbol{\theta}_i = \{\boldsymbol{\theta}_i^j: j \in [1, L]\}$, where $L$ is the number of MCMC samples}
     $\bar{\delta}_i \gets$ \Distance{$\phi_0, \phi_i$}\; \Comment*[r]{According to a distance metric of choice}
-    $\boldsymbol{\delta}_i^j \gets$ \Distance{$\phi_0, \phi_i^j$}\; \Comment*[r]{$\boldsymbol{\delta}_i^j = \{\delta_i^1, \delta_i^2, ..., \delta_i^L\}$}
+    $\boldsymbol{\delta}_i^j \gets$ \Distance{$\phi_0, \phi_i^j$}\; \Comment*[r]{$\boldsymbol{\delta}_i = \{\delta_i^j: j \in [1, L]\}$}
     $r_i \gets$ \Rank($\bar{\delta}_i, \boldsymbol{\delta}_i^j$)\; \Comment*[r]{$r_i = \sum\limits_{j=1}^L \mathbb{I}(\delta^j_i < \bar{\delta_i})$}
   }
   \label{alg:sbc}

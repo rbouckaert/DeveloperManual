@@ -234,9 +234,8 @@ distribution for its parameters, $f(\theta|d) =
 Here, our prior inferences or beliefs about the natural world -- represented by
 the prior distribution $f(\theta)$ -- are confronted with and updated by
 the data through the likelihood function -- or multiple likelihood functions.
-The
-probability of the data, $f(d) = \int_\Theta f(d|\theta)f(\theta)d\theta$, is also known as the marginal likelihood or the model
-evidence and is of central importance in hypothesis testing and model comparison, but its computation can usually be circumvented if the main goal is parameter estimation.
+The probability of the data, $f(d) = \int_\Theta f(d|\theta)f(\theta)d\theta$, is also known as the marginal likelihood or the model evidence;
+this term is of central importance in hypothesis testing and model comparison, but its computation can usually be circumvented if the main goal is parameter estimation.
 Crucially, a Bayesian model includes a prior, $f(\theta)$:
 when models are compared, for example, $f(\theta)$ needs to be taken
 into account when computing the model evidence $f(d)$.
@@ -659,7 +658,7 @@ Our discussion on how to ensure a Bayesian model is well-calibrated
 and thus correct will mostly follow the ideas in \citet{Cook2006} and \citet{Talts2018}.
 The basic idea is presented in the flowchart in figure \ref{fig:flowchart}, and
 consists of three stages: simulation, inference, and coverage calculation.
-Once we have a validated simulator for model $\mathcal{M}$, we start by sampling $n$ parameter sets from $\boldsymbol{\theta} = \{\theta_1,\theta_2,...,\theta_n\}$ from its prior, $f(\theta)$.
+Once we have a validated simulator for model $\mathcal{M}$, we start by sampling $n$ parameter sets $\boldsymbol{\theta} = \{\theta_1,\theta_2,...,\theta_n\}$ \textcolor{red}{[potentially change this later to $\boldsymbol{\theta} = \{\theta_i: i \in [1, n]\}$ or $\boldsymbol{\theta} = \{\theta_i: 1 \leq i \leq n\}$]} from its prior, $f(\theta)$.
 For each parameter set $\theta_i$, we then sample a data set $d_i$ from $f(d |\theta)$.
 These two steps conclude the ``simulation'' stage of this validation
 protocol.
@@ -806,23 +805,17 @@ is still appropriate.
 
 \noindent \emph{Simulation-based calibration (SBC)}
 
-We now discuss another technique that might be combined with coverage-based checking to further scrutinize the inference machinery using the same samples generated in the coverage step.
-
-\cite{Talts2018} show that one can devise other tests that might be
-more powerful to detect problems than just looking at the coverage of
-Bayesian HPD intervals.
-In particular, they show (Theorem 1 therein) that if the inference machinery
-$\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank
-$r^j$ \textcolor{red}{@Luiz: do we even need to introduce this $r$ term here?}
-of the $j$-th sample from an MCMC chain ($\boldsymbol{\theta} = \{\theta^j, \theta^2, ..., \theta^L\}$)
-\textcolor{purple}{(@Fabio, this notation does not make sense: if $j$ is a superscript, it does not make sense for $1, 2,\ldots, L$ to also be superscripts)}
-\textcolor{red}{@Luiz: how about this: $\boldsymbol{\theta} = \{\theta^j: j \in [1, L]\}$? Or $\boldsymbol{\theta} = \{\theta^j: 1 \leq j \leq L\}$ }
-will follow a uniform distribution on $[1, L + 1]$.
+We will now discuss another procedure for scrutinizing the inference machinery, which we will henceforth refer to as the simulation-based calibration (SBC) technique.
+SBC can be carried out in addition to the coverage-based validation described above, and can conveniently leverage the same samples produced in that validation step.
+% \cite{Talts2018} show that one can devise other tests that might be
+% more powerful to detect problems than just looking at the coverage of
+% Bayesian HPD intervals.
+% In particular, they
+The basis for SBC was introduced in \cite{Talts2018}, who showed (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r^j$ (with respect to the posterior density)
+of the $j$-th sample from an MCMC chain ($\boldsymbol{\theta}^j = \{\theta^1, \theta^2, ..., \theta^L\}$) \textcolor{purple}{(@Fabio, this notation does not make sense: if $j$ is a superscript, it does not make sense for $1, 2,\ldots, L$ to also be superscripts)}
+\textcolor{red}{@Luiz: how about this: $\boldsymbol{\theta} = \{\theta^j: j \in [1, L]\}$? Or $\boldsymbol{\theta} = \{\theta^j: 1 \leq j \leq L\}$ } will follow a uniform distribution on $[1, L + 1]$.
 In other words, if the sampling algorithm is correctly implemented, we expect the ``true'' data-generating parameter to fall uniformly within the posterior samples.
-Adherence to this distribution can be investigated by constructing
-histograms \citep{Talts2018} as well as by looking at the empirical
-cumulative distribution function (ECDF) and their confidence bands
-\citep{Sailynoja2021}.
+Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021}.
 
 We illustrate the SBC procedure on the model represented in figure
 \ref{fig:pgm}... \textcolor{red}{[@Remco or @Luiz: to be done]}
