@@ -21,7 +21,7 @@ In the same directory as the above files, create two directories: `sampled_trees
 Then you might want to:
 - Check that a file named `true_param_values.RData` exists in the root folder, containing the "true" (data-generating) trees and continuous parameter values;
 - Modify the function `get_index()` in `process_posterior_draws.r` to accommodate your naming conventions;
-- Check that `f.burnin` and `n.keep`in process_posterior_draws.r` are to your liking;
+- Check that `f.burnin` and `n.keep` in `sbc_configs.r` are to your liking;
 
 
 Finally, you will want to run 
