@@ -2,6 +2,7 @@ library(ape)
 library(distory)
 library(tidyverse)
 source("functionals_sbcPhylo.r")
+source("sbc_configs.r")
 
 burn_and_thin <- function(dt, b, k){
   N <- nrow(dt)
@@ -22,24 +23,33 @@ organise_posterior_draws <- function(post_draws, i, bnin, nkeep){
   return(out)
 }
 
-organise_posterior_draws_tree <- function(post_draws, i, bnin, nkeep){
+organise_posterior_draws_tree <- function(post_draws, i, bnin, nkeep,
+                                          distances = FALSE){
   
   lengths <- unlist(lapply(post_draws, functional_1))
   maxbranch <- unlist(lapply(post_draws, functional_2))
   rangebranch <- unlist(lapply(post_draws, functional_2b))
   bl1 <- unlist(lapply(post_draws, functional_3))
-  # RFs <-  unlist(lapply(post_draws, functional_4))
-  # BHVs <-  unlist(lapply(post_draws, functional_5))
-  # KCs <-  unlist(lapply(post_draws, functional_6))
-  
-  out <- data.frame(tree_length = lengths,
-                  max_branch = maxbranch,
-                  range_branch = rangebranch,
-                  bl1_length = bl1
-                  # RF_dist = RFs,
-                  # BHV_dist = BHVs,
-                  # KC_dist = KCs
-  )
+
+  if(distances){
+    RFs <-  unlist(lapply(post_draws, functional_4))
+    BHVs <-  unlist(lapply(post_draws, functional_5))
+    KCs <-  unlist(lapply(post_draws, functional_6))
+    
+    out <- data.frame(tree_length = lengths,
+                      max_branch = maxbranch,
+                      range_branch = rangebranch,
+                      bl1_length = bl1,
+                      RF_dist = RFs,
+                      BHV_dist = BHVs,
+                      KC_dist = KCs
+    )
+  }else{
+    out <- data.frame(tree_length = lengths,
+                      max_branch = maxbranch,
+                      range_branch = rangebranch,
+                      bl1_length = bl1)
+  }
   row.names(out) <- NULL
   out <- data.frame(out, data_set = paste0("data_set_", i))
   out <- burn_and_thin(dt = out, b = bnin, k = nkeep)
@@ -50,7 +60,8 @@ process_postfile <- function(fl, index, burnin, n_keep, tree = TRUE){
   if(tree){
     draws <- ape::read.nexus(fl)
     ans <- organise_posterior_draws_tree(post_draws = draws, i = index,
-                                         bnin = burnin, nkeep = n_keep)
+                                         bnin = burnin, nkeep = n_keep,
+                                         distances = do_distances)
   }else{
     draws <- read.table(fl, header = TRUE)
     ans <- organise_posterior_draws(post_draws = draws, i = index,
@@ -70,7 +81,9 @@ get_index <- function(fl, tree = TRUE){
 
 ##############################
 
-# load(file = "reference_tree.RData")
+if(do_distances){
+  load(file = "reference_tree.RData")
+}
 
 tree.post.files <- system("ls sampled_trees/*.trees", intern = TRUE)
 tree.inds <- sapply(tree.post.files, get_index)
@@ -82,9 +95,6 @@ logs.post.files <- system("ls sampled_logs/*.log", intern = TRUE)
 logs.inds <- sapply(logs.post.files, get_index, FALSE)
 sorted.logs.post.files <- names(sort(logs.inds))
 
-f.burnin <- 0.1
-n.keep <- 50
-
 posterior.summaries <- parallel::mclapply(1:K, function(i){
   trees <- process_postfile(fl = sorted.tree.post.files[i], index = i,
                             burnin = f.burnin, n_keep = n.keep)
@@ -94,7 +104,7 @@ posterior.summaries <- parallel::mclapply(1:K, function(i){
   trees$data_set <- NULL
   out <- cbind(trees, continuous)
   return(out)
-}, mc.cores = 8)
+}, mc.cores = Ncores)
 
 save(posterior.summaries,
      file = "posterior.RData")

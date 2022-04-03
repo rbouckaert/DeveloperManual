@@ -7,9 +7,10 @@ is_in <- function(x, l, u){
 #######
 library(SBC)
 library(dplyr)
+library(ggplot2)
+source("sbc_configs.r")
 
 load(file = "SBC_results.RData")
-
 
 sbc.results$covers <- is_in(x = sbc.results$simulated_value,
                             l = sbc.results$q5,
@@ -19,14 +20,17 @@ sbc.results$hpd_covers <- is_in(x = sbc.results$simulated_value,
                                 l = sbc.results$hpd_lwr,
                                 u = sbc.results$hpd_upr)
 
-head(sbc.results, 3)
 
-# par.levels <- c("tree_length", "max_branch", "bl1_length",
-#                 "BHV_dist", "KC_dist", "RF_dist")
-
-par.levels <- c( "tree_length",  "max_branch",   "range_branch",
-                 "bl1_length",
-                 "birthRate", "bmRate") 
+if(do_distances){
+  par.levels <- c( "tree_length",  "max_branch",   "range_branch",
+                   "bl1_length",
+                   "birthRate", "bmRate",
+                   "BHV_dist", "KC_dist", "RF_dist") 
+}else{
+  par.levels <- c( "tree_length",  "max_branch",   "range_branch",
+                   "bl1_length",
+                   "birthRate", "bmRate") 
+}
 
 par_factor <- function(x) {
   factor(x, par.levels)
@@ -40,10 +44,10 @@ custom_label_parsed <- function (variable, value) {
     max_branch = "LB(Phi)",
     bl1_length = "T[1](Phi)",
     birthRate = "lambda",
-    bmRate = "r"
-    # RF_dist = "RF[0](tau)",
-    # BHV_dist = "BHV[0](tau)",
-    # KC_dist = "KC[0](tau)"
+    bmRate = "r",
+    RF_dist = "RF[0](tau)",
+    BHV_dist = "BHV[0](tau)",
+    KC_dist = "KC[0](tau)"
   )
   return(
     plyr::llply(as.character(newval),
@@ -51,22 +55,20 @@ custom_label_parsed <- function (variable, value) {
   )
 }
 
-library(ggplot2)
-
-SBC::plot_ecdf(sbc.results) +
+ecdf_plot <- SBC::plot_ecdf(sbc.results) +
   facet_wrap(~factor(variable,
                      levels = par.levels),
              labeller = custom_label_parsed) +
   theme_bw(base_size = 20)
 
-SBC::plot_rank_hist(sbc.results) +
+hist_plot <- SBC::plot_rank_hist(sbc.results) +
   facet_wrap(~factor(variable,
                      levels = par.levels),
              labeller = custom_label_parsed) +
   theme_bw(base_size = 20)
 
 
-ggplot(
+interval_plot <- ggplot(
   data = sbc.results,
   aes(x = simulated_value, y = mean, colour = hpd_covers)
 ) + 
@@ -84,6 +86,37 @@ ggplot(
               linetype = "longdash") + 
   theme_bw(base_size = 20)
 
+
+ggsave(
+  file = "plot_SBC_ECDF.pdf",
+  plot = ecdf_plot,
+  scale = 1,
+  width = 297,
+  height = 210,
+  units = "mm",
+  dpi = 300
+)
+
+ggsave(
+  file = "plot_SBC_histogram.pdf",
+  plot = hist_plot,
+  scale = 1,
+  width = 297,
+  height = 210,
+  units = "mm",
+  dpi = 300
+)
+
+ggsave(
+  file = "plot_SBC_intervals.pdf",
+  plot = interval_plot,
+  scale = 1,
+  width = 297,
+  height = 210,
+  units = "mm",
+  dpi = 300
+)
+
 ## Coverage
 mean_ci <- function(x, alpha = 0.95){
   n <- length(x)
@@ -97,11 +130,21 @@ mean_ci <- function(x, alpha = 0.95){
   )
 }
 
-aggregate(covers ~ variable, mean_ci, data = sbc.results)
-aggregate(hpd_covers ~ variable, mean_ci,
+coverage_bci <- aggregate(covers ~ variable, mean_ci, data = sbc.results)
+coverage_hpd <- aggregate(hpd_covers ~ variable, mean_ci,
           alpha = .90, data = sbc.results)
 
-subset(sbc.results, covers == 0)[, c("variable",
-                                     "simulated_value",
-                                     "mean",
-                                     "covers", "sim_id")]
+bci_table <- tibble::as_tibble(as.matrix(coverage_bci))
+names(bci_table) <- c("quantity", "coverage", "cover_lwr", "cover_upr")
+
+hpd_table <- tibble::as_tibble(as.matrix(coverage_hpd))
+names(hpd_table) <- c("quantity", "coverage", "cover_lwr", "cover_upr")
+
+write.table(x = bci_table, file  = "bci.txt", sep = "\t", row.names = FALSE)
+write.table(x = hpd_table, file  = "hpd.txt", sep = "\t", row.names = FALSE)
+
+bci.latex <- xtable::xtable(bci_table)
+hpd.latex <- xtable::xtable(hpd_table)
+
+write.table(x = bci.latex, file  = "bci.tex")
+write.table(x = hpd.latex, file  = "hpd.tex")

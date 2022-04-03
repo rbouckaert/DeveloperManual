@@ -1,5 +1,3 @@
-library(SBC)
-
 calculate_ranks_draws_matrix_nonrandom <- function (params, dm) 
 {
   max_rank <- posterior::ndraws(dm)
@@ -99,5 +97,5 @@ L <- length(posterior.summaries)
 sbc.results <- do.call(rbind,
                      lapply(1:L, get_statistics))
 
-
+warnings()
 save(sbc.results, file = "SBC_results.RData")
