@@ -130,9 +130,10 @@ mean_ci <- function(x, alpha = 0.95){
   )
 }
 
-coverage_bci <- aggregate(covers ~ variable, mean_ci, data = sbc.results)
+coverage_bci <- aggregate(covers ~ variable, mean_ci,
+                          alpha = .95, data = sbc.results)
 coverage_hpd <- aggregate(hpd_covers ~ variable, mean_ci,
-          alpha = .90, data = sbc.results)
+          alpha = .95, data = sbc.results)
 
 bci_table <- tibble::as_tibble(as.matrix(coverage_bci))
 names(bci_table) <- c("quantity", "coverage", "cover_lwr", "cover_upr")
@@ -146,5 +147,5 @@ write.table(x = hpd_table, file  = "hpd.txt", sep = "\t", row.names = FALSE)
 bci.latex <- xtable::xtable(bci_table)
 hpd.latex <- xtable::xtable(hpd_table)
 
-write.table(x = bci.latex, file  = "bci.tex")
-write.table(x = hpd.latex, file  = "hpd.tex")
+print(bci.latex, file  = "bci.tex")
+print(hpd.latex, file  = "hpd.tex")

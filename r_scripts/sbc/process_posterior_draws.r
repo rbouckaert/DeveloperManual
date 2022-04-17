@@ -7,6 +7,7 @@ source("sbc_configs.r")
 burn_and_thin <- function(dt, b, k){
   N <- nrow(dt)
   nb <- round(b*N) + 1
+  if(N-nb < k) stop(paste0("Can't keep ", k, " samples after ", b, " burnin"))
   burned <- dt[nb:N, ]
   Nstar <- nrow(burned)
   thinned <- burned[round(seq(1, Nstar, length.out = k)), ]
@@ -24,6 +25,7 @@ organise_posterior_draws <- function(post_draws, i, bnin, nkeep){
 }
 
 organise_posterior_draws_tree <- function(post_draws, i, bnin, nkeep,
+                                          sbase, 
                                           distances = FALSE){
   
   lengths <- unlist(lapply(post_draws, functional_1))
@@ -56,15 +58,17 @@ organise_posterior_draws_tree <- function(post_draws, i, bnin, nkeep,
   return(out)
 }
 
-process_postfile <- function(fl, index, burnin, n_keep, tree = TRUE){
+process_postfile <- function(fl, index, burnin, n_keep, sbase, tree = TRUE){
   if(tree){
     draws <- ape::read.nexus(fl)
-    ans <- organise_posterior_draws_tree(post_draws = draws, i = index,
+    ans <- organise_posterior_draws_tree(post_draws = draws,
+                                         i = get_index(fl, tree = TRUE),
                                          bnin = burnin, nkeep = n_keep,
                                          distances = do_distances)
   }else{
     draws <- read.table(fl, header = TRUE)
-    ans <- organise_posterior_draws(post_draws = draws, i = index,
+    ans <- organise_posterior_draws(post_draws = draws,
+                                    i = get_index(fl, tree = FALSE),
                                     bnin = burnin, nkeep = n_keep)
   }
   return(ans)
@@ -96,15 +100,23 @@ logs.inds <- sapply(logs.post.files, get_index, FALSE)
 sorted.logs.post.files <- names(sort(logs.inds))
 
 posterior.summaries <- parallel::mclapply(1:K, function(i){
-  trees <- process_postfile(fl = sorted.tree.post.files[i], index = i,
+  trees <- process_postfile(fl = sorted.tree.post.files[i],
+                            index = get_index(fl =  sorted.tree.post.files[i],
+                                              tree = TRUE),
                             burnin = f.burnin, n_keep = n.keep)
   continuous <- process_postfile(fl = sorted.logs.post.files[i],
-                                 index = i, tree = FALSE,
+                                 index = get_index(fl = sorted.logs.post.files[i],
+                                                   tree = FALSE),
+                                 tree = FALSE,
                                  burnin = f.burnin, n_keep = n.keep)
   trees$data_set <- NULL
   out <- cbind(trees, continuous)
   return(out)
 }, mc.cores = Ncores)
+
+if(is(posterior.summaries[[1]]) == "try-error"){
+  stop(paste0(posterior.summaries[[1]]))
+}
 
 save(posterior.summaries,
      file = "posterior.RData")

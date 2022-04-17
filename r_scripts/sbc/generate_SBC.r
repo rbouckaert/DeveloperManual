@@ -29,9 +29,10 @@ get_statistics <- function(index, thin_ranks = 1,
   # require(coda)
   # require(dplyr)
   
-  parameters <- f.prior[index, ]
-  K <- ncol(parameters)
   postdraws <- posterior.summaries[[index]]
+  dts <- postdraws$data_set[1]
+  parameters <- f.prior[match(dts, f.prior$data_set), ]
+  K <- ncol(parameters)
   
   if(parameters$data_set != postdraws$data_set[1]){
     stop("Not the same data set")
