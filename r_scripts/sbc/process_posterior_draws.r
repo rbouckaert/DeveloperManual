@@ -15,7 +15,7 @@ burn_and_thin <- function(dt, b, k){
 }
 organise_posterior_draws <- function(post_draws, i, bnin, nkeep){
   out <- data.frame(
-    birthRate = post_draws$birthDiffRate,
+    birthRate = post_draws$birthRate,
     bmRate = post_draws$bmRate
   )
   row.names(out) <- NULL
@@ -24,8 +24,8 @@ organise_posterior_draws <- function(post_draws, i, bnin, nkeep){
   return(out)
 }
 
-organise_posterior_draws_tree <- function(post_draws, i, bnin, nkeep,
-                                          sbase, 
+organise_posterior_draws_tree <- function(post_draws, i,
+                                          bnin, nkeep,
                                           distances = FALSE){
   
   lengths <- unlist(lapply(post_draws, functional_1))
@@ -58,30 +58,36 @@ organise_posterior_draws_tree <- function(post_draws, i, bnin, nkeep,
   return(out)
 }
 
-process_postfile <- function(fl, index, burnin, n_keep, sbase, tree = TRUE){
+get_index <- function(fl, bs, tree = TRUE){
+  bit <- paste0(".*/", bs)
+  if(tree){
+    ans <- gsub(".trees", "", gsub(bit, "", fl))
+  }else{
+    ans <- gsub(".log", "", gsub(bit, "", fl))
+  }
+  return(as.numeric(ans))
+}
+
+process_postfile <- function(fl, index,
+                             burnin, n_keep,
+                             tree = TRUE){
   if(tree){
     draws <- ape::read.nexus(fl)
     ans <- organise_posterior_draws_tree(post_draws = draws,
-                                         i = get_index(fl, tree = TRUE),
-                                         bnin = burnin, nkeep = n_keep,
+                                         i = index,
+                                         bnin = burnin,
+                                         nkeep = n_keep,
                                          distances = do_distances)
   }else{
     draws <- read.table(fl, header = TRUE)
     ans <- organise_posterior_draws(post_draws = draws,
-                                    i = get_index(fl, tree = FALSE),
+                                    i = index,
                                     bnin = burnin, nkeep = n_keep)
   }
   return(ans)
 }
 
-get_index <- function(fl, tree = TRUE){
-  if(tree){
-    ans <- gsub(".trees", "", gsub(".*/yule_bm", "", fl))
-  }else{
-    ans <- gsub(".log", "", gsub(".*/yule_bm", "", fl))
-  }
-  return(as.numeric(ans))
-}
+
 
 ##############################
 
@@ -89,23 +95,28 @@ if(do_distances){
   load(file = "reference_tree.RData")
 }
 
+cat("----- Processing posterior draws....------", "\n")
+
 tree.post.files <- system("ls sampled_trees/*.trees", intern = TRUE)
-tree.inds <- sapply(tree.post.files, get_index)
+tree.inds <- sapply(tree.post.files, get_index, bs = file_stump)
 sorted.tree.post.files <- names(sort(tree.inds))
 
 K <- length(sorted.tree.post.files)
 
 logs.post.files <- system("ls sampled_logs/*.log", intern = TRUE)
-logs.inds <- sapply(logs.post.files, get_index, FALSE)
+logs.inds <- sapply(logs.post.files, get_index,
+                    bs = file_stump, FALSE)
 sorted.logs.post.files <- names(sort(logs.inds))
 
 posterior.summaries <- parallel::mclapply(1:K, function(i){
   trees <- process_postfile(fl = sorted.tree.post.files[i],
-                            index = get_index(fl =  sorted.tree.post.files[i],
+                            index = get_index(fl = sorted.tree.post.files[i],
+                                              bs = file_stump,
                                               tree = TRUE),
                             burnin = f.burnin, n_keep = n.keep)
   continuous <- process_postfile(fl = sorted.logs.post.files[i],
                                  index = get_index(fl = sorted.logs.post.files[i],
+                                                   bs = file_stump,
                                                    tree = FALSE),
                                  tree = FALSE,
                                  burnin = f.burnin, n_keep = n.keep)
@@ -117,6 +128,5 @@ posterior.summaries <- parallel::mclapply(1:K, function(i){
 if(is(posterior.summaries[[1]]) == "try-error"){
   stop(paste0(posterior.summaries[[1]]))
 }
-
 save(posterior.summaries,
      file = "posterior.RData")

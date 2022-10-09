@@ -12,6 +12,8 @@ source("sbc_configs.r")
 
 load(file = "SBC_results.RData")
 
+cat("----- Processing SBC output....------", "\n")
+
 sbc.results$covers <- is_in(x = sbc.results$simulated_value,
                             l = sbc.results$q5,
                             u = sbc.results$q95)

@@ -54,7 +54,6 @@ get_statistics <- function(index, thin_ranks = 1,
   shared_parameters <- intersect(names(parameters),
                            posterior::variables(fit_matrix))
   
-  
   # Make sure the order of parameters matches
   
   fit_matrix <- posterior::subset_draws(fit_matrix,
@@ -87,6 +86,8 @@ get_statistics <- function(index, thin_ranks = 1,
 #######################################
 load(file = "prior_functionals.RData")
 load(file = "posterior.RData")
+
+cat("----- Generating SBC output....------", "\n")
 
 ####
 ## Excluding stuff not tracked in the posterior

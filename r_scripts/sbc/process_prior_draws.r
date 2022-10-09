@@ -5,7 +5,7 @@ library(tidyverse)
 source("functionals_sbcPhylo.r")
 source("sbc_configs.r")
 ##############################
-
+cat("----- Processing prior draws....------", "\n")
 load("true_param_values.RData")
 
 prior.draws <- trs
