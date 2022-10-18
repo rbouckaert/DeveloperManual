@@ -5,6 +5,8 @@ library(gridExtra)
 library(tikzDevice)
 library(plotrix)
 library(psychometric)
+library(mvtnorm)
+library(tidyverse)
 
 output.path <- "../figures/"
 
@@ -15,6 +17,46 @@ ci.var <- function(obs.var, alpha, n) {
     return(obs.var * ci.var)
 }
 
+### Covariance stuff
+flatten_cov_mat <- function(mat){
+  p <- ncol(mat)
+  if(nrow(mat) != p) stop("matrix is not square")
+  index.grid <- subset(expand.grid(i = 1:p, j = 1:p), i < j)
+  par.names <- apply(index.grid, 1, function(x){
+    paste0("cov[", x[1], x[2], "]")
+  })
+  par.vals <- apply(index.grid, 1, function(x){
+    mat[x[1], x[2]]
+  })
+  out <- data.frame(
+    parameter = par.names,
+    point = par.vals
+  )
+  return(out)
+}
+prob_interval <- function(x, level){
+  interv <- quantile(x, probs = c(1-level, 1 + level)/2)
+  return(
+    data.frame(
+      lwr = as.numeric(interv[1]),
+      upr = as.numeric(interv[2])
+    )
+  )
+}
+ci.covars <- function(X, alpha, B = 500){
+  # Parametric CI via simulation
+  cov.hat <- cov(X)
+  n <- nrow(X)
+  cov.samples <- stats::rWishart(n = B, df = n-1, Sigma = cov.hat/n)
+  flats <- do.call(rbind, apply(cov.samples, 3, flatten_cov_mat))
+  
+  par.ci <- flats %>%
+    group_by(parameter) %>%
+    dplyr::summarise(prob_interval(point, level = alpha))
+  return(par.ci)
+}
+
+###
 check.ci <- function(start, end, value, reverse=FALSE) {
     if (reverse == TRUE) {
         if (start > value && end < value) return(TRUE)
@@ -53,8 +95,9 @@ set.seed(123)
 n.sim <- 10000
 n.rep <- 100
 
-sims <- as.data.frame(t(mvSIM(tr, nsim=n.sim, model="BM1",param=list(ntraits=1, sigma=0.1, theta=0.0))))
-sims.list <- vector(mode="list", length=n.rep)
+sims <- as.data.frame(t(mvSIM(tr, nsim = n.sim, model="BM1",
+                              param = list(ntraits = 1, sigma = 0.1, theta = 0.0))))
+sims.list <- vector(mode = "list", length = n.rep)
 
 j <- 1
 for (i in seq(1, n.sim, n.rep)) {
@@ -62,9 +105,24 @@ for (i in seq(1, n.sim, n.rep)) {
     j = j+1
 }
 
-ab.plot <- ggscatter(sims[1:1000,], x="A", y="B", ellipse=TRUE, shape=20, size=.75, alpha=.25) + xlim(-3,3) + ylim(-3,3) + xlab(expression("y"["A"])) + ylab(expression("y"["B"])) + theme_classic() + theme(panel.background = element_rect(fill = "transparent"), plot.background = element_rect(fill = "transparent", color = NA))
-ac.plot <- ggscatter(sims[1:1000,], x="A", y="C", ellipse=TRUE, shape=20, size=.75, alpha=.25) + xlim(-3,3) + ylim(-3,3) + xlab(expression("y"["A"])) + ylab(expression("y"["C"])) + theme_classic() + theme(panel.background = element_rect(fill = "transparent"), plot.background = element_rect(fill = "transparent", color = NA))
-bc.plot <- ggscatter(sims[1:1000,], x="B", y="C", ellipse=TRUE, shape=20, size=.75, alpha=.25) + xlim(-3,3) + ylim(-3,3) + xlab(expression("y"["B"])) + ylab(expression("y"["C"])) + theme_classic() + theme(panel.background = element_rect(fill = "transparent"), plot.background = element_rect(fill = "transparent", color = NA))
+ab.plot <- ggscatter(sims[1:1000,], x="A", y="B", ellipse=TRUE,
+                     shape=20, size=.75, alpha=.25) + xlim(-3,3) +
+  ylim(-3,3) + xlab(expression("y"["A"])) + ylab(expression("y"["B"])) +
+  theme_classic() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA))
+ac.plot <- ggscatter(sims[1:1000,], x="A", y="C", ellipse=TRUE,
+                     shape=20, size=.75, alpha=.25) + xlim(-3,3) +
+  ylim(-3,3) + xlab(expression("y"["A"])) + ylab(expression("y"["C"])) +
+  theme_classic() +
+  theme(panel.background = element_rect(fill = "transparent"),
+        plot.background = element_rect(fill = "transparent", color = NA))
+bc.plot <- ggscatter(sims[1:1000,], x="B", y="C", ellipse=TRUE,
+                     shape=20, size=.75, alpha=.25) + xlim(-3,3) +
+  ylim(-3,3) + xlab(expression("y"["B"])) + ylab(expression("y"["C"])) +
+  theme_classic() +
+  theme(panel.background = element_rect(fill = "transparent"),
+                          plot.background = element_rect(fill = "transparent", color = NA))
 
 a.plot <- ggplot(sims[1:1000,], aes(x=A)) + geom_histogram(aes(y =..density..), bins=10, fill = "gray") + stat_function(fun = dnorm, args = list(mean = mean(sims[1:1000,]$B), sd = sd(sims[1:1000,]$A))) + xlim(-2.8,2.8) + xlab(expression("y"["A"])) + ylab("Density") + theme_classic() + theme(panel.background = element_rect(fill = "transparent"), plot.background = element_rect(fill = "transparent", color = NA))
 b.plot <- ggplot(sims[1:1000,], aes(x=B)) + geom_histogram(aes(y =..density..), bins=10, fill = "gray") + stat_function(fun = dnorm, args = list(mean = mean(sims[1:1000,]$B), sd = sd(sims[1:1000,]$B))) + xlim(-2.8,2.8) + xlab(expression("y"["B"])) + ylab("Density") + theme_classic() + theme(panel.background = element_rect(fill = "transparent"), plot.background = element_rect(fill = "transparent", color = NA))
@@ -81,6 +139,10 @@ ci.var.c.df <- data.frame(matrix(ncol=2, nrow=100))
 ci.cor.ab.df <- data.frame(matrix(ncol=2, nrow=100))
 ci.cor.ac.df <- data.frame(matrix(ncol=2, nrow=100))
 ci.cor.bc.df <- data.frame(matrix(ncol=2, nrow=100))
+ci.cov.ab.df <- data.frame(matrix(ncol=2, nrow=100))
+ci.cov.ac.df <- data.frame(matrix(ncol=2, nrow=100))
+ci.cov.bc.df <- data.frame(matrix(ncol=2, nrow=100))
+
 
 is.a.within.ci <- rep(FALSE, n.rep)
 is.b.within.ci <- rep(FALSE, n.rep)
@@ -94,9 +156,15 @@ is.cor.c.within.ci <- rep(FALSE, n.rep)
 is.cor.ab.within.ci <- rep(FALSE, n.rep)
 is.cor.ac.within.ci <- rep(FALSE, n.rep)
 is.cor.bc.within.ci <- rep(FALSE, n.rep)
+is.cov.ab.within.ci <- rep(FALSE, n.rep)
+is.cov.ac.within.ci <- rep(FALSE, n.rep)
+is.cov.bc.within.ci <- rep(FALSE, n.rep)
 exp.cor.ab <- 0.5 / 0.6
 exp.cor.ac <- 0.0
 exp.cor.bc <- 0.0
+
+true.cov <- 0.1*vcv.phylo(tr)
+true.cov.vals <- flatten_cov_mat(true.cov)
 
 j <- 1
 for (j in 1:n.rep) {
@@ -114,6 +182,12 @@ for (j in 1:n.rep) {
     cor.ab = cor(jth.sim$A, jth.sim$B)
     cor.ac = cor(jth.sim$A, jth.sim$C)
     cor.bc = cor(jth.sim$B, jth.sim$C)
+    
+    fcovs.hat <- flatten_cov_mat(cov(jth.sim))
+    covs.cis <- ci.covars(X = jth.sim, alpha = .95)
+    cov.ab = fcovs.hat$point[1]
+    cov.ac = fcovs.hat$point[2]
+    cov.bc = fcovs.hat$point[3]
 
     ## CI for mean trait value of A
     ci.a = c(m.a - 1.96 * se.a, m.a + 1.96 * se.a)
@@ -149,8 +223,23 @@ for (j in 1:n.rep) {
 
     ## CI for trait-value correlation b/w B and C
     ci.cor.bc = CIr(r=cor.bc, n=100, level = .95)
-    ci.cor.bc.df[j,] = ci.cor.bc
-
+    ci.cor.bc.df[j, ] = ci.cor.bc
+    
+    ### Covariances
+    
+    ## CI for trait-value covariance b/w A and B
+    ci.cov.ab = covs.cis[1, 2:3]
+    ci.cov.ab.df[j, ] = ci.cov.ab
+    
+    ## CI for trait-value covariance b/w A and C
+    ci.cov.ac = covs.cis[2, 2:3]
+    ci.cov.ac.df[j,] = ci.cov.ac
+    
+    ## CI for trait-value covariance b/w B and C
+    ci.cov.bc = covs.cis[3, 2:3]
+    ci.cov.bc.df[j,] = ci.cov.bc
+    
+    
     ## seeing if within CI for mean trait values
     is.a.within.ci[j] = check.ci(ci.a[1], ci.a[2], 0.0)
     is.b.within.ci[j] = check.ci(ci.b[1], ci.b[2], 0.0)
@@ -165,6 +254,10 @@ for (j in 1:n.rep) {
     is.cor.ab.within.ci[j] = check.ci(ci.cor.ab[1], ci.cor.ab[2], exp.cor.ab)
     is.cor.ac.within.ci[j] = check.ci(ci.cor.ac[1], ci.cor.ac[2], exp.cor.ac)
     is.cor.bc.within.ci[j] = check.ci(ci.cor.bc[1], ci.cor.bc[2], exp.cor.bc)
+    
+    is.cov.ab.within.ci[j] = check.ci(ci.cov.ab[1], ci.cov.ab[2], true.cov.vals[1, 2])
+    is.cov.ac.within.ci[j] = check.ci(ci.cov.ac[1], ci.cov.ac[2], true.cov.vals[2, 2])
+    is.cov.bc.within.ci[j] = check.ci(ci.cov.bc[1], ci.cov.bc[2], true.cov.vals[3, 2])
 
     j = j + 1
 }
@@ -178,6 +271,9 @@ table(is.var.c.within.ci) # var C, 97
 table(is.cor.ab.within.ci) # cor A, 96 -- the CI is built by first transforming r into Fisher's Z, which is normally distributed, see (https://support.sas.com/resources/papers/proceedings/proceedings/sugi31/170-31.pdf)
 table(is.cor.ac.within.ci) # cor B, 96
 table(is.cor.bc.within.ci) # cor C, 97
+table(is.cov.ab.within.ci) # cov A, 95
+table(is.cov.ac.within.ci) # cov B, 95
+table(is.cov.bc.within.ci) # cov C, 97
 
 ## second batch of graphs
 out.a.idx <- which(!is.a.within.ci)
@@ -191,6 +287,10 @@ out.var.c.idx <- which(!is.var.c.within.ci)
 out.cor.ab.idx <- which(!is.cor.ab.within.ci)
 out.cor.ac.idx <- which(!is.cor.ac.within.ci)
 out.cor.bc.idx <- which(!is.cor.bc.within.ci)
+
+out.cov.ab.idx <- which(!is.cov.ab.within.ci)
+out.cov.ac.idx <- which(!is.cov.ac.within.ci)
+out.cov.bc.idx <- which(!is.cov.bc.within.ci)
 
 ## pl.a <- plot.cis(0.0, out.a.idx, expression(paste("CI"["95"], " of y"["A"])), ci.a.df, c(-.5,.5))
 ## pl.b <- plot.cis(0.0, out.b.idx, expression(paste("CI"["95"], " of y"["B"])), ci.b.df, c(-.5,.5))
@@ -215,14 +315,17 @@ dev.off()
 cat("\n\nPreparing tikz figure. Takes a little while...\n\n")
 
 tikz(file=paste0(output.path, "bmsim_cis.tex"))
-par(mfrow=c(3,3))
+par(mfrow=c(4,3))
 plot.cis(0.0, out.a.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of y"["A"])), expression("y"["A"]), ci.a.df, c(-.5,.5))
 plot.cis(0.0, out.b.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of y"["B"])), expression("y"["B"]), ci.b.df, c(-.5,.5))
 plot.cis(0.0, out.c.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of y"["C"])), expression("y"["C"]), ci.c.df, c(-.5,.5))
 plot.cis(0.6, out.cor.ab.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Var[y"["A"], "]")), expression(paste("Var[y"["A"], "]")), ci.var.a.df, c(.2,1.25))
 plot.cis(0.6, out.var.b.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Var[y"["B"], "]")), expression(paste("Var[y"["B"], "]")), ci.var.b.df, c(.2,1.25))
 plot.cis(0.6, out.var.c.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Var[y"["C"], "]")), expression(paste("Var[y"["C"], "]")), ci.var.c.df, c(.2,1.25))
-plot.cis(exp.cor.ab, out.cor.ab.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cor[y"["A"], ", y"["B"], "]")), expression(paste("Cor[y"["A"], ", y"["B"], "]")), ci.cor.ab.df, c(0.6,1.0))
-plot.cis(exp.cor.ac, out.cor.ac.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cor[y"["A"], ", y"["C"], "]")), expression(paste("Cor[y"["A"], ", y"["C"], "]")), ci.cor.ac.df, c(-.6,.5))
-plot.cis(exp.cor.bc, out.cor.bc.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cor[y"["B"], ", y"["C"], "]")), expression(paste("Cor[y"["B"], ", y"["C"], "]")), ci.cor.bc.df, c(-.6,.5))
+plot.cis(true.cov.vals[1, 2], out.cov.ab.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cov[y"["A"], ", y"["B"], "]")), expression(paste("Cov[y"["A"], ", y"["B"], "]")), ci.cov.ab.df, c(.25, 1.))
+plot.cis(true.cov.vals[2, 2], out.cov.ac.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cov[y"["A"], ", y"["C"], "]")), expression(paste("Cov[y"["A"], ", y"["C"], "]")), ci.cov.ac.df, c(-.5, .5))
+plot.cis(true.cov.vals[3, 2], out.cov.bc.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cov[y"["B"], ", y"["C"], "]")), expression(paste("Cov[y"["B"], ", y"["C"], "]")), ci.cov.bc.df, c(-.5, .5))
+plot.cis(exp.cor.ab, out.cor.ab.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cor[y"["A"], ", y"["B"], "]")), expression(paste("Cor[y"["A"], ", y"["B"], "]")), ci.cor.ab.df, c(0.6, 1.0))
+plot.cis(exp.cor.ac, out.cor.ac.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cor[y"["A"], ", y"["C"], "]")), expression(paste("Cor[y"["A"], ", y"["C"], "]")), ci.cor.ac.df, c(-.6, .5))
+plot.cis(exp.cor.bc, out.cor.bc.idx, expression(paste("CI"["95"], "\\hspace{1.5pt}of Cor[y"["B"], ", y"["C"], "]")), expression(paste("Cor[y"["B"], ", y"["C"], "]")), ci.cor.bc.df, c(-.6, .5))
 dev.off()
