@@ -30,11 +30,12 @@
     \node [block] (directsim0) [text width=2.75cm, below=1cm of prior] {$\text{S}\big[\mathcal{M}=f_\Theta(\cdot)\big]$};
     \node [decision, text width=1.5cm, align=center] (decision0) [below = 1cm of directsim0] {$\text{S}[\mathcal{M}]$\\validated?};
     \node [block1, text width = 2cm, align=center] [right = 1.5cm of decision0] (valsim0) {Validate $\text{S}[\mathcal{M}]$};
-    \node [io, text width=2.5cm, align=center] (params) [below = 1cm of decision0] {Parameters\\$\boldsymbol{\theta} = \{ \theta_1, ..., \theta_n \}$};
+    \node [io, text width=3.5cm, align=center] (params) [below = 1cm
+    of decision0] {Parameters\\$\boldsymbol{\theta} = \{ \theta_i: 1 \leq i \leq n\}$};
     
     % simulator
     % \node [block] (lik) [text width=1cm, right=6.5cm of directdata] {$\text{I}(\mathcal{M})$};
-    \node [block] (directsim1) [text width=2.75cm, below=1cm of params] {$\text{S}\big[\mathcal{M}=f_{D|\Theta}(\cdot)\big]$};
+    \node [block] (directsim1) [text width=3.5cm, below=1cm of params] {$\text{S}\big[\mathcal{M}=f_{D|\Theta}(\cdot|\Theta=\theta)\big]$};
     \node [decision, text width=1.5cm, align=center] (decision1) [below = 1cm of directsim1] {$\text{S}[\mathcal{M}]$\\validated?};
     % \coordinate [below = 0.75cm of decision1] (datacoord) {};
     \node [block1, text width = 2cm, align=center] [right = 1.5cm of decision1] (valsim1) {Validate $\text{S}[\mathcal{M}]$};
@@ -42,12 +43,13 @@
     
     % data
     % \node [decision, text width=1.5cm, align=center] (decision1) [below = 1cm of params] {Direct simulator available?};  
-    \node [io, text width=2cm, align=center] (directdata) [below = 1cm of decision1] {Data $\boldsymbol{d}=\{d_1, ..., d_n\}$}; 
+    \node [io, text width=3.5cm, align=center] (directdata) [below = 1cm of decision1] {Data\\$\boldsymbol{d}=\{d_i: 1 \leq i \leq n\}$}; 
     % \node [io, text width=1cm, align=center] (mcmcdata) [below right = 1cm and 1cm of decision1] {Data $D'$}; 
     
     % inference
-    \node [block] (lik2) [below = 1cm of directdata] {$\text{I}\big[\mathcal{M}=f_{D|\Theta}(\cdot)f_\Theta(\cdot)\big]$}; 
-    \node [io, text width=3cm, align=center] (posterior) [below = 1cm of lik2] {Parameter samples\\$\boldsymbol{\theta_i^j} = \{\theta_i^1, ..., \theta_i^L\}$}; 
+    \node [block] (lik2) [below = 1cm of directdata] {$\text{I}\big[\mathcal{M}\propto f_{D|\Theta}(D=d|\Theta=\theta)f_\Theta(\Theta=\theta)\big]$}; 
+    \node [io, text width=2.5cm, align=center] (posterior) [below = 1cm
+    of lik2] {Parameter\\MCMC samples\\$\boldsymbol{\theta'} = \{\theta_i^j\}$}; 
     \node [block2] (cov) [text width=2cm, left = 1cm of posterior] {Calculate coverage};
     \node [decision, text width=1.75cm, align=center] (decision2) [below = 0.5cm of posterior] {Coverage $\sim 95\%$?};
     \node [block1, text width=2cm, align=center] [right = 1.5cm of decision2] (fix) {Repair $\text{I}[\mathcal{M}]$};
@@ -70,7 +72,7 @@
     \path[line] (decision1) -- node [midway, right] {Yes} (directdata);
     \path[line, draw=none, text width=1.5cm, align=center] (decision1) -- node [midway, left, xshift=0.25cm] {\footnotesize Sample $n$ times} (directdata);
     
-    \path[line, rounded corners] (prior) --++ (-2,0cm) |- (lik2);
+    \path[line, rounded corners] (prior) --++ (-3.5,0cm) |- (lik2);
     \path[line] (directdata) -- (lik2);
     \path[line] (lik2) -- node [midway, text width=2.5cm] {\footnotesize for $i \in \{1, ..., n\}$ for $j \in \{1,...,L\}$} (posterior);
     \path[line, rounded corners] (params) -| (cov.north);
