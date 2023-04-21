@@ -873,7 +873,7 @@ SBCAnalyser has the following inputs:
 
 * log `<filename>`: log file containing actual values (required)
 * skip `<integer>`: numer of log file lines to skip (optional, default: 1)
-* logAnalyser `<filename>`: file produced by loganalyser tool using the -oneline option, containing estimated values (required)
+* logAnalyser `<filename>`: file produced by logcombiner, combining the trace log files associated with entries in the 'log' file
 * bins `<integer>`: number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
 * outputDir `<directory>`: output directory for SVG bar charts (optional, default: [[none]])
 * useRankedBins `<boolean>`: if true use ranking wrt prior to find bins. If false, use empirical bins based on prior. (optional, default: true)
