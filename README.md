@@ -768,6 +768,7 @@ You can run `CoverageCalculator` using the BEAST applauncher utility (or via the
 - skip `<integer>`	numer of log file lines to skip (default: 1)
 - logAnalyser `<filename>`	file produced by loganalyser tool using the -oneline option, containing estimated values
 - out `<directory>`	output directory for tsv files with truth and estimated mean and 95% HPDs, and directory is also used to generate svg bargraphs and html report. Not produced if not specified.
+-exclude `x,y,z` 	comma separated list of entries to exclude from the analysis. By default, `posterior`, `prior` and `likelihood` are excluded.
 - typeFile (File): if specified, the type file is a tab delimited file with first column containing entry names as they appear in the trace log file, and second column variable type, d for double, b for binary, c for categorical, for example:
 ```
 variable		type
@@ -877,6 +878,7 @@ SBCAnalyser has the following inputs:
 * bins `<integer>`: number of bins to represent prior distribution. If not specified (or not positive) use number of samples from posterior + 1 (L+1 in the paper) (optional, default: -1)
 * outputDir `<directory>`: output directory for SVG bar charts (optional, default: [[none]])
 * useRankedBins `<boolean>`: if true use ranking wrt prior to find bins. If false, use empirical bins based on prior. (optional, default: true)
+* exclude `x,y,z`: comma separated list of entries to exclude from the analysis. By default, `posterior`, `prior` and `likelihood` are excluded.
 
 
 Note that it compares entries from the prior to posterior, so items like likelihood, posterior, treeLikelihood and clockRate seem very wrong, but that can be ignored, since these were not part of the prior or (for clockRate) we know beforehand the prior differs substantially from the posterior.
