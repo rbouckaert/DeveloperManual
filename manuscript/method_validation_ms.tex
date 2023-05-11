@@ -155,75 +155,40 @@ This repository also hosts tools for model validation within the BEAST 2 platfor
 Probabilistic models mathematically formalize natural phenomena
 having an element of randomness.
 This is done through probability distributions describing both the observed
-empirical data -- seen as the result of one or more random
-instantiations of the modeled process -- as well the model parameters,
-which abstract relevant, but usually unknown aspects
-of the phenomenon at hand.
-The historical, stochastic, and highly dimensional nature of evolutionary
-processes makes the utility of probabilistic models in evolutionary
-biology self-evident. 
+empirical data -- seen as the result of one or more random instantiations of the modeled process -- as well the model parameters, which abstract relevant, but usually unknown aspects of the phenomenon at hand.
+In Evolutionary Biology specifically, the historical, stochastic, and highly dimensional nature of evolutionary processes makes the utility of probabilistic models in evolutionary biology self-evident. 
 
-The central component of a probabilistic model, $\text{Pr}(D=d|\Theta=\theta)$, allows us to describe the probability distribution over the data ($d$) given the model parameters ($\theta$).
-This probability mass function (pmf; or its continuous counterpart, the probability density function, pdf, $f_D(d|\Theta=\theta)$) is sometimes referred to as the likelihood function.
-(Just for this section, we will abuse and simplify notation, and drop variable subscripts, e.g., $f_D(D=d|\Theta=\theta) \rightarrow f(d|\theta)$).
+The central component of a probabilistic model, $\text{Pr}(D=d|\Theta=\theta)$, allows us to describe the probability distribution over the data ($D$) given the model parameters ($\theta$).
+This probability mass function (pmf; or its continuous counterpart, the probability density function (pdf) $f_D(d|\Theta=\theta)$) is sometimes referred to as the likelihood function.
+Just for this section, we will abuse and simplify notation, and drop variable subscripts, e.g., we will write $f_D(D=d|\Theta=\theta)$  as $f(d|\theta)$.
 As illustrated in the next sections, probabilistic models can be hierarchical, in which case there may be several likelihood functions.
 % (Fig. \ref{fig:graphmodel}).
 In a frequentist statistical framework, $f(d|\theta)$ is the sole component of a probabilistic model, and is maximized across parameter space during parameter estimation and model comparison.
 
-In the present study we focus on Bayesian inference, however, 
-where a probabilistic model $\mathcal{M}$ defines a posterior probability
-distribution for its parameters, $f(\theta|d) =
-\frac{f(d|\theta)f(\theta)}{f(d)}$.
-Here, our prior inferences or beliefs about the natural world -- represented by
-the prior distribution $f(\theta)$ -- are confronted and updated by
-the data through the likelihood function (or multiple likelihood functions).
-$f(d) = \int_\Theta f(d|\theta)f(\theta)d\theta$, the
-probability of the data, is also known as the marginal likelihood or the model
-evidence.
-Crucially, a Bayesian model includes a prior, $f(\theta)$:
-when models are compared, for example, $f(\theta)$ needs to be taken
-into account when computing the model evidence $f(d)$.
+In the present study we focus on Bayesian inference, however, where a probabilistic model $\mathcal{M}$ defines a posterior  probability distribution for its parameters, $f(\theta|d) = \frac{f(d|\theta)f(\theta)}{f(d)}$.
+Here, our prior inferences or beliefs about the natural world -- represented by the prior distribution $f(\theta)$ -- are confronted with and updated by the data through the likelihood function (or multiple likelihood functions).
+$f(d) = \int_\Theta f(d|\theta)f(\theta)d\theta$, the probability of the data, is also known as the marginal likelihood or the model evidence.
+Crucially, a Bayesian model includes a prior, $f(\theta)$: when models are compared, for example, $f(\theta)$ needs to be taken into account when computing the model evidence $f(d)$.
 
-Models routinely used in evolutionary biology are often characterized by
-continuous parameters, and are normally complex enough to preclude
-analytical solutions for the posterior density $f(\theta|d)$, mainly
-due to the intractability of the integral appearing in the marginal
-likelihood.
-In those cases, one can make use of the fact that $f(d)$
-is a constant that can be ignored (i.e., $f(\theta|d)
-\propto f(\theta|d)f(\theta)$), and use 
-techniques like Markov chain Monte Carlo (MCMC) to sample the posterior
-distribution.
-This is because the MCMC algorithm that generates the Markov chain,
-called the Metropolis-Hastings \citep{metropolis53,mh} algorithm, only requires the
-posterior to be evaluated up to a constant.
+Models routinely used in evolutionary biology are often characterized by continuous parameters, and are normally complex enough to preclude analytical solutions for the posterior density $f(\theta|d)$, mainly due to the intractability of the integral appearing in the denominator -- i.e., the marginal likelihood.
+In those cases, one can make use of the fact that $f(d)$ is a constant with respect to the parameters that can be ignored (i.e., $f(\theta|d) \propto f(\theta|d)f(\theta)$), and use techniques like Markov chain Monte Carlo (MCMC) to sample the posterior distribution.
+This is because MCMC is usually implemented in the form of the Metropolis-Hastings \citep{metropolis53,mh} algorithm, which only requires the posterior to be evaluated up to a constant.
 
 In practice, the Metropolis-Hastings algorithm samples the posterior
 distribution (also referred to as the ``target'' distribution) by means of a
 transition mechanism. 
-If the proposal distribution generated by this mechanism is
-irreducible, positive recurrent, and aperiodic, and the resulting
-chain is long enough, then the sampled posterior distribution will approximate
-the target distribution $f(\theta|d)$ \citep{smith93,tierney94,gelman}.
+If the proposal distribution generated by this mechanism is irreducible, positive recurrent, and aperiodic, and the resulting chain is long enough, then the sampled posterior distribution will closely approximate the target distribution $f(\theta|d)$ \citep{smith93,tierney94,gelman}.
 
-We will spend time considering MCMC in particular as it is the commonly
-chosen technique for obtaining $f(\theta|d)$ under an implementation of
-model $\mathcal{M}$.
-A thorough validation effort thus entails verifying the
-correctness of (i) the model (i.e., $f(d|\theta)f(\theta)$), and (ii)
-the components involved in the MCMC transition mechanism.
-We note that the latter are not part of the model, however, and it is 
-possible to sample $f(\theta|d)$ with other techniques such as importance
-sampling, Hamiltonian Monte Carlo \citep{hmc}, or even by converting the
-sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
+We will spend time considering MCMC in particular, as it is the commonly chosen technique for obtaining samples from $f(\theta|d)$ under an implementation of model $\mathcal{M}$.
+A thorough validation effort thus entails verifying the correctness of (i) the model (i.e., $f(d|\theta)f(\theta)$), and (ii) the components involved in the MCMC transition mechanism.
+We note that the latter are not part of the model, however, and it is  possible to sample $f(\theta|d)$ with other techniques such as importance sampling, Laplace approximations~\citep{inla}, or even by converting the sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
 
 Finally, we stress that we are interested in practices for verifying model
 \emph{correctness}.
-There are other tests employed to ensure that a particular MCMC analysis
-is converging as anticipated.
-Determining that one or more independent Markov chains converged on very
-similar posterior distributions is not a correctness test, as those
-distributions might be very different from the target distribution.
+There are other tests and diagnostics employed to ensure that a particular MCMC analysis is converging as expected.
+Determining that one or more independent Markov chains converged on very similar posterior distributions is not a correctness test, as those distributions might be very different from the target distribution. 
+We refer the interested reader to e.g., \cite{rwty}, \cite{fabreti2022}, 
+\cite{magee2023} and references therein.
 
 \subsection*{Validating a Bayesian model}
 
