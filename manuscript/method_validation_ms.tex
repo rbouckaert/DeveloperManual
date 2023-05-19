@@ -51,8 +51,6 @@
 \fancyhead[C]{Mendes et al. $\bullet$ June 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
-
-
 \usepackage{natbib}
 \bibliographystyle{apalike}
 
@@ -155,86 +153,50 @@ This repository also hosts tools for model validation within the BEAST 2 platfor
 Probabilistic models mathematically formalize natural phenomena
 having an element of randomness.
 This is done through probability distributions describing both the observed
-empirical data -- seen as the result of one or more random
-instantiations of the modeled process -- as well the model parameters,
-which abstract relevant, but usually unknown aspects
-of the phenomenon at hand.
-The historical, stochastic, and highly dimensional nature of evolutionary
-processes makes the utility of probabilistic models in evolutionary
-biology self-evident. 
+empirical data -- seen as the result of one or more random instantiations of the modeled process -- as well the model parameters, which abstract relevant, but usually unknown aspects of the phenomenon at hand.
+In Evolutionary Biology specifically, the historical, stochastic, and highly dimensional nature of evolutionary processes makes the utility of probabilistic models in evolutionary biology self-evident. 
 
-The central component of a probabilistic model, $\text{Pr}(D=d|\Theta=\theta)$, allows us to describe the probability distribution over the data ($d$) given the model parameters ($\theta$).
-This probability mass function (pmf; or its continuous counterpart, the probability density function, pdf, $f_D(d|\Theta=\theta)$) is sometimes referred to as the likelihood function.
-(Just for this section, we will abuse and simplify notation, and drop variable subscripts, e.g., $f_D(D=d|\Theta=\theta) \rightarrow f(d|\theta)$).
+The central component of a probabilistic model, $\text{Pr}(D=d|\Theta=\theta)$, allows us to describe the probability distribution over the data ($D$) given the model parameters ($\theta$).
+This probability mass function (pmf; or its continuous counterpart, the probability density function (pdf) $f_D(d|\Theta=\theta)$) is sometimes referred to as the likelihood function.
+Just for this section, we will abuse and simplify notation, and drop variable subscripts, e.g., we will write $f_D(D=d|\Theta=\theta)$  as $f(d|\theta)$.
 As illustrated in the next sections, probabilistic models can be hierarchical, in which case there may be several likelihood functions.
 % (Fig. \ref{fig:graphmodel}).
 In a frequentist statistical framework, $f(d|\theta)$ is the sole component of a probabilistic model, and is maximized across parameter space during parameter estimation and model comparison.
 
-In the present study we focus on Bayesian inference, however, 
-where a probabilistic model $\mathcal{M}$ defines a posterior probability
-distribution for its parameters, $f(\theta|d) =
-\frac{f(d|\theta)f(\theta)}{f(d)}$.
-Here, our prior inferences or beliefs about the natural world -- represented by
-the prior distribution $f(\theta)$ -- are confronted and updated by
-the data through the likelihood function (or multiple likelihood functions).
-$f(d) = \int_\Theta f(d|\theta)f(\theta)d\theta$, the
-probability of the data, is also known as the marginal likelihood or the model
-evidence.
-Crucially, a Bayesian model includes a prior, $f(\theta)$:
-when models are compared, for example, $f(\theta)$ needs to be taken
-into account when computing the model evidence $f(d)$.
+In the present study we focus on Bayesian inference, however, where a probabilistic model $\mathcal{M}$ defines a posterior  probability distribution for its parameters, $f(\theta|d) = \frac{f(d|\theta)f(\theta)}{f(d)}$.
+Here, our prior inferences or beliefs about the natural world -- represented by the prior distribution $f(\theta)$ -- are confronted with and updated by the data through the likelihood function (or multiple likelihood functions).
+$f(d) = \int_\Theta f(d|\theta)f(\theta)d\theta$, the probability of the data, is also known as the marginal likelihood or the model evidence.
+Crucially, a Bayesian model includes a prior, $f(\theta)$: when models are compared, for example, $f(\theta)$ needs to be taken into account when computing the model evidence $f(d)$.
 
-Models routinely used in evolutionary biology are often characterized by
-continuous parameters, and are normally complex enough to preclude
-analytical solutions for the posterior density $f(\theta|d)$, mainly
-due to the intractability of the integral appearing in the marginal
-likelihood.
-In those cases, one can make use of the fact that $f(d)$
-is a constant that can be ignored (i.e., $f(\theta|d)
-\propto f(\theta|d)f(\theta)$), and use 
-techniques like Markov chain Monte Carlo (MCMC) to sample the posterior
-distribution.
-This is because the MCMC algorithm that generates the Markov chain,
-called the Metropolis-Hastings \citep{metropolis53,mh} algorithm, only requires the
-posterior to be evaluated up to a constant.
+Models routinely used in evolutionary biology are often characterized by continuous parameters, and are normally complex enough to preclude analytical solutions for the posterior density $f(\theta|d)$, mainly due to the intractability of the integral appearing in the denominator -- i.e., the marginal likelihood.
+In those cases, one can make use of the fact that $f(d)$ is a constant with respect to the parameters that can be ignored (i.e., $f(\theta|d) \propto f(\theta|d)f(\theta)$), and use techniques like Markov chain Monte Carlo (MCMC) to sample the posterior distribution.
+This is because MCMC is usually implemented in the form of the Metropolis-Hastings \citep{metropolis53,mh} algorithm, which only requires the posterior to be evaluated up to a constant.
 
 In practice, the Metropolis-Hastings algorithm samples the posterior
 distribution (also referred to as the ``target'' distribution) by means of a
 transition mechanism. 
-If the proposal distribution generated by this mechanism is
-irreducible, positive recurrent, and aperiodic, and the resulting
-chain is long enough, then the sampled posterior distribution will approximate
-the target distribution $f(\theta|d)$ \citep{smith93,tierney94,gelman}.
+If the proposal distribution generated by this mechanism is irreducible, positive recurrent, and aperiodic, and the resulting chain is long enough, then the sampled posterior distribution will closely approximate the target distribution $f(\theta|d)$ \citep{smith93,tierney94,gelman}.
 
-We will spend time considering MCMC in particular as it is the commonly
-chosen technique for obtaining $f(\theta|d)$ under an implementation of
-model $\mathcal{M}$.
-A thorough validation effort thus entails verifying the
-correctness of (i) the model (i.e., $f(d|\theta)f(\theta)$), and (ii)
-the components involved in the MCMC transition mechanism.
-We note that the latter are not part of the model, however, and it is 
-possible to sample $f(\theta|d)$ with other techniques such as importance
-sampling, Hamiltonian Monte Carlo \citep{hmc}, or even by converting the
-sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
+We will spend time considering MCMC in particular, as it is the commonly chosen technique for obtaining samples from $f(\theta|d)$ under an implementation of model $\mathcal{M}$.
+A thorough validation effort thus entails verifying the correctness of (i) the model (i.e., $f(d|\theta)f(\theta)$), and (ii) the components involved in the MCMC transition mechanism.
+We note that the latter are not part of the model, however, and it is  possible to sample $f(\theta|d)$ with other techniques such as importance sampling, Laplace approximations~\citep{inla}, or even by converting the sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
 
-Finally, we stress that we are interested in practices for verifying model
-\emph{correctness}.
-There are other tests employed to ensure that a particular MCMC analysis
-is converging as anticipated.
-Determining that one or more independent Markov chains converged on very
-similar posterior distributions is not a correctness test, as those
-distributions might be very different from the target distribution.
+Finally, we stress that we are interested in practices for verifying model \emph{correctness}.
+There are other tests and diagnostics employed to ensure that a particular MCMC analysis is converging as expected.
+Ascertaining whether one or more independent Markov chains have converged to a given posterior distribution is not a correctness test, as that distribution might be very different from the target distribution. 
+We refer the interested reader to e.g., \cite{rwty}, \cite{fabreti2022}, 
+\cite{magee2023} and references therein.
 
 \subsection*{Validating a Bayesian model}
+
+In this section we discuss a host of procedures for validating an implementation of a Bayesian model.
+This entails validating both the (data) simulator and the inferential engine (e.g. the MCMC algorithm).
 
 \subsubsection*{Validating the simulator, $\text{S}[\mathcal{M}]$}
 \label{verify-correctness-of-simulator-implementation}
 
-When a probabilistic model $\mathcal{M}$ is implemented for the first
-time, a simulator $\text{S}[\mathcal{M}]$ must be devised and itself
-validated before we can validate an inferential engine $\text{I}[\mathcal{M}]$.
-It is $\text{I}[\mathcal{M}]$ that will be employed by users in empirical
-analyses.
+When a probabilistic model $\mathcal{M}$ is implemented for the first time, a simulator $\text{S}[\mathcal{M}]$ must be devised and itself validated before we can validate an inferential engine $\text{I}[\mathcal{M}]$.
+It is $\text{I}[\mathcal{M}]$ that will be employed by users in empirical analyses.
 \begin{wrapfigure}{l}{5.5cm}
   \includestandalone[width=5.75cm]{../figures/graphical_model}    
   \caption{The graphical representation of a simple Bayesian
@@ -249,52 +211,32 @@ analyses.
   \label{fig:pgm}
 \end{wrapfigure}
 A simulator conventionally requires a parameter value as input (i.e., a $\theta$ value, where $\theta$ might represent more than one parameter), or a prior distribution on those values, $f_\Theta(\cdot)$. 
-(Note that we use ``$\cdot$'' when referring specifically to the generative function, rather than the value it takes given input.)
+Note that we use ``$\cdot$'' when referring specifically to the generative function, rather than the value it takes given input.
 The simulator then outputs a sample of random variable(s), which for hierarchical models will include not only an instantiation of data $\text{D}$, but also of a subset of the parameters in $\theta$.
  
 In the case of hierarchical models, it is sometimes useful to consider $\text{S}[\mathcal{M}]$ as a collection of component simulators, each characterized by a different sampling distribution.
-For example, $\text{S}[\mathcal{M}]$ for the whole integrative model
-in figure \ref{fig:yulecalval} can be seen as an ensemble comprised
-by:
+For example, $\text{S}[\mathcal{M}]$ for the whole integrative model in Figure \ref{fig:yulecalval} can be seen as an ensemble comprised by:
 \begin{enumerate}
   \item $\text{S}[f_\Theta(\cdot)]$ (where $\Theta = \{\Lambda, R, Y_0\}$), which jointly simulates $\theta=\{\lambda,r,y_0\}$,
   \item $\text{S}[f_{\Phi|\Lambda}(\cdot|\Lambda=\lambda)]$, which simulates a Yule tree $\phi$ given a value of $\lambda$ simulated in (1),
   \item $\text{S}[f_{Y|\Phi,R}(\cdot|\phi,r)]$, which simulates an array of $k$ continuous-trait values, $\boldsymbol{y}$, given a phylogeny $\phi$ with $k$ species and an evolutionary rate $r$ (simulated in (1) and (2), respectively).
 \end{enumerate}
-Being able to isolate the building blocks of a hierarchical model simulator helps divide and conquer the validation task, especially when some, but not all of the sampling distributions are well-known parametric distributions, or when they result from well characterized stochastic processes (see below).
+Being able to isolate the building blocks of a hierarchical model simulator helps divide and conquer the validation task, especially when some but not all of the sampling distributions are well-known parametric distributions, or when they result from well characterized stochastic processes (see below).
 
-One way to validate a probabilistic model simulator is by
-using it to sample a large number of data sets given a set of parameters.
-These parameters can be seen as characterizing a ``population''
-of the entities being modeled.
-For each data set, one can then construct $\alpha$-confidence intervals
-(where $\alpha \in (0,1)$ gives the credibility level) for
-certain summary statistics
-(e.g., mean, variance, covariance).
-If the simulator is behaving as expected, one should
-be able to verify that the (population) summary statistic
-is contained approximately $\alpha$\% of the time within their
-$\alpha$-confidence intervals.
-An example is the Yule model (also known as the pure-birth model;
-\citealt{yule24}), a continuous-time Markov process that has been
-classically employed in phylogenetics to model the number of
-species in a clade \citep{yule24,aldous01}.
-Under a Yule process with a species birth rate of $\lambda$, the
-expected tree height, $\text{E}[t_{\text{root}}]$, for
-a tree with $n$ tips is:
-
+One way to validate a probabilistic model simulator is by using it to produce (sample) a large number of data sets given a set of parameters.
+These parameters can be seen as characterizing a ``population'' of the entities being modeled.
+For each data set, one can then construct $\alpha \times 100 \%$-confidence intervals (where $\alpha \in (0,1)$ gives the confidence level) for certain summary statistics (e.g., mean, variance, covariance).
+If the simulator is behaving as expected, one should be able to verify that the (population or ``true'') summary statistic is contained approximately $\alpha$\% of the time within their $\alpha \times 100\%$-confidence intervals.
+An example is the Yule model (also known as the pure-birth model; \citealt{yule24}), a continuous-time Markov process that has been classically employed in phylogenetics to model the number of species in a clade \citep{yule24,aldous01}.
+Under a Yule process with a species birth rate of $\lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
 \vspace{.5cm}
 
 % Start: BM BOX
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
   title=Box 1: Models characterized by well-known parametric distributions, fonttitle=\bfseries]
   \small 
-  One commonly used model in macroevolution for the study
-of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. X;
-\citealt{felsenstein73}).
-The pdf characterizing this model's sampling distribution is in fact
-the pdf of the multivariate normal (MVN) probability distribution:
-
+  One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. X; \citealt{felsenstein73}).
+The pdf characterizing this model's sampling distribution is in fact the pdf of the multivariate normal (MVN) probability distribution:
 \begin{equation}
   \begin{split}
     \text{log }f(\boldsymbol{y} \mid \boldsymbol{y_0}, r, \boldsymbol{T}) = -\frac{1}{2} \Big[ n\text{log}(2\pi) + \text{log}|r \boldsymbol{T}| \Big] & \\
@@ -303,12 +245,8 @@ the pdf of the multivariate normal (MVN) probability distribution:
   \end{split}
 \end{equation}
 
-\noindent where $\boldsymbol{y}$ corresponds to the observed values of a trait
-scored for $n$ species, $\boldsymbol{y_0}$ is the trait value at the root of the tree,
-$r$ is the instantaneous rate of change (i.e., the evolutionary rate, and sometimes
-represented by $\sigma^2$), and $r\boldsymbol{T}$ is the variance-covariance matrix.
-$\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree
-$\Phi$'s topology and branch lengths; see Fig. 1 below).
+\noindent where $\boldsymbol{y}$ corresponds to the observed values of a trait scored for $n$ species, $\boldsymbol{y_0}$ is the trait value at the root of the tree, $r$ is the instantaneous rate of change (i.e., the evolutionary rate, and sometimes represented by $\sigma^2$), and $r\boldsymbol{T}$ is the variance-covariance matrix.
+$\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree $\Phi$'s topology and branch lengths; see Fig. 1 below).
 
 \vspace{.25cm}
 The probability density function in equation \eqref{eq:bm} describes the distribution
@@ -370,16 +308,9 @@ either ``A'' or ``B'').
 
 \vspace{.25cm}
 
-Figure 1 shows the distributions of trait values and their variances
-and covariances for one sample of \textcolor{red}{X} independent
-realizations of phylogenetic BM processes.
-One can see that the sample's average trait value and the
-variances and covariances approach their expectations.
-In order to be igorous, one can follow the method described
-in the main text and verify that those expectations fall within
-their 95\% confidence intervals 95\% of the time, as calculated
-from a large number of samples (Supplementary Fig. \ref{supfig:bmsimcis} and
-Supplementary Table \ref{suptab:bmsimcis}).
+Figure 1 shows the distributions of trait values and their variances and covariances for one sample of \textcolor{red}{X} independent realizations of phylogenetic BM processes. 
+One can see that the sample's average trait value and the variances and covariances approach their expectations. 
+In order to be rigorous, one can follow the method described in the main text and verify that those expectations fall within their 95\% confidence intervals 95\% of the time, as calculated from a large number of samples (Supplementary Fig. \ref{supfig:bmsimcis} and Supplementary Table \ref{suptab:bmsimcis}).
 %
 %\vspace{.25cm}
 %\emph{Validating a phylogenetic BM likelihood implementation}
@@ -398,19 +329,14 @@ Supplementary Table \ref{suptab:bmsimcis}).
 % End: BM BOX
 
 \begin{equation}
-  \text{E}[t_{\text{root}}] = \sum_{i=2}^{n}\frac{1}{1\lambda}.
+  \text{E}[t_{\text{root}}] = \sum_{i=2}^{n}\frac{1}{i\lambda}.
   \label{eq:yule}
 \end{equation}
 
-\noindent One can then verify if $\text{E}[t_{\text{root}}]$ is $95\%$
-of the time within $\pm 1.96$ standard errors of the average
-Yule-tree height (from each sampled data set).
-Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot)]$ is correctly
-implemented (Fig. \ref{fig:yulemean}).
-In Box 1, we illustrate this procedure for the (parametric) sampling distribution
-underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{felsenstein73}).
-Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also automatically validate
-$\text{S}[\mathcal{M}]$.
+\noindent One can then verify if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
+Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
+In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{felsenstein73}).
+Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also automatically validate $\text{S}[\mathcal{M}]$.
 
 \begin{figure}
   \centering
@@ -443,7 +369,7 @@ $\text{S}[\mathcal{M}]$.
   \caption{Validation of Yule tree simulator.
     (a) Number of simulated data sets (out of 100) for which the
     expected tree height ($t_{\text{root}}$) was inside the 95\% CI
-    about its sample average.
+    about its sample average -- if the simulator is correct, we expect this number to be between 90 and 99 95\% of the time.
     Each data set consisted of 50 twenty-taxon simulated Yule trees.
     (b) The area shaded in light blue represents the
     95\% confidence interval about the average tree height, obtained
@@ -452,7 +378,7 @@ $\text{S}[\mathcal{M}]$.
   \label{fig:yulemean}
 \end{figure}
 
-We note that we have so far used $\text{S}[\mathcal{M}]$ to represent a \emph{direct} simulator under model $\mathcal{M}$ (Table \ref{tab:sim}), meaning each and every sample generated by $\text{S}[\mathcal{M}]$ is independent.
+We note that we have so far used $\text{S}[\mathcal{M}]$ to represent a \emph{direct} simulator under model $\mathcal{M}$ (Table~\ref{tab:sim}), meaning each and every sample generated by $\text{S}[\mathcal{M}]$ is independent.
 This is contrast with other simulation strategies, such as conducting MCMC under model $\mathcal{M}$ with no data, given specific parameter ($\theta$) values.
 This latter approach may be the only option if $\text{S}[\mathcal{M}]$ has not been yet implemented, and it is predicated upon the existence of correct implementations of both an inferential engine $\text{I}[\mathcal{M}]'$ and of proposal functions.
 We distinguish $\text{I}[\mathcal{M}]'$ from $\text{I}[\mathcal{M}]$ because simulations are being carried out precisely to validate $\text{I}[\mathcal{M}]$.
@@ -460,7 +386,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 
 \begin{center}
   \begin{table}[h]
-  \caption{A non-exhaustive list of direct simulation software used for various models in evolutionary biology.}
+  \caption{A non-exhaustive list of direct simulation software used for various models in Evolutionary Biology.}
   \label{tab:sim}
   \centering
   \begin{tabular}{ p{0.7in} | p{1.5in} | p{1in} | p{1.3in} }
@@ -519,7 +445,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 %   for an example.
 % \item
 %   Models implemented in other phylogenetic software packages, such a
-%   BEAS 1, MrBayes, RevBayes, allow sampling a distribution using MCMC.
+%   BEAST 1, MrBayes, RevBayes, allow sampling a distribution using MCMC.
 % \item
 %   The \texttt{beast.core.DirectSimulator} class in BEAST 2 can be used
 %   to draw samples from distributions in BEAST that extend
