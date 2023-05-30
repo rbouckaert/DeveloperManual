@@ -462,61 +462,40 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 \subsubsection*{Validating the inferential engine, $\text{I}[\mathcal{M}]$}
 \label{sec:sbc}
 
-The more complex the natural phenomenon under study,
-the more difficult it will be to strike a good balance
-between model practicality and realism.
+The more complex the natural phenomenon under study, the more difficult it will be to strike a good balance between model practicality and realism~\citep{levins1966}.
 \begin{wrapfigure}{l}{6.85cm}
   % \includestandalone[width=6.75cm]{../figures/flowchart}
   \includegraphics[width=6.75cm]{../figures/flowchart.pdf}
   \caption{Flowchart of the coverage-validation of a Bayesian model.}
     \label{fig:flowchart}
 \end{wrapfigure}
-The popular aphorism rings true: ``all models are wrong but some are useful''
-\citep{box79}.
-Very simple models are easier to implement in efficient inference tools, but will
-commonly make assumptions likely to be broken by the data (e.g.,
-\citealp{sullivan97,mendes17,mendes19}).
-Conversely, complex models will fit the data better (e.g., \citealp{ogilvie22}), but
-may become unwieldly with increasing levels of realism.
+The popular aphorism rings true: ``all models are wrong but some are useful''~\citep{box79}.
+Very simple models are easier to implement in efficient inference tools, but will commonly make assumptions that are likely to be broken by the data (e.g., \citealp{sullivan97,mendes17,mendes19}). 
+Conversely, complex models will fit the data better (e.g., \citealp{ogilvie22}), but may become unwieldy with increasing levels of realism.
 
-A large number of parameters can cause overfitting and unidentifiability,
-and highly complex models might lead to prohibitively slow inferential analyses
-(e.g., \citealp{lartillot11}).
+A large number of parameters can cause overfitting and unidentifiability, and inference for highly complex models might be prohibitively slow (see e.g., \citealp{lartillot11}).
 % In order to achieve correct inferences, it is of utmost importance to guarantee that inferential machinery returns quantifiably correct answers.
 % In practice, however, this is impossible to achieve due to the models under consideration being almost always badly misspecified for the data at hand.
-Deciding on the utility of a model for real-world problems is a
-daunting task \citep{brown18,shepherd18}, and is a challenge we do not address in
-the present contribution.
-Such model appraisals are normally carried out after a model is
-published, often in multiple contribution bouts, and are critical for a model's
-longevity.
-Analyses of model fit against data are normally accompanied by discussions on
-assumption validity, and more rarely by benchmarking and scrutinization of model
-behavior and implementation (e.g., \citealp{maddison07,rabosky15,rabosky13,moore16,stadler10,luo20}).
+Deciding on the utility of a model for real-world problems is a daunting task \citep{brown18,shepherd18}, and is a challenge we do not address in the present contribution.
+Such model appraisals are normally carried out after a model is published, often in multiple  contribution bouts, and are critical for a model's longevity.
+Analyses of model fit against data are normally accompanied by discussions on assumption validity, and more rarely by benchmarking and scrutinization of model behavior and implementation (e.g., \citealp{maddison07,rabosky15,rabosky13,moore16,stadler10,luo20}).
 
-When a new model $\mathcal{M}$ is initially proposed, however, authors must ensure
-that their methods
 % Simulating data from a probabilistic generative model can thus be helpful to understand when the inferential machinery under development
+When a new model $\mathcal{M}$ is initially proposed, however, authors must ensure that their methods 
 can at the very least robustly recover generating parameters.
-In this section, we discuss a few techniques that can be employed to assess
-the correctness of a parameter-estimation routine.
-These techniques assume that one can simulate from a probabilistic data-generating
-process (see previous section).
+In this section, we discuss a few techniques that can be employed to assess the correctness of a parameter-estimation routine.
+These techniques assume that one can accurately simulate from a probabilistic data-generating process (see previous section).
 
 \vspace{.25cm}
 
 \noindent{\emph{Coverage-validation of a Bayesian model}}
 
-Our discussion on how to ensure a Bayesian model is well-calibrated
-and thus correct will mostly follow the ideas in \citet{Cook2006} and \citet{Talts2018}.
-The basic idea is presented in the flowchart in figure \ref{fig:flowchart}, and
-consists of three stages: simulation, inference, and coverage calculation.
+Our discussion on how to ensure a Bayesian model is well-calibrated and thus correct will mostly follow the ideas in \citet{Cook2006} and \citet{Talts2018}.
+The basic idea is presented in the flowchart in figure \ref{fig:flowchart}, and consists of three stages: simulation, inference, and coverage calculation.
 Once we have a validated simulator for model $\mathcal{M}$, we start by sampling $n$ parameter
-sets from
-% $\theta^{(i)}, i = 1, \ldots, M$
+sets from % $\theta^{(i)}, i = 1, \ldots, M$
 % $\boldsymbol{\theta} = \{\theta_1,\theta_2,...,\theta_n\}$
-$\boldsymbol{\theta} = \{\theta_i: 1 \leq j \leq n\}$ from its prior,
-% \st{$\pi(\theta)$}
+$\boldsymbol{\theta} = \{\theta_i: 1 \leq j \leq n\}$ from its prior, % \st{$\pi(\theta)$}
 $f_\Theta(\cdot)$, i.e.:
 
 \vspace{-1cm}
