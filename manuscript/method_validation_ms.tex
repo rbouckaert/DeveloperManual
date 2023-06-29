@@ -78,7 +78,7 @@
 \small $^4$School of Biological Sciences, The University of Auckland\\
 \small
 \href{mailto:f.mendes@auckland.ac.nz}{$^*$Corresponding authors:
-  f.mendes@auckland.ac.nz; remco@cs.auckland.ac.nz}\\
+  f.mendes@wustl.edu; remco@cs.auckland.ac.nz}\\
 {\small $^\dagger$Authors contributed equally to this work}
 % \href{mailto:f.mendes@auckland.ac.nz}{another.email@auckland.ac.nz}
 %\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
@@ -487,7 +487,7 @@ These techniques assume that one can accurately simulate from a probabilistic da
 
 \vspace{.25cm}
 
-\noindent{\emph{Coverage-based validation}}
+\noindent{\emph{Coverage validation}}
 
 Our discussion on how to ensure a Bayesian model is well-calibrated and thus correct will mostly follow the ideas in \citet{Cook2006} and \citet{Talts2018}.
 The basic idea is presented in the flowchart in figure \ref{fig:flowchart}, and consists of three stages: simulation, inference, and coverage calculation.
@@ -609,7 +609,7 @@ $k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
 \begin{figure}
   \includegraphics[width=\textwidth]{../figures/graphical_model_coverage.pdf}
   \caption{
-    Coverage-validation analyses of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
+    Coverage validation analyses of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
     Panels show the true (i.e., simulated) parameter values plotted against their mean posteriors (the dashed line gives $f(x) = x$).
     Dots and lines (100 per panel) represent true values and their 95\%-HPDs, respectively.
     Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
@@ -631,19 +631,21 @@ These numbers indicate that one or more of the parts comprising model $\mathcal{
 This result was expected because we purposefully made the models in simulation and inference differ; we know $\text{I}[\mathcal{M}]$ is correct because of the results from scenario 1.
 Of course, in a real-world validation experiment the model should be correctly specified, and such a result would suggest a problem with the inferential machinery (provided the the simulator had been previously validated).
 
-Lastly, in ``Scenario 3'' of figure \ref{fig:yulecalval} (rightmost top and bottom panels), we again correctly specified the model, but carried out substantial rejection sampling.
+Lastly, in ``Scenario 3'' of figure \ref{fig:yulecalval} (rightmost top and bottom panels), we again correctly specified the model, but carried out substantial rejection sampling in simulation.
 Approximately 90\% of all simulated trees were rejected based on their taxon count; trees were rejected if they had fewer than 100 or more than 200 taxa.
 As with scenario 1, coverage fell within the expected ranges for a correct model implementation.
 \textcolor{red}{This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
-The catch is that, although tree size is indeed a random variable being filtered in simulation, it was not a free parameter during inference, being instead fixed to the truth.
-As long as the tree is possible under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
+The catch here is that, although tree size is a random variable being filtered in simulation, it was not a free parameter when we carried out inference, being instead fixed to the truth.}
+
+\textcolor{red}{As long as a parameter value has non-zero probability under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
 Scenario 3 brings home the point that coverage validation is agnostic to biases in parameter estimated values, beyond their effect on coverage.
 Due to the finite size of a Yule tree, which may allow the prior a substantial influence over the posterior, the estimated $\lambda$ may be consistently higher or lower than the true $\lambda$.
 (We illustrate and further expand on this point using a much simpler model; Supplementary Figs. X.)
-As long as coverage is appropriate, however, the model is said to be correct, and a potential bias may remain undetected unless more investigation is done (see the SBC procedure below).}
+But as long as coverage is appropriate under this type of validation, the model is understood to be correct.
+Potential biases in parameter estimates may remain undetected unless more investigation is done (see the SBC procedure below).}
 
-The three scenarios we explored above illustrate how coverage-validation results can be interpreted in terms of model implementation correctness.
-We can additionally capitalize on this validation setup and gauge how accurate our inferential tool can be for different parameters. 
+The three scenarios we explored above illustrate how coverage validation results can be interpreted in terms of model implementation correctness.
+One can additionally capitalize on this validation setup and gauge how accurate our inferential tool can be for different parameters. 
 The more identifiable a parameter is, the higher should be the correlation between its posterior mean and its generating ``true'' value.
 In our scenarios 1 and 3, the species birth-rate $\Lambda$ was not easily identifiable given the sizes of the phylogenetic trees.
 Conversely, the continuous-trait evolutionary rate, $R$, was more easily identifiable, as revealed by the higher correlation between its true values and their posterior means.
@@ -651,15 +653,25 @@ We conclude this section by noting that unidentifiability should not be taken as
 
 \vspace{.25cm}
 
-\noindent \emph{Simulation-based calibration (SBC)}}
+\noindent \emph{Simulation-based calibration (SBC)}
 
 \cite{Talts2018} show that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
-In particular, they show (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of the $i$-th parameter value, relative to its corresponding MCMC chain samples $\boldsymbol{\theta}_i$, will follow a uniform distribution on $[1, L + 1]$.
+In particular, they show (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of the $i$-th parameter value, relative to its corresponding MCMC chain samples ($\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$), will follow a uniform distribution on $[1, L + 1]$.
 In other words, if one were to sort \textcolor{red}{all true parameter values $\theta_i$ against their corresponding $L$ MCMC posterior samples, the first (smallest ranking) 10\% $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.}
-Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
+Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ecdf) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
 
+\textcolor{red}{We conduct SBC on the three scenarios described in the previous section, which revolve around the model depicted in figure 1.
+For the sake of plotting space, we only show the histograms and ECDFs for $\Lambda$, and leave the remaining plots for $R$ to the supplement (but see Box 1 below).
+As expected, under scenario 1 our model passes the SBC correctness test -- as indicated by histogram bars and ecdf values falling within their 95\% confidence intervals (Fig. Xa,c).
+The outcome of SBC under scenario 2, again as expected, was a fail, as shown by \textcolor{blue}{[describe histogram and ecdf plots here, I can't remember what they look like by memory]}.
+In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator).
+We remind the reader that in our experiment, scenario 2 was purposefully set up so that the models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the SBC test.
+When a model implementation fails SBC, it can do so in different ways.
+For a more thorough discussion, see \cite{Talts2018}.}
 
-We illustrate the SBC procedure on the model represented in figure
+SBC results from scenario 1 indicate that the implementation of the
+model in figure 1 is correct , the 
+
 \ref{fig:pgm}... \textcolor{red}{[@Remco or @Luiz: to be done]}
 
 \textcolor{red}{
