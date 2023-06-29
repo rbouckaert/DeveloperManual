@@ -121,9 +121,9 @@ Not only has intraspecific data from multiple individuals allowed progress in fi
 However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care needed to analyze it. 
 Almost on par with with data accumulation is the rate at which new computational tools are being proposed, as evidenced by journals entirely dedicated to method advances, methodological sections in biological journals, and computational biology degrees being offered by institutions around the world.
 
-One extreme case is the discipline of Evolutionary Biology, on which we focus our attention.
+One extreme case is the discipline of evolutionary biology, on which we focus our attention.
 While it could be said that many decade-old questions and hypotheses in evolutionary biology have aged well and stood up the test of time (e.g., the Red Queen hypothesis, \citealt{vanvalen73,lively87,morran11,gibson15}; the Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
-In particular, Evolutionary Biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
+In particular, evolutionary biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
 
 Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99,mendes18}), to models that interact directly with data through explicit mathematical functions \citep{yule24,felsenstein73,hky,hudson90}. 
 Within the latter category, probabilistic models have seen a sharp surge in popularity within evolutionary biology, in conjunction with computational tools implementing them.
@@ -154,7 +154,7 @@ Probabilistic models mathematically formalize natural phenomena
 having an element of randomness.
 This is done through probability distributions describing both the observed
 empirical data -- seen as the result of one or more random instantiations of the modeled process -- as well the model parameters, which abstract relevant, but usually unknown aspects of the phenomenon at hand.
-In Evolutionary Biology specifically, the historical, stochastic, and highly dimensional nature of evolutionary processes makes the utility of probabilistic models in evolutionary biology self-evident. 
+In evolutionary biology specifically, the historical, stochastic, and highly dimensional nature of evolutionary processes makes the utility of probabilistic models in evolutionary biology self-evident. 
 
 The central component of a probabilistic model, $\text{Pr}(D=d|\Theta=\theta)$, allows us to describe the probability distribution over the data ($D$) given the model parameters ($\Theta$).
 This probability mass function (pmf; or its continuous counterpart, the probability density function, pdf, $f_D(d|\Theta=\theta)$) is sometimes referred to as the likelihood function.
@@ -386,7 +386,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 
 \begin{center}
   \begin{table}[h]
-  \caption{A non-exhaustive list of direct simulation software used for various models in Evolutionary Biology.}
+  \caption{A non-exhaustive list of direct simulation software used for various models in evolutionary biology.}
   \label{tab:sim}
   \centering
   \begin{tabular}{ p{0.7in} | p{1.5in} | p{1in} | p{1.3in} }
@@ -465,7 +465,7 @@ The more complex the natural phenomenon under study, the more difficult it will 
 \begin{wrapfigure}{l}{6.85cm}
   % \includestandalone[width=6.75cm]{../figures/flowchart}
   \includegraphics[width=6.75cm]{../figures/flowchart.pdf}
-  \caption{Flowchart of the coverage-validation of a Bayesian model.}
+  \caption{Flowchart of the coverage validation of a Bayesian model.}
     \label{fig:flowchart}
 \end{wrapfigure}
 The popular aphorism rings true: ``all models are wrong but some are useful''~\citep{box79}.
@@ -620,6 +620,12 @@ $k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
   \label{fig:yulecalval}
 \end{figure}
 
+\textcolor{red}{At this point, we will take a moment to remark that the usefulness of model coverage analysis in Bayesian inference is only manifest when $\theta_i$ is sampled from $f(\Theta)$.
+Method developers may be tempted, for example, to calculate coverage for specific parameter values -- perhaps chosen across a grid over parameter space -- using uninformative priors during inference.
+In such cases, we emphasize that obtaining a coverage lower than 95\% (for 95\% HPDs) does not necessarily mean that a model is incorrectly implemented; conversely, obtaining exactly 95\% coverage does not imply model correctness.
+Coverage values only have bearing on model correctness if, and only if, random variables are sampled from the same prior distribution used in inference. 
+}
+
 We provide examples of coverage validation attempts in figure \ref{fig:yulecalval}, which shows coverage graphical summaries for data simulated under the model represented in figure \ref{fig:pgm}.
 This model is deliberately simple for the sake of brevity and clarity in the discussion below.
 The parameters in this model are the phylogenetic tree $\Phi$, the species birth rate $\Lambda$, and the continuous-trait evolutionary rate $R$ (we assume the continuous trait value at the root, $\boldsymbol{Y_0}$, is known and set it to $\boldsymbol{0.0}$ for all simulated data sets).
@@ -660,13 +666,15 @@ In particular, they show (Theorem 1 therein) that if the inference machinery $\t
 In other words, if one were to sort \textcolor{red}{all true parameter values $\theta_i$ against their corresponding $L$ MCMC posterior samples, the first (smallest ranking) 10\% $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.}
 Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ecdf) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
 
-\textcolor{red}{We conduct SBC on the three scenarios described in the previous section, which revolve around the model depicted in figure 1.
+\textcolor{red}{We conduct SBC on the three scenarios described in the previous section, which make use of the model depicted in figure 1.
 For the sake of plotting space, we only show the histograms and ECDFs for $\Lambda$, and leave the remaining plots for $R$ to the supplement (but see Box 1 below).
-As expected, under scenario 1 our model passes the SBC correctness test -- as indicated by histogram bars and ecdf values falling within their 95\% confidence intervals (Fig. Xa,c).
-The outcome of SBC under scenario 2, again as expected, was a fail, as shown by \textcolor{blue}{[describe histogram and ecdf plots here, I can't remember what they look like by memory]}.
+As expected, under scenario 1 our model implementation passes the SBC correctness test -- as indicated by histogram bars and ecdf values falling within their 95\% confidence intervals (Fig. Xa,c).
+Under scenario 2, again as expected, our method failed the SBC test, as shown by \textcolor{blue}{[describe histogram and ecdf plots here, I can't remember what they look like by memory]}.
 In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator).
-We remind the reader that in our experiment, scenario 2 was purposefully set up so that the models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the SBC test.
-When a model implementation fails SBC, it can do so in different ways.
+We remind the reader that in our experiment, scenario 2 was purposefully set up so that the models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the SBC test.}
+
+\textcolor{red}{When a model implementation fails SBC, it can do so in different ways, and some are more straightforward to interpret.
+\textcolor{blue}{For example, if [@Luiz: fill out]}.
 For a more thorough discussion, see \cite{Talts2018}.}
 
 SBC results from scenario 1 indicate that the implementation of the
