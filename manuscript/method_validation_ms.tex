@@ -488,17 +488,13 @@ These techniques assume that one can accurately simulate from a probabilistic da
 
 \vspace{.25cm}
 
-\noindent{\emph{Coverage-validation of a Bayesian model}}
+\noindent{\emph{Coverage-based validation}}
 
 Our discussion on how to ensure a Bayesian model is well-calibrated and thus correct will mostly follow the ideas in \citet{Cook2006} and \citet{Talts2018}.
 The basic idea is presented in the flowchart in figure \ref{fig:flowchart}, and consists of three stages: simulation, inference, and coverage calculation.
-Once we have a validated simulator for model $\mathcal{M}$, we start by sampling $n$ parameter
-sets from % $\theta^{(i)}, i = 1, \ldots, M$
-% $\boldsymbol{\theta} = \{\theta_1,\theta_2,...,\theta_n\}$
-$\boldsymbol{\theta} = \{\theta_i: 1 \leq j \leq n\}$ from its prior, % \st{$\pi(\theta)$}
+Once we have a validated simulator for model $\mathcal{M}$, we start by sampling $n$ parameter sets $\boldsymbol{\theta} = \{\theta_i : 1 \leq i \leq n\}$ from its prior,
 $f_\Theta(\cdot)$, i.e.:
-
-\vspace{-1cm}
+% \vspace{-1cm}
 \begin{align*}
  \theta_i & \sim f_\Theta(\cdot).
 \end{align*}
@@ -536,7 +532,7 @@ At this point, we have concluded the inference stage of this validation pipeline
 The third stage and final stage consists of investigating coverage properties of uncertainty intervals.
 The critical expectation here is that if the inferential engine is correct, we will be able to obtain interval estimates with precise coverage properties.
 More concretely, let us first define the highest posterior density (HPD) interval.
-For a credibility level $\alpha \in (0, 1)$, we define $I_\alpha(d) := (a(d, \alpha), b(d, \alpha))$
+For a credibility level $\alpha \in (0, 1)$, we define $I_\alpha(y) := (a(y, \alpha), b(y, \alpha))$
 such that:
 
 %\begin{center}
@@ -545,19 +541,19 @@ such that:
 %\end{center}
 
 \begin{equation*}
-  \frac{1}{f_D(D=d)} \int_{a(y, \alpha)}^{b(y,\alpha)} f_{D|\Theta}(D=d | \Theta=\theta)f_\Theta(\Theta=\theta)\, d\Theta = \alpha,
+  \frac{1}{f_D(D=y)} \int_{a(y, \alpha)}^{b(y,\alpha)} f_{D|\Theta}(D=y | \Theta=\theta)f_\Theta(\Theta=\theta)\, d\Theta = \alpha,
 \end{equation*}
 
 \noindent where
 % \st{$m(y) = \int_{\Theta} f(y \mid t)\pi(t)\,dt$}
-$f_D(D=d)$
+$f_D(D=y)$
 % = \int_\Theta f(d|\theta)f(\theta)d\theta$
 is a constant that can be ignored.
-By defining $\text{Cred}(I_\alpha(d)) = \alpha$,
+By defining $\text{Cred}(I_\alpha(y)) = \alpha$,
 
 \begin{center}
   \hspace{0cm}
-  $\inf_{b(d, \alpha)-a(d, \alpha)} \left \{ I_\alpha(d) : \text{Cred}(I_\alpha(d)) = \alpha \right\}$
+  $\inf_{b(y, \alpha)-a(y, \alpha)} \left \{ I_\alpha(y) : \text{Cred}(I_\alpha(y)) = \alpha \right\}$
 \end{center}
 
 % \begin{equation*}
@@ -567,7 +563,7 @@ By defining $\text{Cred}(I_\alpha(d)) = \alpha$,
 \noindent yields the shortest interval with the required credibility.
 % We are now prepared to discuss how to validate a (Bayesian) inference engine.
 % Consider the following generative model:
-Note that we approximate a particular $I_\alpha(d_i)$ from the $i$-th $L$ samples obtained with MCMC, in $\boldsymbol{\theta}'$.
+Note that we approximate a particular $I_\alpha(y_i)$ from the $i$-th $L$ samples obtained with MCMC, in $\boldsymbol{\theta}'$.
 
 Now taking a set of parameter values $\theta_i$ sampled from $f_\Theta(\cdot)$
 % respectively,
@@ -577,7 +573,7 @@ Now taking a set of parameter values $\theta_i$ sampled from $f_\Theta(\cdot)$
 % \end{align*}
 it can be shown that
 % $\operatorname{Pr}\left(\theta_0 \in I_\alpha(Y) \right) = \alpha$
-$\operatorname{Pr}\left(\theta_i \in I_\alpha(d) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs
+$\operatorname{Pr}\left(\theta_i \in I_\alpha(y) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs
 have nominal coverage under the true generative model (a proof is
 provided in the supplementary material).
 More formally, the coverage of $n$ intervals obtained as above will be distributed as binomial random variable with $n$ trials and success probability $\alpha$.
@@ -679,20 +675,9 @@ more powerful to detect problems than just looking at the coverage of
 Bayesian HPD intervals.
 In particular, they show (Theorem 1 therein) that if the inference machinery
 $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank
-\st{$r^{(i)}$} $r^j$ of the $j$-th sample from an MCMC chain ($\boldsymbol{\theta}^j
-= \{\theta^1, \theta^2, ..., \theta^L\}$) \st{in $\boldsymbol\theta_s^{(i)}$}
-will follow a uniform distribution on $[1, L + 1]$.
-In other words, if one were to sort all $L$ samples from the output
-of an MCMC experiment by a given parameter value, the first (smallest)
-10\% of all samples should account for approximately 10\% of the total
-posterior density; the next 10\% of (larger) samples should account, again,
-for approximately 10\% of the total posterior density, and so on.
-\textcolor{red}{[@Luiz: this was my shot at verbalizing the mathematical
-  description. Is this correct?]}
-Adherence to this distribution can be investigated by constructing
-histograms \citep{Talts2018} as well as by looking at the empirical
-cumulative distribution function (ECDF) and their confidence bands
-\citep{Sailynoja2021}.
+$r_i$ of the $i$-th parameter value relative to its corresponding MCMC chain samples $\boldsymbol{\theta}_i$ will follow a uniform distribution on $[1, L + 1]$.
+In other words, if one were to sort the true parameter value against all $L$ samples from the output of an MCMC run, the first (smallest) 10\% of all samples should account for approximately 10\% of the total posterior mass; the next 10\% of (larger) samples should account, again, for approximately 10\% of the total posterior mass, and so on.
+Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
 
 We illustrate the SBC procedure on the model represented in figure
 \ref{fig:pgm}... \textcolor{red}{[@Remco or @Luiz: to be done]}
@@ -701,7 +686,7 @@ We illustrate the SBC procedure on the model represented in figure
   Items to discuss/consider after example:
   \begin{itemize}
   \item We could use a flowchart for the SBC procedure. I (FKM) can
-    help Luiz put one together;
+    help Luiz put one together; 
   \item What happens when the distribution of ranks is not uniform,
     and is, say, shifted towards low or high ranks? How can this help
     us fix or understand a model better? (see second point below);
