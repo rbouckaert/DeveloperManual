@@ -462,10 +462,13 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 \label{sec:sbc}
 
 The more complex the natural phenomenon under study, the more difficult it will be to strike a good balance between model practicality and realism~\citep{levins1966}.
-\begin{wrapfigure}{l}{6.85cm}
-  % \includestandalone[width=6.75cm]{../figures/flowchart}
-  \includegraphics[width=6.75cm]{../figures/flowchart.pdf}
-  \caption{Flowchart of the coverage validation of a Bayesian model.}
+\begin{wrapfigure}{l}{7.25cm}
+  % \includestandalone[width=7cm]{../figures/flowchart}
+  \includegraphics[width=7cm]{../figures/flowchart.pdf}
+  \caption{Flowchart of the coverage validation of a Bayesian
+    model. The red dotted box encloses the stages of the pipeline that
+  differ from the simulation-based calibration (SBC) procedure
+  described in the text (see also Fig. \ref{fig:sbcflowchart})}
     \label{fig:flowchart}
 \end{wrapfigure}
 The popular aphorism rings true: ``all models are wrong but some are useful''~\citep{box79}.
@@ -613,9 +616,9 @@ $k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
     Panels show the true (i.e., simulated) parameter values plotted against their mean posteriors (the dashed line gives $f(x) = x$).
     Dots and lines (100 per panel) represent true values and their 95\%-HPDs, respectively.
     Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
-    In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
-    In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
+    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
+    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
+    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
   }
   \label{fig:yulecalval}
 \end{figure}
@@ -629,15 +632,15 @@ Coverage values only have bearing on model correctness if, and only if, random v
 We provide examples of coverage validation attempts in figure \ref{fig:yulecalval}, which shows coverage graphical summaries for data simulated under the model represented in figure \ref{fig:pgm}.
 This model is deliberately simple for the sake of brevity and clarity in the discussion below.
 The parameters in this model are the phylogenetic tree $\Phi$, the species birth rate $\Lambda$, and the continuous-trait evolutionary rate $R$ (we assume the continuous trait value at the root, $\boldsymbol{Y_0}$, is known and set it to $\boldsymbol{0.0}$ for all simulated data sets).
-When the model is correctly specified between simulation and inference (``Scenario 1'', the leftmost top and bottom panels, Fig. \ref{fig:yulecalval}), coverage is close to 95\% and adequate for both $\Lambda$ and $R$, which indicates that $\text{I}[\mathcal{M}]$ -- as implemented in BEAST 2, the software we used -- is well-calibrated and correct.
+When the model is correctly specified between simulation and inference (``Scenario 1'', Fig. \ref{fig:yulecalval}a), coverage is close to 95\% and adequate for both $\Lambda$ and $R$, which indicates that $\text{I}[\mathcal{M}]$ -- as implemented in BEAST 2, the software we used -- is well-calibrated and correct.
 
-In ``Scenario 2'' of figure \ref{fig:yulecalval} (middle top and bottom panels), however, we misspecify the model during inference, setting the prior distribution on $\Lambda$ to be a log-normal with a mean of -2.0 (rather than -3.25, as specified in the simulation procedure; Fig. \ref{fig:pgm}).
+In ``Scenario 2'' of figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}b), however, we misspecify the model during inference, setting the prior distribution on $\Lambda$ to be a log-normal with a mean of -2.0 (rather than -3.25, as specified in the simulation procedure; Fig. \ref{fig:pgm}).
 In contrast with scenario 1, coverage is 0.0 for $\Lambda$ and 70\% for $R$, both much lower and outside the expected coverage bounds (Table \ref{tab:coverage}).
 These numbers indicate that one or more of the parts comprising model $\mathcal{M}$ used in $\text{I}[\mathcal{M}]$ differs from their counterparts in $\text{S}[\mathcal{M}]$ differs.
 This result was expected because we purposefully made the models in simulation and inference differ; we know $\text{I}[\mathcal{M}]$ is correct because of the results from scenario 1.
 Of course, in a real-world validation experiment the model should be correctly specified, and such a result would suggest a problem with the inferential machinery (provided the the simulator had been previously validated).
 
-Lastly, in ``Scenario 3'' of figure \ref{fig:yulecalval} (rightmost top and bottom panels), we again correctly specified the model, but carried out substantial rejection sampling in simulation.
+Lastly, in ``Scenario 3'' of figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}c), we again correctly specified the model, but carried out substantial rejection sampling in simulation.
 Approximately 90\% of all simulated trees were rejected based on their taxon count; trees were rejected if they had fewer than 100 or more than 200 taxa.
 As with scenario 1, coverage fell within the expected ranges for a correct model implementation.
 \textcolor{red}{This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
@@ -664,12 +667,19 @@ We conclude this section by noting that unidentifiability should not be taken as
 \cite{Talts2018} show that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
 In particular, they show (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of the $i$-th parameter value, relative to its corresponding MCMC chain samples ($\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$), will follow a uniform distribution on $[1, L + 1]$.
 In other words, if one were to sort \textcolor{red}{all true parameter values $\theta_i$ against their corresponding $L$ MCMC posterior samples, the first (smallest ranking) 10\% $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.}
+\begin{wrapfigure}{l}{7.35cm}
+  \includegraphics[width=7.25cm]{../figures/flowchart_sbc.pdf}
+  \caption{Flowchart of the simulation-based calibration (SBC) procedure,
+    for validating a Bayesian model. The red dotted box encloses the stages of the pipeline that
+  differ from coverage validation (see Fig. \ref{fig:flowchart}).}
+\label{fig:sbcflowchart}
+\end{wrapfigure}
 Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ecdf) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
 
 \textcolor{red}{We conduct SBC on the three scenarios described in the previous section, which make use of the model depicted in figure 1.
 For the sake of plotting space, we only show the histograms and ECDFs for $\Lambda$, and leave the remaining plots for $R$ to the supplement (but see Box 1 below).
-As expected, under scenario 1 our model implementation passes the SBC correctness test -- as indicated by histogram bars and ecdf values falling within their 95\% confidence intervals (Fig. Xa,c).
-Under scenario 2, again as expected, our method failed the SBC test, as shown by \textcolor{blue}{[describe histogram and ecdf plots here, I can't remember what they look like by memory]}.
+As expected, under scenario 1 our model implementation passes the SBC correctness test -- as indicated by histogram bars and ecdf values falling within their 95\% confidence intervals (Fig. Xa).
+Under scenario 2, again as expected, our method failed the SBC test, as shown by \textcolor{blue}{[describe histogram and ecdf plots here, I can't remember what they look like by memory]} (Fig. Xb).
 In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator).
 We remind the reader that in our experiment, scenario 2 was purposefully set up so that the models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the SBC test.}
 
@@ -677,21 +687,15 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
 \textcolor{blue}{For example, if [@Luiz: fill out]}.
 For a more thorough discussion, see \cite{Talts2018}.}
 
-SBC results from scenario 1 indicate that the implementation of the
-model in figure 1 is correct , the 
+\textcolor{red}{SBC results from scenario 3 (Fig. Xc), \textcolor{blue}{specifically the histogram bars falling out of their 95\% confidence intervals, }would suggest that our model implementation is incorrect.
+This result also illustrates how SBC is a more sensitive test than coverage validation (Fig. \ref{yulecalval}c for a comparison).
+}
 
 \ref{fig:pgm}... \textcolor{red}{[@Remco or @Luiz: to be done]}
 
 \textcolor{red}{
   Items to discuss/consider after example:
   \begin{itemize}
-  \item We could use a flowchart for the SBC procedure. I (FKM) can
-    help Luiz put one together; 
-  \item What happens when the distribution of ranks is not uniform,
-    and is, say, shifted towards low or high ranks? How can this help
-    us fix or understand a model better? (see second point below);
-  \item Find a case (the purpose of Scenario 3) where
-    coverage-validation passes, but SBC does not;
   \item What are the downsides of SBC relative to just verifying
     a model is well-calibrated? You'd have to simulate 1,000
     data sets instead of 100 (so you have, say, 100 per 10\% bin).
