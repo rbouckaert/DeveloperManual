@@ -476,7 +476,7 @@ The popular aphorism rings true: ``all models are wrong but some are useful''~\c
 Very simple models are easier to implement in efficient inference tools, but will commonly make assumptions that are likely to be broken by the data (e.g., \citealp{sullivan97,mendes17,mendes19}). 
 Conversely, complex models will fit the data better (e.g., \citealp{ogilvie22}), but may become unwieldy with increasing levels of realism.
 
-A large number of parameters can cause overfitting and unidentifiability, and inference for highly complex models might be prohibitively slow (see e.g., \citealp{lartillot11}).
+A large number of parameters can cause overfitting and weak identifiability, and inference for highly complex models might be prohibitively slow (see e.g., \citealp{lartillot11}).
 % In order to achieve correct inferences, it is of utmost importance to guarantee that inferential machinery returns quantifiably correct answers.
 % In practice, however, this is impossible to achieve due to the models under consideration being almost always badly misspecified for the data at hand.
 Deciding on the utility of a model for real-world problems is a daunting task \citep{brown18,shepherd18}, and is a challenge we do not address in the present contribution.
@@ -583,6 +583,11 @@ If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces covera
 %   \includestandalone[width=8cm]{../figures/flowchart}
 % \end{figure}
 
+\begin{figure}
+  \label{fig:sbctest}
+  \includestandalone[width=12cm]{../figures/coverage_interval_plot}
+\end{figure}
+
 \begin{table}
 \begin{center}
 \begin{tabular}{l|c}
@@ -624,11 +629,10 @@ $k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
   \label{fig:yulecalval}
 \end{figure}
 
-\textcolor{red}{At this point, we will take a moment to remark that the usefulness of model coverage analysis in Bayesian inference is only manifest when $\theta_i$ is sampled from $f(\Theta)$.
-Method developers may be tempted, for example, to calculate coverage for specific parameter values -- perhaps chosen across a grid over parameter space -- using uninformative priors during inference.
+At this point, we will take a moment to remark that the usefulness of model coverage analysis in Bayesian inference is only manifest when $\theta_i$ is sampled from $f_\Theta(\cdot)$.
+Method developers may be tempted, for example, to calculate coverage for specific parameter values -- perhaps chosen across a grid over parameter space -- using a different prior during inference.
 In such cases, we emphasize that obtaining a coverage lower than 95\% (for 95\% HPDs) does not necessarily mean that a model is incorrectly implemented; conversely, obtaining exactly 95\% coverage does not imply model correctness.
 Coverage values only have bearing on model correctness if, and only if, random variables are sampled from the same prior distribution used in inference. 
-}
 
 We provide examples of coverage validation attempts in Figure \ref{fig:yulecalval}, which shows coverage graphical summaries for data simulated under the model represented in Figure \ref{fig:pgm}.
 This model is deliberately simple for the sake of brevity and clarity in the discussion below.
@@ -647,12 +651,12 @@ As with scenario 1, coverage fell within the expected ranges for a correct model
 \textcolor{red}{This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
 The catch here is that, although tree size is a random variable being filtered in simulation, it was not a free parameter when we carried out inference, being instead fixed to the truth.}
 
-\textcolor{red}{As long as a parameter value has non-zero probability under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
-Scenario 3 brings home the point that coverage validation is agnostic to biases in parameter estimated values, beyond their effect on coverage.
+As long as a parameter value has non-zero probability under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
+Scenario 3 brings home the point that coverage validation is insensitive to parameter estimate location, beyond the calculated coverage.
 Due to the finite size of a Yule tree, which may allow the prior a substantial influence over the posterior, the estimated $\lambda$ may be consistently higher or lower than the true $\lambda$.
-(We illustrate and further expand on this point using a much simpler model; Supplementary Figs. X.)
-But as long as coverage is appropriate under this type of validation, the model is understood to be correct.
-Potential biases in parameter estimates may remain undetected unless more investigation is done (see the SBC procedure below).}
+We expand on this point using a different and much simpler model \textcolor{red}{(Supplementary Figs. X)}.
+This illustrates that obtaining  appropriate coverage is not enough to ascertain that  the model is correct.
+Potential biases in parameter estimates may remain undetected unless more investigation is done (see the RUV procedure below).
 
 The three scenarios we explored above illustrate how coverage validation results can be interpreted in terms of model implementation correctness.
 One can additionally capitalize on this validation setup and gauge how accurate our inferential tool can be for different parameters. 
@@ -667,7 +671,7 @@ We conclude this section by noting that unidentifiability should not be taken as
 
 \cite{Talts2018} show that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
 In particular, they show (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of the $i$-th parameter value, relative to its corresponding MCMC chain samples ($\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$), will follow a uniform distribution on $[1, L + 1]$.
-In other words, if one were to sort \textcolor{red}{all true parameter values $\theta_i$ against their corresponding $L$ MCMC posterior samples, the first (smallest ranking) 10\% $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.}
+In other words, if one were to sort all true parameter values $\theta_i$ against $\boldsymbol{\theta_i'}$ -- their corresponding $L$ MCMC posterior samples -- the first (smallest ranking) 10\% out of $n$ $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.
 \begin{figure}{l}{7.35cm}
   \includegraphics[width=7.25cm]{../figures/flowchart_sbc.pdf}
   \caption{Flowchart of the simulation-based calibration (SBC) procedure,
@@ -675,20 +679,20 @@ In other words, if one were to sort \textcolor{red}{all true parameter values $\
   differ from coverage validation (see Fig. \ref{fig:flowchart}).}
 \label{fig:sbcflowchart}
 \end{figure}
-Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ecdf) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
+Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
 
-\textcolor{red}{We conduct SBC on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
-For the sake of plotting space, we only show the histograms and ECDFs for $\Lambda$, and leave the remaining plots for $R$ to the supplement (but see Box 1 below).
-As expected, under scenario 1 our model implementation passes the SBC correctness test -- as indicated by histogram bars and ecdf values falling within their 95\% confidence intervals (Fig. Xa).
-Under scenario 2, again as expected, our method failed the SBC test, as shown by \textcolor{blue}{[describe histogram and ecdf plots here, I can't remember what they look like by memory]} (Fig. Xb).
-In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator).
-We remind the reader that in our experiment, scenario 2 was purposefully set up so that the models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the SBC test.}
+We conduct RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
+In the interest of brevity, we only show the histograms and ECDFs for $\Lambda$, and leave the remaining plots for $R$ to the supplement (but see Box 1 below).
+As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\% confidence intervals \textcolor{red}{Fig. Xa)}.
+Under scenario 2, again as expected, our method failed RUV, as shown by \textcolor{blue}{[describe histogram and ECDF plots here, I can't remember what they look like by memory] (Fig. Xb)} .
+In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator, etc).
+We remind the reader that in our experiment, scenario 2 was purposefully set up so that the (prior) models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the RUV procedure.
 
-\textcolor{red}{When a model implementation fails SBC, it can do so in different ways, and some are more straightforward to interpret.
+\textcolor{red}{When a model implementation fails RUV, it can do so in different ways, and some are more straightforward to interpret.
 \textcolor{blue}{For example, if [@Luiz: fill out]}.
 For a more thorough discussion, see \cite{Talts2018}.}
 
-\textcolor{red}{SBC results from scenario 3 (Fig. Xc), \textcolor{blue}{specifically the histogram bars falling out of their 95\% confidence intervals, }would suggest that our model implementation is incorrect.
+\textcolor{red}{RUV results from scenario 3 (Fig. Xc), \textcolor{blue}{specifically the histogram bars falling out of their 95\% confidence intervals, } would suggest that our model implementation is incorrect.
 This result also illustrates how SBC is a more sensitive test than coverage validation (Fig. \ref{yulecalval}c for a comparison).
 }
 
@@ -903,8 +907,8 @@ This result also illustrates how SBC is a more sensitive test than coverage vali
 %   \vspace{.15cm}
 %   Such task can be done with a non-parametric test, for example, such
 %   as the Kolgomorov-Smirnov test \citep{kolgomorov,smirnov,ks}, which
-%   compares two empirical distribution functions (\emph{ecdf}'s) or an
-%   \emph{ecdf} with a cumulative distribution function (\emph{cdf}).
+%   compares two empirical distribution functions (\emph{ECDF}'s) or an
+%   \emph{ECDF} with a cumulative distribution function (\emph{cdf}).
 %   We provide an example of this procedure in the supplementary material.
 % \end{tcolorbox}
 
@@ -1114,6 +1118,11 @@ Model characterization is no doubt critical for the longevity and popularity of 
 (...)
 
 \section*{Concluding remarks}
+
+\begin{itemize}
+    \item 
+    \item RUV failing for a single rank does not mean the method is flawed
+\end{itemize}
 
 As more data is generated and made publicly available, the more will
 researchers in the life sciences require computational methods with
