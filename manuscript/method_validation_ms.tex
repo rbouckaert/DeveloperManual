@@ -186,12 +186,12 @@ There are other tests and diagnostics employed to ensure that a particular MCMC 
 Ascertaining whether one or more independent Markov chains have converged to a given posterior distribution is not a correctness test, as that distribution might be very different from the target distribution. 
 We refer the reader interested in these and related topics to \cite{rwty}, \cite{fabreti2022},  \cite{magee2023} and references therein.
 
-\subsection*{Validating a Bayesian model}
+\section*{Validating a Bayesian model}
 
 In this section we discuss a host of procedures for validating an implementation of a Bayesian model.
 This entails validating both the (data) simulator and the inferential engine (e.g. the MCMC algorithm).
 
-\subsubsection*{Validating the simulator, $\text{S}[\mathcal{M}]$}
+\subsection*{Validating the simulator, $\text{S}[\mathcal{M}]$}
 \label{verify-correctness-of-simulator-implementation}
 
 When a probabilistic model $\mathcal{M}$ is implemented for the first time, a simulator $\text{S}[\mathcal{M}]$ must be devised and itself validated before we can validate an inferential engine $\text{I}[\mathcal{M}]$.
@@ -458,7 +458,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 %   \href{https://github.com/CompEvol/beast2/blob/master/examples/testDirectSimulatorHierarchical.xml}{testDirectSimulatorHierarchical.xml}.
 % \end{itemize}
 
-\subsubsection*{Validating the inferential engine, $\text{I}[\mathcal{M}]$}
+\subsection*{Validating the inferential engine, $\text{I}[\mathcal{M}]$}
 \label{sec:sbc}
 
 The more complex the natural phenomenon under study, the more difficult it will be to strike a good balance between model practicality and realism~\citep{levins1966}.
@@ -1095,6 +1095,22 @@ This result also illustrates how SBC is a more sensitive test than coverage vali
 % Determining which of the two possibilities -- or whether both are
 % happening -- is not a trivial task, and careful diagnostics are
 % necessary on the part of method developers.
+
+\section*{Bayesian model validation guidelines for developers and reviewers}
+
+In the previous sections, we described and executed two procedures for validating Bayesian models, namely, coverage validation and simulation-based calibration (SBC).
+Once both simulation and inference can be conducted under a model $\mathcal{M}$, executing these procedures amounts to following relatively straightforward protocols (Figs. \ref{fig:flowchart} and \ref{fig:sbcflowchart}).
+Importantly, following these protocols should validate any Bayesian model, regardless of the nature of its parameter space and its component sampling distributions.
+This is because such protocols provide clear, objective rules for assessing model correctness, based on the coverage and rank distribution of parameters values; both be computed for any and all Bayesian models.
+For the reasons above, carrying out an analysis of coverage and/or of the distribution of parameter-value ranks (with respect to their posterior samples) should on one hand be a requirement, and on another should suffice for introducing a new Bayesian model implementation.
+
+In contrast, there is an infinite number of ways in which a new or published method can have its behavior inspected.
+Researchers may want to know, given a model, how sensitive parameter estimates are to prior choice, data set size, model assumption violation, to name a few.
+The immense variety of such investigations and their idiosyncrasies should be self-evident.
+We collectively refer to these examinations as ``model characterization'': any analysis of model behavior beyond assessing its correctness (as described in the present work).
+Model characterization is no doubt critical for the longevity and popularity of a method, after all, researchers need to know if and when they can trust the output of an analysis.
+
+(...)
 
 \section*{Concluding remarks}
 
