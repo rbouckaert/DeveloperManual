@@ -45,7 +45,7 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Authors et al. $\bullet$ March 2022 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
+\fancyhead[C]{Mendes et al. $\bullet$ August 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 
@@ -124,8 +124,7 @@ where $\boldsymbol{y}=\{0,0,0\}$, $r=0.1$ and $\boldsymbol{T}$ is given by the t
 Fig. 2 in the main text.
 Supplementary table \ref{suptab:bmsimcis} summarizes how often each statistic fell within
 its 95\%-confidence interval.
-These results indicate the PhyloBM simulator produces appropriate confidence intervals
-and behaves as expected.
+These results indicate the PhyloBM simulator produces appropriate confidence intervals and behaves as expected.
 
 \begin{figure}
   \centering
@@ -182,7 +181,7 @@ Both tasks evaluate if $\mathcal{M}$ is well calibrated and correct.
 Because of the nature of tree space, summarizing and comparing phylogenetic
 trees with univariate measures is not a trivial task.
 The key to an effective validation effort is to choose a functional
-that reflects relevant estimators of the quantitiy of interest, in our case,
+that reflects relevant estimators of the quantity of interest, in our case,
 $\Phi$.
 Fortunately, it is possible to exploit the metric nature of tree space and compute
 quantities both from the generating phylogenetic tree $\Phi$ (i.e., the ``true''
@@ -238,7 +237,7 @@ phylogenetic tree:
   \SetKwFunction{Distance}{CalculateDistance}
   \SetKwFunction{MCMC}{MCMC}
   \SetKwFunction{Rank}{GetRank}
-  \caption{Algorithm for carrying out a simulation-based calibration procedure with respect to the phylogenetic tree parameter $\Phi$.}\label{alg:sbcphylo}
+  \caption{Algorithm for carrying out a rank-uniformity validation procedure with respect to the phylogenetic tree parameter $\Phi$.}\label{alg:sbcphylo}
   $n \gets 100$\; \Comment*[r]{Number of data sets to simulate}
   $\phi_0 \gets$ \SampleTree{$\theta_\Phi$}\; \Comment*[r]{$\phi_0 \sim f(\Phi|\theta_\Phi)$}
   \For{$i \gets 1$ \KwTo $n$} {
@@ -286,30 +285,26 @@ phylogenetic tree:
     \includegraphics[scale=0.5]{../figures/hists_SBC.pdf}    
   \end{subfigure}
   \hfill
-   \caption{Simulation-based calibration (SBC) of a phylogenetic
+   \caption{Rank-uniformity validation (RUV) of a phylogenetic
      model, focusing on the phylogenetic tree parameter.
      (a) Empirical cumulative distribution function (ECDF) for each
      functional.
      (b) Rank distribution for each functional.
-   \textcolor{red}{[@Luiz: Need to fix notation in this figure,
-     replacing $\tau$ with $\Phi$; I changed the abbreviation of some
-     of the functionals as well, to avoid collision (see the table
-     above);
-     the x-axis labels in panel(a)
-     are also overlapping each other]; ``rank'' and ``count''
-     should start with uppercase ``Rank'', ``Count''}}
+   % \textcolor{red}{[@Luiz: Need to fix notation in this figure,
+   %   replacing $\tau$ with $\Phi$; I changed the abbreviation of some
+   %   of the functionals as well, to avoid collision (see the table
+   %   above);
+   %   the x-axis labels in panel(a)
+   %   are also overlapping each other]; ``rank'' and ``count''
+   %   should start with uppercase ``Rank'', ``Count''}
+   }
    \label{supfig:sbc}
 \end{figure}
 
 \begin{figure}
  \includegraphics[width=\textwidth]{../figures/coverage.pdf}
-    \caption{Coverage for different functionals in validation experiment
-      \textcolor{red}{[@Luiz: maybe we can use
-        ``SBC'' to refer just to the experiment looking at ECDFs and
-        ranks -- see main text; also I would
-     remove the legend entirely and keep just the description
-   in the caption]}
-        % simulation-based calibration.
+    \caption{Coverage for different functionals in validation experiment.
+        % rank-uniformity validation.
       Posterior means are represented by point and 95\% HPDs by bars.
       Red dots and lines show intervals that failed to include the
       generating value, whilst blue ones show those that did include
@@ -334,16 +329,18 @@ theoretically.
 
 \newpage
 \section{Proof for coverage validation}
-% \label{appendix::sec:proofs}
+ \label{appendix::sec:proofs}
 
-For a number $n$ of simulations, simulate
+In this section we provide a mathematical argument that coverage-based validation is sound,  i.e., that sampling from the prior, simulating data and then using the same prior for computing the posterior should give Bayesian credible intervals (BCIs) with nominal frequentist coverage.
+
+For a number $n$ of replicates, simulate
 
 \begin{align*}
 \theta^{(i)} &\sim f(\cdot), \\
 y^{(i)} \mid \theta^{(i)} &\sim f(\cdot \mid \theta^{(i)}).
 \end{align*}
 
-Now  for brevity, define $a^{(i)} := a(y^{(i)}, \alpha)$ and $b^{(i)} := b(y^{(i)}, \alpha)$ and recall $I_{\alpha}\left(y^{(i)}\right)$ is such that 
+Now  for notational convenience, define $a^{(i)} := a(y^{(i)}, \alpha)$ and $b^{(i)} := b(y^{(i)}, \alpha)$ and recall $I_{\alpha}\left(y^{(i)}\right)$ is such that 
 
 \begin{align*}
 Q\left(b^{(i)} \mid y^{(i)}\right) - Q\left(a^{(i)} \mid y^{(i)}\right) = p_1 - p_2 = \alpha,

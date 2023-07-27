@@ -48,7 +48,7 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Mendes et al. $\bullet$ June 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
+\fancyhead[C]{Mendes et al. $\bullet$ August 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 \usepackage{natbib}
@@ -583,11 +583,6 @@ If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces covera
 %   \includestandalone[width=8cm]{../figures/flowchart}
 % \end{figure}
 
-\begin{figure}
-  \label{fig:sbctest}
-  \includestandalone[width=12cm]{../figures/coverage_interval_plot}
-\end{figure}
-
 \begin{table}
 \begin{center}
 \begin{tabular}{l|c}
@@ -619,7 +614,7 @@ $k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
   \includegraphics[width=\textwidth]{../figures/graphical_model_coverage.pdf}
   \caption{
     Coverage validation analyses of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
-    Panels show the true (i.e., simulated) parameter values plotted against their mean posteriors (the dashed line gives $f(x) = x$).
+    Panels show the true (i.e., simulated) parameter values plotted against their mean posteriors (the dashed line shows $x = y$).
     Dots and lines (100 per panel) represent true values and their 95\%-HPDs, respectively.
     Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
     (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
@@ -648,8 +643,8 @@ Of course, in a real-world validation experiment the model should be correctly s
 Lastly, in ``Scenario 3'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}c), we again correctly specified the model, but carried out substantial rejection sampling in simulation.
 Approximately 90\% of all simulated trees were rejected based on their taxon count; trees were rejected if they had fewer than 100 or more than 200 taxa.
 As with scenario 1, coverage fell within the expected ranges for a correct model implementation.
-\textcolor{red}{This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
-The catch here is that, although tree size is a random variable being filtered in simulation, it was not a free parameter when we carried out inference, being instead fixed to the truth.}
+This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
+The key insight here is that, although tree size is a random variable being filtered in simulation, it was not a free parameter when we carried out inference, being instead fixed to the truth.
 
 As long as a parameter value has non-zero probability under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
 Scenario 3 brings home the point that coverage validation is insensitive to parameter estimate location, beyond the calculated coverage.
