@@ -400,7 +400,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
     SLiM & Population genetic models & Standalone & \citealp{haller19}\\    
     TreeSim & Birth-death models & R & \citealp{stadler11}\\
     mvMORPH & Continuous trait evolution models & R & \citealp{clavel15}\\
-    diversitree & Several birth-death models & R & \citealp{revell12}\\
+    diversitree & Several birth-death models & R & \citealp{fitzjohn12}\\
     MASTER & Several birth-death models & BEAST 2 & \citealp{vaughan13}\\
     LPhy & Several evolutionary models & Standalone & \citealp{drummond22}\\ 
     \hline
@@ -463,15 +463,6 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 \label{sec:sbc}
 
 The more complex the natural phenomenon under study, the more difficult it will be to strike a good balance between model practicality and realism~\citep{levins1966}.
-\begin{figure}{l}{7.25cm}
-  % \includestandalone[width=7cm]{../figures/flowchart}
-  \includegraphics[width=7cm]{../figures/flowchart.pdf}
-  \caption{Flowchart of the coverage validation of a Bayesian
-    model. The red dotted box encloses the stages of the pipeline that
-  differ from the simulation-based calibration (SBC) procedure
-  described in the text (see also Fig. \ref{fig:sbcflowchart})}
-    \label{fig:flowchart}
-\end{figure}
 The popular aphorism rings true: ``all models are wrong but some are useful''~\citep{box79}.
 Very simple models are easier to implement in efficient inference tools, but will commonly make assumptions that are likely to be broken by the data (e.g., \citealp{sullivan97,mendes17,mendes19}). 
 Conversely, complex models will fit the data better (e.g., \citealp{ogilvie22}), but may become unwieldy with increasing levels of realism.
@@ -487,9 +478,20 @@ Analyses of model fit against data are normally accompanied by discussions on as
 When a new model $\mathcal{M}$ is initially proposed, however, authors must ensure that their methods 
 can at the very least robustly recover generating parameters.
 In this section, we discuss a few techniques that can be employed to assess the correctness of a parameter-estimation routine.
-These techniques assume that one can accurately simulate from a probabilistic data-generating process (see previous section).
+These techniques assume that one can accurately simulate from a
+probabilistic data-generating process (see previous section).
+\begin{wrapfigure}{l}{7.25cm}
+  % \includestandalone[width=7cm]{../figures/flowchart}
+  \includegraphics[width=7cm]{../figures/flowchart.pdf}
+  \caption{Flowchart of the coverage validation of a Bayesian
+    model. The red dotted box encloses the stages of the pipeline that
+  differ from the simulation-based calibration (SBC) procedure
+  described in the text (see also Fig. \ref{fig:sbcflowchart})}
+\label{fig:flowchart}
+\vspace{2cm}
+\end{wrapfigure}
 
-\vspace{.25cm}
+\vspace{-1cm}
 
 \noindent{\emph{Coverage validation}}
 
@@ -1098,19 +1100,29 @@ This result also illustrates how SBC is a more sensitive test than coverage vali
 
 \section*{Bayesian model validation guidelines for developers and reviewers}
 
-In the previous sections, we described and executed two procedures for validating Bayesian models, namely, coverage validation and simulation-based calibration (SBC).
+In the previous sections, we described and executed two procedures for validating Bayesian models, namely, coverage validation and rank-uniformity validation (RUV).
 Once both simulation and inference can be conducted under a model $\mathcal{M}$, executing these procedures amounts to following relatively straightforward protocols (Figs. \ref{fig:flowchart} and \ref{fig:sbcflowchart}).
 Importantly, following these protocols should validate any Bayesian model, regardless of the nature of its parameter space and its component sampling distributions.
-This is because such protocols provide clear, objective rules for assessing model correctness, based on the coverage and rank distribution of parameters values; both be computed for any and all Bayesian models.
+This is because such protocols provide clear, objective rules for
+assessing model correctness, based on the coverage and rank
+distribution of parameters values; both can be computed for any and all Bayesian models.
 For the reasons above, carrying out an analysis of coverage and/or of the distribution of parameter-value ranks (with respect to their posterior samples) should on one hand be a requirement, and on another should suffice for introducing a new Bayesian model implementation.
 
-In contrast, there is an infinite number of ways in which a new or published method can have its behavior inspected.
-Researchers may want to know, given a model, how sensitive parameter estimates are to prior choice, data set size, model assumption violation, to name a few.
-The immense variety of such investigations and their idiosyncrasies should be self-evident.
-We collectively refer to these examinations as ``model characterization'': any analysis of model behavior beyond assessing its correctness (as described in the present work).
-Model characterization is no doubt critical for the longevity and popularity of a method, after all, researchers need to know if and when they can trust the output of an analysis.
+In contrast, there is an infinite number of ways in which a new or published model can have its behavior inspected.
+Researchers may want to know, given a model, how sensitive parameter estimates are to data set size, prior choice, model complexity, violation of model assumptions, to name a few.
+Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang23}[cite Landis Anolis paper, Ho papers]), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang23}).
+We collectively refer to these examinations as ``model characterization'': any analysis of model performance during inference, beyond assessing its correctness (as described in the present work).
+Although it may happen (e.g., \citealp{steel20}), model characterization is rarely carried out to satisfy the theoretical curiosity of a researcher; it is instead normally motivated by a model's empirical applications.
+These investigations are thus critical for the longevity and popularity of a model, as domain experts will only adopt a model widely if they know when to trust the results and how to interpret them.
 
-(...)
+It is possible to characterize certain aspects of model behavior while simultaneously verifying its correctness, as discussed in the coverage validation section above.
+For example, one can observe how accurate parameter estimates are (e.g., if the points in Fig. \ref{fig:yulecalval} fall on the identity line) under both correctly and incorrectly specified models.
+However, the requirement of simulating parameter values from a prior distribution $f_{\Theta}(\cdot)$ during the validation of a model can complicate its characterization.
+Depending on the characterization experiment's goals and design, researchers may find themselves rejecting a large fraction of simulated data sets, a problem that worsens the more dimensions of parameter space are allowed to vary.
+In most cases, it may make more sense to first verify model correctness by following the procedures we described above, and then characterize model behavior further in a subsequent batch of analyses.
+
+We conclude this section by proposing that scientists contributing or reviewing a new model ask the following question: Is the contribution at hand carrying out an empirical analysis that will specifically profit from scrutinizing the model beyond verifying its correctness?
+If not, then model characterization efforts are not justified, and should take place at a different time and place, and be shouldered by the scientific community at large.
 
 \section*{Concluding remarks}
 
