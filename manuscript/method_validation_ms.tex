@@ -664,18 +664,18 @@ We conclude this section by noting that unidentifiability should not be taken as
 
 \vspace{.25cm}
 
-\noindent \emph{Simulation-based calibration (SBC)}
+\noindent \emph{Rank-uniformity validation (RUV)}
 
 \cite{Talts2018} show that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
 In particular, they show (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of the $i$-th parameter value, relative to its corresponding MCMC chain samples ($\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$), will follow a uniform distribution on $[1, L + 1]$.
 In other words, if one were to sort all true parameter values $\theta_i$ against $\boldsymbol{\theta_i'}$ -- their corresponding $L$ MCMC posterior samples -- the first (smallest ranking) 10\% out of $n$ $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.
-\begin{figure}{l}{7.35cm}
+\begin{wrapfigure}{l}{7.35cm}
   \includegraphics[width=7.25cm]{../figures/flowchart_sbc.pdf}
   \caption{Flowchart of the simulation-based calibration (SBC) procedure,
     for validating a Bayesian model. The red dotted box encloses the stages of the pipeline that
   differ from coverage validation (see Fig. \ref{fig:flowchart}).}
 \label{fig:sbcflowchart}
-\end{figure}
+\end{wrapfigure}
 Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
 
 We conduct RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
@@ -1126,30 +1126,30 @@ If not, then model characterization efforts are not justified, and should take p
 
 \section*{Concluding remarks}
 
-\begin{itemize}
-    \item 
-    \item RUV failing for a single rank does not mean the method is flawed
-\end{itemize}
+% \begin{itemize}
+%     \item 
+%     \item RUV failing for a single rank does not mean the method is flawed
+% \end{itemize}
 
-As more data is generated and made publicly available, the more will
-researchers in the life sciences require computational methods with
-which to analyze it.
-If such methods are not correctly implemented, conclusions drawn from
-the data will be of reduced or void of any significance.
-Here we discussed guidelines for the validation of computational methods
-implementing Bayesian probabilistic models.
-This manuscript is also followed by a supplementary text further
-illustrating these guidelines that is linked with a live document
-available on \href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
-We hope our guidelines can help raise the standards for software
-package releases required by users, developers and reviewers alike,
-and consequently lead to computational tools that are more efficient,
-better documented, and most importantly, correctly implemented.
+In order to keep up with the large amounts of data of different kinds accumulating in public databases, researchers in the life sciences must constantly update their computational tool boxes.
+New models are implemented in computational methods every day, but if implementation is not correct, downstream conclusions from using those methods will be void of any significance.
+In the present study, we described and executed two distinct validation protocols for verifying that a Bayesian model has been correctly implemented.
+Although we looked at examples from statistical phylogenetics, these two simulation-based protocols work for any and all Bayesian models.
+
+We further highlighted the difference between experiments in model validation versus model characterization.
+The former are strictly concerned with theoretical expectations (e.g., about coverage) a model must meet if correctly implemented.
+The latter, in contrast, include procedures more widely examining how model behavior responds to data set and model attributes; here, researchers often make predictions that are not theoretically guaranteed.
+Some form of model validation should always be carried out when models are newly implemented, but the need for model characterization efforts is contextual.
+Experiments probing model behavior beyond correctness are best designed and justified when empirically motivated.
+
+% This manuscript is also followed by a supplementary text further illustrating these guidelines that is linked with a live document available on \href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
+We hope the guidelines described here can enhance both the release rate and standards of statistical software for biology, by assisting its users, developers and referees in quickly finding common ground when evaluating new modeling work.
 
 \subsection*{Funding}
-F.K.M. and A.J.D. were supported by Marsden grant 16-UOA-277. R.B. was
-supported by Marsden grant .
-
+F.K.M. was supported by and Marsden grant 16-UOA-277.
+R.B. was supported by Marsden grant .
+L.M.C was supported by ...
+A.J.D. was supported by Marsden grant 16-UOA-277.
 
 %----------------------------------------------------------------------------------------
 %	REFERENCE LIST
