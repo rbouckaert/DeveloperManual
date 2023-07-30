@@ -18,6 +18,7 @@
 \usepackage{microtype} % Slightly tweak font spacing for aestheticsgins
 \usepackage[small,labelfont=bf,up,up]{caption} % Custom captions under/above floats in tables or Figures
 \usepackage{booktabs} % Horizontal rules in tables
+\usepackage{multirow}
 \usepackage{amsmath} % Text in equations
 \usepackage{titlesec} % Allows customization of titles
 \usepackage{titling} % Customizing the title section
@@ -578,7 +579,7 @@ it can be shown that
 % $\operatorname{Pr}\left(\theta_0 \in I_\alpha(Y) \right) = \alpha$
 $\operatorname{Pr}\left(\theta_i \in I_\alpha(y) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs have nominal coverage under the true generative model (a proof is provided in the supplementary material).
 More formally, the coverage of $n$ intervals obtained as above will be distributed as binomial random variable with $n$ trials and success probability $\alpha$.
-When $n=100$ and $\alpha = 0.95$, the confidence interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage}).
+When $n=100$ and $\alpha = 0.95$, the confidence interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage2}).
 If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces coverage lying within the expected bounds, we say the model has passed the coverage validation, and is well-calibrated and correct.
 
 % \begin{figure}
@@ -586,32 +587,57 @@ If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces covera
 %   \includestandalone[width=8cm]{../figures/flowchart}
 % \end{figure}
 
+% \begin{table}
+% \begin{center}
+% \begin{tabular}{l|c}
+% \hline
+% $k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
+% \hline
+% 90 & 0.0167 \\ % & 0.0282 & 0.9718\\
+% 91 & 0.0349 \\ % & 0.0631 & 0.9369\\
+% 92 & 0.0649 \\ % & 0.1280 & 0.8720\\
+% 93 & 0.1060 \\ % & 0.2340 & 0.7660\\
+% 94 & 0.1500 \\ % & 0.3840 & 0.6160\\
+% 95 & 0.1800 \\ % & 0.5640 & 0.4360\\
+% 96 & 0.1781 \\ % & 0.7422 & 0.2578\\
+% 97 & 0.1396 \\ % & 0.8817 & 0.1183\\
+% 98 & 0.0812 \\ % & 0.9629 & 0.0371\\
+% 99 & 0.0312 \\ % & 0.9941 & 0.0059\\
+% 100 & 0.0059 \\ % & 1.0000 & 0.0000\\
+% \hline
+% \end{tabular}
+% \end{center}
+% \caption{Under a correctly implemented model, coverage $x$ (the number
+%   of true simulated values that fall within their corresponding 95\%-HPDs)
+%   is binomially distributed with $n$ trials ($n=100$ in this case),
+%   and probability of success $p=0.95$.}
+% \label{tab:coverage}
+% \end{table}
+
 \begin{table}
 \begin{center}
-\begin{tabular}{l|c}
-\hline
-$k$ & $\text{Pr}(x=k)$ \\ % & $\text{P}(x\le k)$ & $\text{P}(x\ge k)$\\
-\hline
-90 & 0.0167 \\ % & 0.0282 & 0.9718\\
-91 & 0.0349 \\ % & 0.0631 & 0.9369\\
-92 & 0.0649 \\ % & 0.1280 & 0.8720\\
-93 & 0.1060 \\ % & 0.2340 & 0.7660\\
-94 & 0.1500 \\ % & 0.3840 & 0.6160\\
-95 & 0.1800 \\ % & 0.5640 & 0.4360\\
-96 & 0.1781 \\ % & 0.7422 & 0.2578\\
-97 & 0.1396 \\ % & 0.8817 & 0.1183\\
-98 & 0.0812 \\ % & 0.9629 & 0.0371\\
-99 & 0.0312 \\ % & 0.9941 & 0.0059\\
-100 & 0.0059 \\ % & 1.0000 & 0.0000\\
-\hline
+\begin{tabular}{@{}cccc@{}}
+\toprule
+Credibility level (\%) & n (replicates) & lower & upper \\ \midrule
+\multirow{3}{*}{90}    & 100            & 84    & 95    \\
+                       & 200            & 171   & 188   \\
+                       & 500            & 436   & 463   \\
+\multirow{3}{*}{95}    & 100            & 90    & 99    \\
+                       & 200            & 184   & 196   \\
+                       & 500            & 465   & 484   \\
+\multirow{3}{*}{99}    & 100            & 97    & 100   \\
+                       & 200            & 195   & 200   \\
+                       & 500            & 490   & 499   \\ \cmidrule(l){1-4} 
 \end{tabular}
 \end{center}
-\caption{Under a correctly implemented model, coverage $x$ (the number
-  of true simulated values that fall within their corresponding 95\%-HPDs)
-  is binomially distributed with $n$ trials ($n=100$ in this case),
-  and probability of success $p=0.95$.}
-\label{tab:coverage}
+\caption{Under a correctly implemented model, the number
+  of true simulated values that fall within their corresponding $\alpha\times 100$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
+  Here we show the 95\% probability intervals for the coverage under different credibility levels and numbers of replicates.
+  For the experiments described in Figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
+  }
+\label{tab:coverage2}
 \end{table}
+
 
 \begin{figure}
   \includegraphics[width=\textwidth]{../figures/graphical_model_coverage.pdf}
@@ -677,14 +703,37 @@ In other words, if one were to sort all true parameter values $\theta_i$ against
   differ from coverage validation (see Fig. \ref{fig:flowchart}).}
 \label{fig:sbcflowchart}
 \end{wrapfigure}
-Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021} \textcolor{red}{see Figure XX below}.
+Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021}, see Figure \ref{fig:ruv_conceptual} below.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{figures/sbc_conceptual.pdf}
+  \caption{Miscalibration patterns in Rank-uniformity validation (RUV).
+  In panel A the replicate-averaged posterior (RAP), i.e. the posterior one gets over all simulated data sets, is overdispersed compared to the prior.
+  This leads to the ranks being concentrated away from the extremes.
+  The scenario in panel B shows an underdispersed RAP, which leads to ``horns'' in the histogram plot.
+  Finally, in panel C we show a situation where the inference machinery consistently overestimates the true quantity, in which case the ranks are consistently smaller than expected under uniformity.
+   }
+  \label{fig:ruv_conceptual}
+\end{figure}
 
 We conduct RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
-In the interest of brevity, we only show the histograms and ECDFs for $\Lambda$, and leave the remaining plots for $R$ to the supplement (but see Box 1 below).
-As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\% confidence intervals \textcolor{red}{Fig. Xa)}.
-Under scenario 2, again as expected, our method failed RUV, as shown by \textcolor{blue}{[describe histogram and ECDF plots here, I can't remember what they look like by memory] (Fig. Xb)} .
+In the interest of brevity, we only show the histograms and ECDFs for $r$, and leave the remaining plots for $\lambda$ to the supplement (but see Box 1 below).
+As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\% confidence intervals (Fig. \ref{fig:ruv_yule}).
+
+Under scenario 2, again as expected, our method failed RUV, as shown by the middle plots Fig.~\ref{fig:ruv_yule}.
+In particular, we observe great overestimation of the Brownian motion rate ($r$)
 In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator, etc).
 We remind the reader that in our experiment, scenario 2 was purposefully set up so that the (prior) models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the RUV procedure.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{figures/sbc_Yule_BM_r.pdf}
+  \caption{Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$.
+  In A we show the rank histograms from 100 replicates, obtained after 10\% burnin and thinning down to get 200 draws from the posterior.
+  For Scenario 1, no anomalies are detected, while for Scenarios 2 and 3 over and underestimation are present, respectively.
+  Panel B shows the corresponding ECDF plots, which help magnify the problems when they are present (Scenarios 2 and 3).
+   }
+  \label{fig:ruv_yule}
+\end{figure}
 
 \textcolor{red}{When a model implementation fails RUV, it can do so in different ways, and some are more straightforward to interpret.
 \textcolor{blue}{For example, if [@Luiz: fill out]}.
