@@ -322,6 +322,21 @@ theoretically.
 % A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
 
 \newpage
+\section{Supplementary Figures}
+\label{appendix::sec:supp_figures}
+
+\begin{figure}[!ht]
+  \includegraphics[width=\linewidth]{figures/sbc_Yule_lambda.pdf}
+  \caption{Rank-uniformity validation (RUV) results for the Brownian motion rate, $\Lambda$.
+  In A we show the rank histograms from 100 replicates, obtained after 10\% burnin and thinning down to get 200 draws from the posterior.
+  For Scenario 1, there is no discernable pattern, while for Scenarios 2 and 3 over and underestimation are present, respectively.
+  Panel B shows the corresponding ECDF plots, which help magnify the problems when they are present (Scenarios 2 and 3).
+   }
+  \label{fig:ruv_yule_lambda}
+\end{figure}
+
+
+\newpage
 \section{Proof for coverage validation}
  \label{appendix::sec:proofs}
 

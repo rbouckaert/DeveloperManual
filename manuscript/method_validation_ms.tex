@@ -230,7 +230,7 @@ These parameters can be seen as characterizing a ``population'' of the entities 
 For each data set, one can then construct $\alpha \times 100 \%$-confidence intervals (where $\alpha \in (0,1)$ gives the confidence level) for certain summary statistics (e.g., mean, variance, covariance).
 If the simulator is behaving as expected, one should be able to verify that the (population or ``true'') summary statistic is contained approximately $\alpha$\% of the time within their $\alpha \times 100\%$-confidence intervals.
 An example is the Yule model (also known as the pure-birth model; \citealt{yule24}), a continuous-time Markov process that has been classically employed in phylogenetics to model the number of species in a clade \citep{yule24,aldous01}.
-Under a Yule process with a species birth rate of $\lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
+Under a Yule process with a species birth rate of $\Lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
 \vspace{.5cm}
 
 % Start: BM BOX
@@ -579,7 +579,7 @@ it can be shown that
 % $\operatorname{Pr}\left(\theta_0 \in I_\alpha(Y) \right) = \alpha$
 $\operatorname{Pr}\left(\theta_i \in I_\alpha(y) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs have nominal coverage under the true generative model (a proof is provided in the supplementary material).
 More formally, the coverage of $n$ intervals obtained as above will be distributed as binomial random variable with $n$ trials and success probability $\alpha$.
-When $n=100$ and $\alpha = 0.95$, the confidence interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage2}).
+When $n=100$ and $\alpha = 0.95$, the confidence interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage22}).
 If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces coverage lying within the expected bounds, we say the model has passed the coverage validation, and is well-calibrated and correct.
 
 % \begin{figure}
@@ -664,7 +664,7 @@ The parameters in this model are the phylogenetic tree $\Phi$, the species birth
 When the model is correctly specified between simulation and inference (``Scenario 1'', Fig. \ref{fig:yulecalval}a), coverage is close to 95\% and adequate for both $\Lambda$ and $R$, which indicates that $\text{I}[\mathcal{M}]$ -- as implemented in BEAST 2, the software we used -- is well-calibrated and correct.
 
 In ``Scenario 2'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}b), however, we misspecify the model during inference, setting the prior distribution on $\Lambda$ to be a log-normal with a mean of -2.0 (rather than -3.25, as specified in the simulation procedure; Fig. \ref{fig:pgm}).
-In contrast with scenario 1, coverage is 0.0 for $\Lambda$ and 70\% for $R$, both much lower and outside the expected coverage bounds (Table \ref{tab:coverage}).
+In contrast with scenario 1, coverage is 0.0 for $\Lambda$ and 70\% for $R$, both much lower and outside the expected coverage bounds (Table \ref{tab:coverage2}).
 These numbers indicate that one or more of the parts comprising model $\mathcal{M}$ used in $\text{I}[\mathcal{M}]$ differs from their counterparts in $\text{S}[\mathcal{M}]$ differs.
 This result was expected because we purposefully made the models in simulation and inference differ; we know $\text{I}[\mathcal{M}]$ is correct because of the results from scenario 1.
 Of course, in a real-world validation experiment the model should be correctly specified, and such a result would suggest a problem with the inferential machinery (provided the the simulator had been previously validated).
@@ -703,7 +703,12 @@ In other words, if one were to sort all true parameter values $\theta_i$ against
   differ from coverage validation (see Fig. \ref{fig:flowchart}).}
 \label{fig:sbcflowchart}
 \end{wrapfigure}
-Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021}, see Figure \ref{fig:ruv_conceptual} below.
+Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021}.
+When a model implementation fails RUV, it can do so in different ways.
+For instance, when the inference machinery leads to consistent overdispersed estimates, one gets a pattern of ranks concentrating towards the middle rank (Figure\ref{fig:ruv_conceptual}A).
+When underdispersion is present, ranks tend to bunch up towards the ends (Figure\ref{fig:ruv_conceptual}B), creating a pattern of ``horns'', which can also be caused by high autocorrelation in the draws.
+This is also why we recommend thinning MCMC draws in order to reduce autocorrelation.
+Figure\ref{fig:ruv_conceptual}C shows the rank patterns when the inference machinery produces biased estimates: ranks will bunch up against one of the ends, depending on whether estimates are biased downwards of upwards.
 
 \begin{figure}
   \includegraphics[width=\linewidth]{figures/sbc_conceptual.pdf}
@@ -727,7 +732,7 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
 
 \begin{figure}
   \includegraphics[width=\linewidth]{figures/sbc_Yule_BM_r.pdf}
-  \caption{Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$.
+  \caption{Rank-uniformity validation (RUV) results for the Brownian motion rate, $R$.
   In A we show the rank histograms from 100 replicates, obtained after 10\% burnin and thinning down to get 200 draws from the posterior.
   For Scenario 1, no anomalies are detected, while for Scenarios 2 and 3 over and underestimation are present, respectively.
   Panel B shows the corresponding ECDF plots, which help magnify the problems when they are present (Scenarios 2 and 3).
@@ -735,29 +740,6 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
   \label{fig:ruv_yule}
 \end{figure}
 
-\textcolor{red}{When a model implementation fails RUV, it can do so in different ways, and some are more straightforward to interpret.
-\textcolor{blue}{For example, if [@Luiz: fill out]}.
-For a more thorough discussion, see \cite{Talts2018}.}
-
-\textcolor{red}{RUV results from scenario 3 (Fig. Xc), \textcolor{blue}{specifically the histogram bars falling out of their 95\% confidence intervals, } would suggest that our model implementation is incorrect.
-This result also illustrates how SBC is a more sensitive test than coverage validation (Fig. \ref{yulecalval}c for a comparison).
-}
-
-\ref{fig:pgm}... \textcolor{red}{[@Remco or @Luiz: to be done]}
-
-\textcolor{red}{
-  Items to discuss/consider after example:
-  \begin{itemize}
-  \item What are the downsides of SBC relative to just verifying
-    a model is well-calibrated? You'd have to simulate 1,000
-    data sets instead of 100 (so you have, say, 100 per 10\% bin).
-    Very computationally intensive!
-  \item What are we going to recommend to the reader? That they
-    really always go all the way to SBC? That's asking for too much.
-    We have to argue that the first type of test is enough for
-    correctness.
-  \end{itemize}
-}
 
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
   title=Box 1: Validating a phylogenetic model with respect to its
@@ -1047,7 +1029,7 @@ This result also illustrates how SBC is a more sensitive test than coverage vali
 % simulations; \citealp{dawid82}).
 % For example, in the case of the commonly used 95\%-HPD interval, the true value
 % should often be inside the HPD between 90--98\% of the time (Table
-% \ref{tab:coverage}).
+% \ref{tab:coverage2}).
 
 
 % Figure \ref{fig:yulecalval} shows the results of a calibrated
@@ -1198,7 +1180,7 @@ We hope the guidelines described here can enhance both the release rate and stan
 \subsection*{Funding}
 F.K.M. was supported by Marsden grant 16-UOA-277 and by the National Science Foundation (DEB-2040347).
 R.B. was supported by Marsden grant .
-L.M.C was supported by ...
+L.M.C  was financed in part by the Coordenação de Aperfeiçoamento de Pessoal de Nível Superior - Brasil (CAPES) - Finance Code 001 and acknowledges support by the School of Applied Mathematics.
 A.J.D. was supported by Marsden grant 16-UOA-277.
 
 %----------------------------------------------------------------------------------------
