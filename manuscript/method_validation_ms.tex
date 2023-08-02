@@ -118,7 +118,8 @@
 The last two decades have seen the biological sciences undergo a major revolution.
 Critical technological innovations such as the advent of massive parallel sequencing and the accompanying improvements in computational power and storage have flooded biology with unprecedented amounts of data ripe for analysis.
 Not only has intraspecific data from multiple individuals allowed progress in fields like medicine and epidemiology
-\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.,][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{martin13,brawand14,jarvis14,novikova16,pease2016,kawahara19,upham19}.
+\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.,][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{pease2016,kawahara19,upham19}.
+% martin13,brawand14,jarvis14,novikova16
 However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care needed to analyze it. 
 Almost on par with with data accumulation is the rate at which new computational tools are being proposed, as evidenced by journals entirely dedicated to method advances, methodological sections in biological journals, and computational biology degrees being offered by institutions around the world.
 
@@ -193,7 +194,7 @@ We refer the reader interested in these and related topics to \cite{rwty}, \cite
 \section*{Validating a Bayesian model}
 
 In this section we discuss a host of procedures for validating an implementation of a Bayesian model.
-This entails validating both the (data) simulator and the inferential engine (e.g. the MCMC algorithm).
+This entails validating both the (data) simulator and the inferential engine.
 
 \subsection*{Validating the simulator, $\text{S}[\mathcal{M}]$}
 \label{verify-correctness-of-simulator-implementation}
@@ -393,7 +394,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
   \caption{A non-exhaustive list of direct simulation software used for various models in evolutionary biology.}
   \label{tab:sim}
   \centering
-  \begin{tabular}{ p{0.7in} | p{1.5in} | p{1in} | p{1.3in} }
+  \begin{tabular}{ p{0.7in} p{1.5in} p{1in} p{1.3in} }
     \hline
     Software package & Model type & Platform & Reference \\
     \hline  
@@ -475,7 +476,7 @@ A large number of parameters can cause overfitting and weak identifiability, and
 % In practice, however, this is impossible to achieve due to the models under consideration being almost always badly misspecified for the data at hand.
 Deciding on the utility of a model for real-world problems is a daunting task \citep{brown18,shepherd18}, and is a challenge we do not address in the present contribution.
 Such model appraisals are normally carried out after a model is published, often in multiple  contribution bouts, and are critical for a model's longevity.
-Analyses of model fit against data are normally accompanied by discussions on assumption validity, and more rarely by benchmarking and scrutinization of model behavior and implementation (e.g., \citealp{maddison07,rabosky15,rabosky13,moore16,stadler10,luo20}).
+Analyses of model fit against data are normally accompanied by discussions on assumption validity, and more rarely by benchmarking and scrutinization of model behavior and implementation (e.g., \citealp{maddison07,stadler10,rabosky13,rabosky15,moore16}).
 
 % Simulating data from a probabilistic generative model can thus be helpful to understand when the inferential machinery under development
 When a new model $\mathcal{M}$ is initially proposed, however, authors must ensure that their methods 
@@ -617,9 +618,9 @@ If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces covera
 
 \begin{table}
 \begin{center}
-\begin{tabular}{@{}cccc@{}}
-\toprule
-Credibility level (\%) & n (replicates) & lower & upper \\ \midrule
+\begin{tabular}{cccc}
+\hline
+Credibility level (\%) & n (replicates) & lower & upper \\ \hline
 \multirow{3}{*}{90}    & 100            & 84    & 95    \\
                        & 200            & 171   & 188   \\
                        & 500            & 436   & 463   \\
@@ -628,7 +629,7 @@ Credibility level (\%) & n (replicates) & lower & upper \\ \midrule
                        & 500            & 465   & 484   \\
 \multirow{3}{*}{99}    & 100            & 97    & 100   \\
                        & 200            & 195   & 200   \\
-                       & 500            & 490   & 499   \\ \cmidrule(l){1-4} 
+                       & 500            & 490   & 499   \\ \hline%\cmidrule(l){1-4} 
 \end{tabular}
 \end{center}
 \caption{Under a correctly implemented model, the number
@@ -742,16 +743,16 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
 \end{figure}
 
 We conduct\textcolor{blue}{ed} RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
-In the interest of brevity, we only show the histograms and ECDFs for $r$, and leave the remaining plots for $\lambda$ to the supplement (but see Box 1 below).
+In the interest of brevity, we only show the histograms and ECDFs for $R$, and leave the remaining plots for $\lambda$ to the supplement (but see Box 1 below).
 As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\% confidence intervals (Fig. \ref{fig:ruv_yule}a).
 
 Under scenario 2, again as expected, our method failed RUV (Fig.~\ref{fig:ruv_yule}b).
-In particular, we observe great overestimation of the Brownian motion rate ($r$).
+In particular, we observe great overestimation of the Brownian motion rate ($R$).
 In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator, etc).
 We remind the reader that in our experiment, scenario 2 was purposefully set up so that the (prior) models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the RUV procedure.
 
 \textcolor{blue}{Lastly, RUV results for scenario 3 contrasted with what we observed for this scenario's coverage validation (Fig. \ref{fig:yulecalval}c).
-  While the model specified in scenario 3 passed its coverage validation (coverage was acceptable for both $\lambda$ and $r$), it did not pass the RUV procedure.
+  While the model specified in scenario 3 passed its coverage validation (coverage was acceptable for both $\Lambda$ and $R$), it did not pass the RUV procedure.
   The corresponding rank histogram and ECDF plots indicate that $r$ is underestimated (Fig. \ref{fig:ruv_yule}c).
   This is an interesting result, because it suggests that rank-uniformity validation can be more sensitive than coverage validation, at least for certain types of model misspecification.
 }
@@ -767,8 +768,8 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
   \includegraphics[width=0.9\linewidth]{../figures/sbc_Yule_BM_r_manual.pdf}
   \caption{
     \textcolor{blue}{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
-    Panels in the top row show the histograms of $n=100$ ranks, for parameter $r$ in each scenario, obtained after 10\% burnin and thinning of posterior samples, 200 out of \textcolor{orange}{[Fill out]}.
-    Panels in the bottom row show the corresponding ECDF plots, for parameter $r$ in each scenario.
+    Panels in the top row show the histograms of $n=100$ ranks, for parameter $R$ in each scenario, obtained after 10\% burnin and thinning of posterior samples, 200 out of \textcolor{orange}{[Fill out]}.
+    Panels in the bottom row show the corresponding ECDF plots, for parameter $R$ in each scenario.
     (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
     (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
     (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).}
@@ -1189,7 +1190,7 @@ For the reasons above, carrying out an analysis of coverage and/or of the distri
 
 In contrast, there is an infinite number of ways in which a new or published model can have its behavior inspected.
 Researchers may want to know, given a model, how sensitive parameter estimates are to data set size, prior choice, model complexity, violation of model assumptions, to name a few.
-Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang23}[cite Landis Anolis paper, Ho papers]), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang23}).
+Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang23,luo23}), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang23}).
 We collectively refer to these examinations as ``model characterization'': any analysis of model behavior beyond assessing its correctness.
 Model characterization is rarely carried out to satisfy the curiosity of the theoretician (but see, e.g., \citealp{tuffley97,steel20}); it is instead normally motivated by a model's empirical applications.
 These investigations are thus critical for the longevity and popularity of a model, as domain experts will only adopt a model widely if they know when to trust the results and how to interpret them.

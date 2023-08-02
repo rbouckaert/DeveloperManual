@@ -66,18 +66,17 @@
 %\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 %\posttitle{\end{center}} % Article title closing formatting
 
-\title{Validating Bayesian inference tools for phylogenetics} % Article title
+\title{How to validate a Bayesian model} % Article title
 %LM: strictly speaking, we're 'validating' the inference machinery.
 %% Validating a model involves epistemic considerations that are, as far as I understand, outside the scope of this paper.
-\author{\textsc{F\'{a}bio K. Mendes$^{1\dagger}$}, \textsc{Remco Bouckaert$^{2\dagger*}$},\\
+\author{\textsc{F\'{a}bio K. Mendes$^{1\dagger*}$}, \textsc{Remco Bouckaert$^{2\dagger}$},\\
 \textsc{Luiz M. Carvalho$^{3\dagger}$}, \textsc{Alexei J. Drummond$^{4}$} \\
 \small $^1$Department of Biology, Washington University in St. Louis\\
 \small $^2$School of Computer Science, The University of Auckland\\
 \small $^3$Escola de Matem\'{a}tica Aplicada, Fundaç\~{a}o Getulio Vargas\\
 \small $^4$School of Biological Sciences, The University of Auckland\\
 \small
-\href{mailto:f.mendes@auckland.ac.nz}{$^*$Corresponding authors:
-  f.mendes@auckland.ac.nz; remco@cs.auckland.ac.nz}\\
+\href{mailto:f.mendes@auckland.ac.nz}{$^*$Corresponding author: f.mendes@auckland.ac.nz}\\
 {\small $^\dagger$Authors contributed equally to this work}
 % \href{mailto:f.mendes@auckland.ac.nz}{another.email@auckland.ac.nz}
 %\and % Uncomment if 2 authors are required, duplicate these 4 lines if more
@@ -326,11 +325,13 @@ theoretically.
 \label{appendix::sec:supp_figures}
 
 \begin{figure}[!ht]
-  \includegraphics[width=\linewidth]{figures/sbc_Yule_lambda.pdf}
-  \caption{Rank-uniformity validation (RUV) results for the Brownian motion rate, $\Lambda$.
-  In A we show the rank histograms from 100 replicates, obtained after 10\% burnin and thinning down to get 200 draws from the posterior.
-  For Scenario 1, there is no discernable pattern, while for Scenarios 2 and 3 over and underestimation are present, respectively.
-  Panel B shows the corresponding ECDF plots, which help magnify the problems when they are present (Scenarios 2 and 3).
+   \includegraphics[width=\linewidth]{../figures/sbc_Yule_lambda_manual.pdf}
+  \caption{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. 1 in the main text.
+    Panels in the top row show the histograms of $n=100$ ranks, for parameter $\Lambda$ in each scenario, obtained after 10\% burnin and thinning of posterior samples, 200 out of \textcolor{orange}{[Fill out]}.
+    Panels in the bottom row show the corresponding ECDF plots, for parameter $\Lambda$ in each scenario.
+    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
+    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
+    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
    }
   \label{fig:ruv_yule_lambda}
 \end{figure}
