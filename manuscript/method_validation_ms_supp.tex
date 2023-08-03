@@ -10,7 +10,7 @@
 \usepackage{soul} % strike through
 \usepackage[normalem]{ulem} % strike through keeping emphasis standard
 \usepackage{cancel} % diagonal strike through
-\usepackage[margin=1in]{geometry} % FKM: margins
+\usepackage[margin=1in]{geometry} % margins
 
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
@@ -340,31 +340,56 @@ These results indicate the PhyloBM simulator produces appropriate confidence int
 \section{Proof for coverage validation}
  \label{appendix::sec:proofs}
 
-In this section we provide a mathematical argument that coverage-based validation is sound,  i.e., that sampling from the prior, simulating data and then using the same prior for computing the posterior should give Bayesian credible intervals (BCIs) with nominal frequentist coverage.
+In this section we provide a mathematical argument that coverage-based validation is sound, i.e., that sampling from the prior, simulating data and then using the same prior for computing the posterior should give Bayesian credible intervals (BCIs) with nominal frequentist coverage.
 
 For a number $n$ of replicates, simulate parameter values $\theta_i$, and then given those values, simulate data $d_i$:
 \begin{align*}
 \theta_i & \sim f_\Theta(\cdot), \\
-d_i & \sim f_{D|\Theta}(\cdot \mid \Theta=\theta_i).
+d_i & \sim f_{D|\Theta}(\cdot | \Theta=\theta_i).
 \end{align*}
+
 Now for notational convenience, define $a_i := a(d_i, \alpha)$ and $b_i := b(d_i, \alpha)$ and recall $I_{\alpha}\left(d_i\right)$ is such that:
 
+
+\textcolor{red}{
+  (Original to be removed)
 \begin{align*}
 Q_{d_i}\left(b_i\right) - Q_{d_i}\left(a_i\right) = p_1 - p_2 = \alpha,
 \end{align*}
+}
 
-\noindent where $Q_y(x)$ is the posterior (conditional on data $y$) CDF and $p_1, p_2 \in (0,1)$, with $p_1 < p_2$.
+\textcolor{blue}{
+\begin{align*}
+Q\left(b_i | d_i\right) - Q\left(a_i | d_i\right) = p_1 - p_2 = \alpha,
+\end{align*}
+}
+
+\noindent where
+\textcolor{red}{\st{$Q_{y}(x)$}}\textcolor{blue}{$Q(x|d)$} is the posterior CDF (conditional on data \textcolor{red}{\st{$y$}}\textcolor{blue}{$d$}) and $p_1, p_2 \in (0,1)$, with $p_1 < p_2$.
+
 A natural quantity to compute is:
 
+\textcolor{red}{
+  (Original to be removed)
 \begin{align*}
 S_n = n^{-1}\sum_{i=1}^n \mathbb{I}\left(\theta_i \in I_{\alpha}\left(d_i\right) \right),
 \end{align*}
+}
+
+\textcolor{blue}{
+\begin{align*}
+S_n = n^{-1}\sum_{i=1}^n \mathbb{I}\left(\theta_i \in I_{\alpha}\left(d_i\right) \right),
+\end{align*}
+}
 
 \noindent i.e., the attained coverage of the Bayesian intervals.
+
 Let $F_U(x) = x$ be the CDF of a $\operatorname{Uniform(0, 1)}$ random variable. 
 Now we can consider what happens when the number of simulations grows, i.e., the limit $\lim_{n \to \infty} S_n$.
 We may re-write the limit as:
 
+\textcolor{red}{
+  (Original to be removed)
 \begin{align*}
 \lim_{n \to \infty} S_n &= \lim_{n \to \infty} n^{-1}\sum_{i=1}^n \mathbb{I}\left(\theta_i \in I_{\alpha}\left(d_i\right) \right),\\
 &=  \lim_{n \to \infty} n^{-1}\sum_{i=1}^n \left\{ \mathbb{I}\left(\theta_i \leq b_i \right) - \mathbb{I}\left(\theta_i \leq a_i \right) \right\},\\
@@ -372,8 +397,20 @@ We may re-write the limit as:
 &=  \lim_{n \to \infty} n^{-1}\sum_{i=1}^n \mathbb{I}\left(Q_{d_i}^{-1}\left(\theta_i\right) \leq p_1 \right) -   \lim_{n \to \infty} n^{-1}\sum_{i=1}^n\mathbb{I}\left(Q_{d_i}^{-1}\left(\theta_i\right) \leq p_2 \right),\\
 &= F_U(p_1) - F_U(p_2) = \alpha,
 \end{align*}
+}
+
+\textcolor{blue}{
+\begin{align*}
+\lim_{n \to \infty} S_n &= \lim_{n \to \infty} n^{-1}\sum_{i=1}^n \mathbb{I}\left(\theta_i \in I_{\alpha}\left(d_i\right) \right),\\
+&=  \lim_{n \to \infty} n^{-1}\sum_{i=1}^n \left\{ \mathbb{I}\left(\theta_i \leq b_i \right) - \mathbb{I}\left(\theta_i \leq a_i \right) \right\},\\
+&=  \lim_{n \to \infty} n^{-1}\sum_{i=1}^n \mathbb{I}\left(\theta_i \leq b_i \right) -  n^{-1}\sum_{i=1}^n\mathbb{I}\left(\theta_i \leq a_i \right),\\
+&=  \lim_{n \to \infty} n^{-1}\sum_{i=1}^n \mathbb{I}\left(Q_{d_i}^{-1}\left(\theta_i\right) \leq p_1 \right) -   \lim_{n \to \infty} n^{-1}\sum_{i=1}^n\mathbb{I}\left(Q_{d_i}^{-1}\left(\theta_i\right) \leq p_2 \right),\\
+&= F_U(p_1) - F_U(p_2) = \alpha,
+\end{align*}
+}
 
 \noindent where the last line follows from the fact that the CDF of $\theta_i$ is uniformly distributed on $(0, 1$) (Theorem 1 in \cite{Cook2006}) and almost sure convergence of the ECDF to the true CDF due to the  Glivenko-Cantelli theorem~\cite[page 275]{Billingsley1986}.
+
 \bibliography{refs}
 
 \end{document}
