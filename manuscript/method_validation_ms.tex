@@ -786,52 +786,52 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
 \end{figure}
 
 
-\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
-  title=Box 1: Validating a phylogenetic model with respect to its
-  phylogenetic tree parameter, fonttitle=\bfseries]
-  \small 
+% \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
+%   title=Box 1: Validating a phylogenetic model with respect to its
+%   phylogenetic tree parameter, fonttitle=\bfseries]
+%   \small 
 
-  Given the centrality of the phylogenetic tree ($\Phi$) in comparative
-  analyses, we must pay close attention to how we investigate this
-  parameter when validating a phylogenetic model.
-  Analyzing phylogenetic trees is made challenging by tree space
-  being a complex mix of a discrete and continuous component, due to
-  trees being comprised by both a topology and set of node times
-  \citep{semple03,gavryushkin16}.
-  Additionally, there is no canonical total-ordering  structure for
-  trees, which complicates a validation procedure such as SBC.
+%   Given the centrality of the phylogenetic tree ($\Phi$) in comparative
+%   analyses, we must pay close attention to how we investigate this
+%   parameter when validating a phylogenetic model.
+%   Analyzing phylogenetic trees is made challenging by tree space
+%   being a complex mix of a discrete and continuous component, due to
+%   trees being comprised by both a topology and set of node times
+%   \citep{semple03,gavryushkin16}.
+%   Additionally, there is no canonical total-ordering  structure for
+%   trees, which complicates a validation procedure such as SBC.
 
-  \vspace{.25cm}
-  To get around this difficulty, we propose computing one or more phylogenetic
-  metrics, or functionals, for which total-ordering holds
-  and thus for which ranks can be obtained.
-  \textcolor{red}{[@Luiz: my suggestion is to focus on RF here]}
-  One such metric is the well-known Robinson-Foulds distance (RF; \citealp{Robinson1981}),
-  which measures \textcolor{red}{[@Luiz: brief description of RF]}
-  relative to another phylogenetic tree.
-  In order to compute a relational metric like the RF distance during
-  validation, we must have a reference phylogeny $\Phi_0$ to which
-  we can compare our focal generating phylogeny $\Phi$ and its
-  posterior MCMC samples.
-  The simulation-based calibration protocol remains the same, with
-  an additional step in which we generate $\Phi_0$ (see Algorithm
-  \ref{alg:sbc} in the supplementary material).
-  Figure \textcolor{red}{X [@Luiz: see my description of new Fig. X below]} shows
-  validation results for the RF metric for trees simulated under the model
-  illustrated in Fig \ref{fig:pgm}. 
-  Figure \textcolor{red}{Xa} and \textcolor{red}{Xb} show the coverage of 95\%-HPD
-  intervals, and the rank distribution of the RF metric, respectively.
-  The coverage of the RF statistic is very close to 95, and the rank distribution
-  is approximately uniform on (1,$L+1$); together, both panels indicate this model
-  is correct.
-  We consider other phylogenetic tree metrics that could be used as an alternative
-  to RF in the supplementary material (Supplementary
-  Figs. \ref{supfig:sbc} and \ref{supfig:phylo_calibration}).
+%   \vspace{.25cm}
+%   To get around this difficulty, we propose computing one or more phylogenetic
+%   metrics, or functionals, for which total-ordering holds
+%   and thus for which ranks can be obtained.
+%   \textcolor{red}{[@Luiz: my suggestion is to focus on RF here]}
+%   One such metric is the well-known Robinson-Foulds distance (RF; \citealp{Robinson1981}),
+%   which measures \textcolor{red}{[@Luiz: brief description of RF]}
+%   relative to another phylogenetic tree.
+%   In order to compute a relational metric like the RF distance during
+%   validation, we must have a reference phylogeny $\Phi_0$ to which
+%   we can compare our focal generating phylogeny $\Phi$ and its
+%   posterior MCMC samples.
+%   The simulation-based calibration protocol remains the same, with
+%   an additional step in which we generate $\Phi_0$ (see Algorithm
+%   \ref{alg:sbc} in the supplementary material).
+%   Figure \textcolor{red}{X [@Luiz: see my description of new Fig. X below]} shows
+%   validation results for the RF metric for trees simulated under the model
+%   illustrated in Fig \ref{fig:pgm}. 
+%   Figure \textcolor{red}{Xa} and \textcolor{red}{Xb} show the coverage of 95\%-HPD
+%   intervals, and the rank distribution of the RF metric, respectively.
+%   The coverage of the RF statistic is very close to 95, and the rank distribution
+%   is approximately uniform on (1,$L+1$); together, both panels indicate this model
+%   is correct.
+%   We consider other phylogenetic tree metrics that could be used as an alternative
+%   to RF in the supplementary material (Supplementary
+%   Figs. \ref{supfig:sbc} and \ref{supfig:phylo_calibration}).
 
-  \textcolor{red}{[@Luiz: include Fig Xa and FigXb here; this Figure
-    would consist of just the RF panels; all other metrics have would
-    be placed in the supp. material]}
-\end{tcolorbox}
+%   \textcolor{red}{[@Luiz: include Fig Xa and FigXb here; this Figure
+%     would consist of just the RF panels; all other metrics have would
+%     be placed in the supp. material]}
+% \end{tcolorbox}
 
 % Note that a tree by itself does not allow one to simulate the observables (alignments). %TODO decide whether to include this
 % Obviously, one might choose to keep $\boldsymbol \alpha$ fixed during the procedure, but it this will not exactly assess the validity of the joint sampler. 
