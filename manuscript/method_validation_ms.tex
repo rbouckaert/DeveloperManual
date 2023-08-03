@@ -3,7 +3,8 @@
 \usepackage{blindtext} % Package to generate dummy text throughout this template 
 \usepackage{graphicx} % FKM: for Figures
 \usepackage{wrapfig}
-\usepackage{color} % FKM: for colored text
+\usepackage{color} % for colored text
+\usepackage{colortbl} % for colored text
 \usepackage{float} % FKM: for forcing Figure placement
 \usepackage[breakable]{tcolorbox} % FKM: for text box
 \usepackage{enumerate} % FKM: for bullet point lists
@@ -398,15 +399,15 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
     \hline
     Software package & Model type & Platform & Reference \\
     \hline  
-    Seq-Gen & Molecular sequence evolution models & Standalone & \citealp{rambaut97} \\
+    \rowcolor{gray!10}Seq-Gen & Molecular sequence evolution models & Standalone & \citealp{rambaut97} \\
     ms & Coalescent model & Standalone & \citealp{hudson02}\\
-    msprime & Coalescent model & Python & \citealp{kelleher16}\\
+    \rowcolor{gray!10}msprime & Coalescent model & Python & \citealp{kelleher16}\\
     SLiM & Population genetic models & Standalone & \citealp{haller19}\\    
-    TreeSim & Birth-death models & R & \citealp{stadler11}\\
+    \rowcolor{gray!10}TreeSim & Birth-death models & R & \citealp{stadler11}\\
     mvMORPH & Continuous trait evolution models & R & \citealp{clavel15}\\
-    diversitree & Several birth-death models & R & \citealp{fitzjohn12}\\
+    \rowcolor{gray!10}diversitree & Several birth-death models & R & \citealp{fitzjohn12}\\
     MASTER & Several birth-death models & BEAST 2 & \citealp{vaughan13}\\
-    LPhy & Several evolutionary models & Standalone & \citealp{drummond22}\\ 
+    \rowcolor{gray!10}LPhy & Several evolutionary models & Standalone & \citealp{drummond22}\\ 
     \hline
   \end{tabular}
   \end{table}
@@ -620,22 +621,21 @@ If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces covera
 \begin{center}
 \begin{tabular}{cccc}
 \hline
-Credibility level (\%) & n (replicates) & lower & upper \\ \hline
-\multirow{3}{*}{90}    & 100            & 84    & 95    \\
-                       & 200            & 171   & 188   \\
-                       & 500            & 436   & 463   \\
-\multirow{3}{*}{95}    & 100            & 90    & 99    \\
-                       & 200            & 184   & 196   \\
+Credibility level (\%) & $n$ (replicates) & lower & upper \\ \hline
+  \rowcolor{gray!10}   & 100            & 84    & 95    \\
+  \rowcolor{gray!10}90 & 200            & 171   & 188   \\
+  \rowcolor{gray!10}   & 500            & 436   & 463   \\
+                       & 100            & 90    & 99    \\
+                  95   & 200            & 184   & 196   \\
                        & 500            & 465   & 484   \\
-\multirow{3}{*}{99}    & 100            & 97    & 100   \\
-                       & 200            & 195   & 200   \\
-                       & 500            & 490   & 499   \\ \hline%\cmidrule(l){1-4} 
+  \rowcolor{gray!10}   & 100            & 97    & 100   \\
+  \rowcolor{gray!10}99 & 200            & 195   & 200   \\
+  \rowcolor{gray!10}   & 500            & 490   & 499   \\ \hline%\cmidrule(l){1-4} 
 \end{tabular}
 \end{center}
-\caption{Under a correctly implemented model, the number
-  of true simulated values that fall within their corresponding $\alpha\times 100$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
-  Here we show the 95\% probability intervals for the coverage under different credibility levels and numbers of replicates.
-  For the experiments described in Figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
+\caption{Under a correctly implemented model, the number of true simulated values that fall within their corresponding $\alpha\times 100$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
+  Here we show the 95\% probability intervals \textcolor{orange}{[would ``confidence interval'' be less ambiguous in this case?]} for parameter coverage under different credibility levels and numbers of replicates.
+  For the experiments described in figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
   }
 \label{tab:coverage2}
 \end{table}
