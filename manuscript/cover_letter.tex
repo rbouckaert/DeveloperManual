@@ -1,0 +1,56 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{setspace}
+\usepackage{soul}
+
+\begin{document}
+\onehalfspacing
+\emph{PLoS Computational Biology}
+
+\begin{flushright}
+August 5, 2023
+\end{flushright}
+
+Dear Editor in Chief,
+
+\vspace{0.25cm}
+
+Please find attached our manuscript titled ``How to validate a Bayesian model'' by F\'{a}bio K. Mendes, Remco Bouckaert, Luiz M. Carvalho and Alexei J. Drummond for consideration as a research article in \emph{PLoS Computational Biology}.
+
+\vspace{0.25cm}
+
+Large amounts of biological data of different kinds (molecular, morphological, geographical) are increasingly available in public databases.
+As a result, computational/statistical methods for analyzing this wealth of information are also increasingly available (many of them published in this very journal).
+In evolutionary biology, \textbf{methods implementing probabilistic
+  models are immensely popular} -- specifically those within the Bayesian paradigm. % on which we focus our attention for the present work.
+Bayesian software platforms we have contributed to ourselves, e.g., BEAST, BEAST 2, RevBayes, have accrued tens of thousands of citations.
+
+\vspace{0.25cm}
+
+As researchers developing and reviewing Bayesian methods on a daily basis, we noticed that different computational tools can be widely variable with respect to how they are tested and validated.
+This variation partly reflects the idiosyncrasies of each methodological contribution, e.g., the empirical analyses therein.
+But perhaps more critically, it also reflects a lack of consensus or common ground in the community as to what validation means and how to achieve it.
+We believe this is because computational biology method development is relatively young and largely multidisciplinary.
+As such, \textbf{information on good validation practices is yet to be synthesized and made available in accessible language for researchers in disparate fields}.
+
+\vspace{0.25cm}
+
+Here, we define validation as the verification of method \emph{correctness}, and summarize best practices in probabilistic model validation for method developers, with an emphasis on Bayesian methods.
+We execute two different validation protocols on variations of a simple hierarchical model, discuss the results, and expand on how to interpret other potential outcomes.
+We further introduce a suite of methods for automating these protocols within the BEAST 2 platform.
+Lastly, we propose method development guidelines that will assist method users, developers and referees in quickly \textbf{finding common ground when evaluating new modeling work}.
+We expect that in defining standards that are desirable and reasonable, these guidelines will \textbf{enhance both the release rate and standards of statistical software} for biology.
+
+\vspace{0.25cm}
+
+\begin{flushright}
+Sincerely,
+
+\vspace{.5cm}
+
+F\'{a}bio K. Mendes, Remco Bouckaert, Luiz M. Carvalho and Alexei J. Drummond
+\end{flushright}
+\end{document}
