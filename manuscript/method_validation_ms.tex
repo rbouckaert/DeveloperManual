@@ -625,7 +625,7 @@ If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces covera
 \begin{center}
 \begin{tabular}{cccc}
 \hline
-Credibility level (\%) & $n$ (replicates) & lower & upper \\ \hline
+Credibility level (\%) & $n$ (replicates) & Lower quantile & Upper quantile \\ \hline
   \rowcolor{gray!10}   & 100            & 84    & 95    \\
   \rowcolor{gray!10}90 & 200            & 171   & 188   \\
   \rowcolor{gray!10}   & 500            & 436   & 463   \\
@@ -638,7 +638,7 @@ Credibility level (\%) & $n$ (replicates) & lower & upper \\ \hline
 \end{tabular}
 \end{center}
 \caption{Under a correctly implemented model, the number of true simulated values that fall within their corresponding $\alpha\times 100$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
-  Here we show the 95\% probability intervals \textcolor{orange}{[would ``confidence interval'' be less ambiguous in this case?]} for parameter coverage under different credibility levels and numbers of replicates.
+  Here we show the 95\% central interquantile intervals for parameter coverage under different credibility levels and numbers of replicates.
   For the experiments described in figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
   }
 \label{tab:coverage2}
@@ -684,7 +684,7 @@ The key insight here is that, although tree size is a random variable being filt
 As long as a parameter value has non-zero probability under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
 Scenario 3 brings home the point that coverage validation is insensitive to parameter estimate location, beyond the calculated coverage.
 Due to the finite size of a Yule tree, which may allow the prior a substantial influence over the posterior, the estimated $\lambda$ may be consistently higher or lower than the true $\lambda$.
-We expand on this point using a different and much simpler model \textcolor{red}{(Supplementary Figs. X)}.
+We expand on this point using a different and much simpler model \textcolor{red}{(Supplementary Figs. X; see rank-uniformity validation section below)}.
 This illustrates that obtaining  appropriate coverage is not enough to ascertain that  the model is correct.
 Potential biases in parameter estimates may remain undetected unless more investigation is done (see the RUV procedure below).
 
@@ -730,14 +730,15 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
 \begin{figure}
   \includegraphics[width=\linewidth]{../figures/sbc_conceptual_manual.pdf}
   \caption{
-    Miscalibration patterns \textcolor{blue}{observable after inference with MCMC} \textcolor{red}{\st{in}}\textcolor{blue}{during} rank-uniformity validation (RUV).
-    \textcolor{blue}{How to interpret the histogram of ranks (middle column) and ECDF plots (right-hand side column) is described in the main text.}
+    Miscalibration patterns \textcolor{blue}{observable after inference} \textcolor{blue}{during} rank-uniformity validation (RUV).
+    We explain how to interpret the histogram of ranks (middle column) and ECDF plots (right-hand side column) in the main text.
     \textcolor{blue}{
       (a) Top row: parameter estimates are overdispersed relative to their true values.
       (b) Middle row: parameter estimates are underdispersed relative to their true values.
       (c) Bottom row: parameter estimates are consistently overestimated relative to their true values.
-      Light-blue bands and horizontal black line (middle graphs in [a-c]) represent \textcolor{orange}{[Fill out]}.
-      Light-blue ellipses (rightmost graphs in [a-c]) represent \textcolor{orange}{[Fill out]}.}}
+      Light-blue bands and horizontal black line in the middle graphs represent the 95\% confidence interval about the expected rank count and its mean, respectively.
+      Light-blue ellipses in the rightmost graphs represent confidence intervals about the empirical cumulative distribution function (ECDF).}
+      }
   % In panel (a) the replicate-averaged posterior (RAP), i.e., the
   % posterior one gets over all \textcolor{blue}{$n \times L$} simulated parameter \textcolor{blue}{values}\textcolor{red}{\st{simulated data sets}}, is overdispersed compared to the prior.
   % This leads to the ranks being concentrated away from the extremes.
@@ -764,7 +765,7 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
 \textcolor{blue}{
   Unlike scenario 2, in which we caused an explicit mismatch between the distributions used in simulation and inference, model misspecification under scenario 3 was subtler: simulation and inference models were identical (as in scenario 1), but tree samples from $f_\Phi(\cdot)$ (the Yule prior) were often rejected as $\boldsymbol{\theta}$ was generated.
   The model used in scenario 3 failed RUV because rejecting tree samples induced an implicit Yule model in simulation that differed from the Yule model used in inference. 
-  Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. \textcolor{orange}{[Fill out]}), we were able to recapitulate the results in figure \ref{fig:ruv_yule}.
+  Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. \textcolor{orange}{[Fill out]}), we were able to recapitulate the results in Figure \ref{fig:ruv_yule}.
 }
 
 \begin{figure}
@@ -772,7 +773,7 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
   \includegraphics[width=0.9\linewidth]{../figures/sbc_Yule_BM_r_manual.pdf}
   \caption{
     \textcolor{blue}{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
-    Panels in the top row show the histograms of $n=100$ ranks, for parameter $R$ in each scenario, obtained after 10\% burnin and thinning of posterior samples, 200 out of \textcolor{orange}{[Fill out]}.
+    Panels in the top row show the histograms of $n=100$ ranks, for parameter $R$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
     Panels in the bottom row show the corresponding ECDF plots, for parameter $R$ in each scenario.
     (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
     (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
@@ -786,52 +787,52 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
 \end{figure}
 
 
-\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
-  title=Box 1: Validating a phylogenetic model with respect to its
-  phylogenetic tree parameter, fonttitle=\bfseries]
-  \small 
+% \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
+%   title=Box 1: Validating a phylogenetic model with respect to its
+%   phylogenetic tree parameter, fonttitle=\bfseries]
+%   \small 
 
-  Given the centrality of the phylogenetic tree ($\Phi$) in comparative
-  analyses, we must pay close attention to how we investigate this
-  parameter when validating a phylogenetic model.
-  Analyzing phylogenetic trees is made challenging by tree space
-  being a complex mix of a discrete and continuous component, due to
-  trees being comprised by both a topology and set of node times
-  \citep{semple03,gavryushkin16}.
-  Additionally, there is no canonical total-ordering  structure for
-  trees, which complicates a validation procedure such as SBC.
+%   Given the centrality of the phylogenetic tree ($\Phi$) in comparative
+%   analyses, we must pay close attention to how we investigate this
+%   parameter when validating a phylogenetic model.
+%   Analyzing phylogenetic trees is made challenging by tree space
+%   being a complex mix of a discrete and continuous component, due to
+%   trees being comprised by both a topology and set of node times
+%   \citep{semple03,gavryushkin16}.
+%   Additionally, there is no canonical total-ordering  structure for
+%   trees, which complicates a validation procedure such as SBC.
 
-  \vspace{.25cm}
-  To get around this difficulty, we propose computing one or more phylogenetic
-  metrics, or functionals, for which total-ordering holds
-  and thus for which ranks can be obtained.
-  \textcolor{red}{[@Luiz: my suggestion is to focus on RF here]}
-  One such metric is the well-known Robinson-Foulds distance (RF; \citealp{Robinson1981}),
-  which measures \textcolor{red}{[@Luiz: brief description of RF]}
-  relative to another phylogenetic tree.
-  In order to compute a relational metric like the RF distance during
-  validation, we must have a reference phylogeny $\Phi_0$ to which
-  we can compare our focal generating phylogeny $\Phi$ and its
-  posterior MCMC samples.
-  The simulation-based calibration protocol remains the same, with
-  an additional step in which we generate $\Phi_0$ (see Algorithm
-  \ref{alg:sbc} in the supplementary material).
-  Figure \textcolor{red}{X [@Luiz: see my description of new Fig. X below]} shows
-  validation results for the RF metric for trees simulated under the model
-  illustrated in Fig \ref{fig:pgm}. 
-  Figure \textcolor{red}{Xa} and \textcolor{red}{Xb} show the coverage of 95\%-HPD
-  intervals, and the rank distribution of the RF metric, respectively.
-  The coverage of the RF statistic is very close to 95, and the rank distribution
-  is approximately uniform on (1,$L+1$); together, both panels indicate this model
-  is correct.
-  We consider other phylogenetic tree metrics that could be used as an alternative
-  to RF in the supplementary material (Supplementary
-  Figs. \ref{supfig:sbc} and \ref{supfig:phylo_calibration}).
+%   \vspace{.25cm}
+%   To get around this difficulty, we propose computing one or more phylogenetic
+%   metrics, or functionals, for which total-ordering holds
+%   and thus for which ranks can be obtained.
+%   \textcolor{red}{[@Luiz: my suggestion is to focus on RF here]}
+%   One such metric is the well-known Robinson-Foulds distance (RF; \citealp{Robinson1981}),
+%   which measures \textcolor{red}{[@Luiz: brief description of RF]}
+%   relative to another phylogenetic tree.
+%   In order to compute a relational metric like the RF distance during
+%   validation, we must have a reference phylogeny $\Phi_0$ to which
+%   we can compare our focal generating phylogeny $\Phi$ and its
+%   posterior MCMC samples.
+%   The simulation-based calibration protocol remains the same, with
+%   an additional step in which we generate $\Phi_0$ (see Algorithm
+%   \ref{alg:sbc} in the supplementary material).
+%   Figure \textcolor{red}{X [@Luiz: see my description of new Fig. X below]} shows
+%   validation results for the RF metric for trees simulated under the model
+%   illustrated in Fig \ref{fig:pgm}. 
+%   Figure \textcolor{red}{Xa} and \textcolor{red}{Xb} show the coverage of 95\%-HPD
+%   intervals, and the rank distribution of the RF metric, respectively.
+%   The coverage of the RF statistic is very close to 95, and the rank distribution
+%   is approximately uniform on (1,$L+1$); together, both panels indicate this model
+%   is correct.
+%   We consider other phylogenetic tree metrics that could be used as an alternative
+%   to RF in the supplementary material (Supplementary
+%   Figs. \ref{supfig:sbc} and \ref{supfig:phylo_calibration}).
 
-  \textcolor{red}{[@Luiz: include Fig Xa and FigXb here; this Figure
-    would consist of just the RF panels; all other metrics have would
-    be placed in the supp. material]}
-\end{tcolorbox}
+%   \textcolor{red}{[@Luiz: include Fig Xa and FigXb here; this Figure
+%     would consist of just the RF panels; all other metrics have would
+%     be placed in the supp. material]}
+% \end{tcolorbox}
 
 % Note that a tree by itself does not allow one to simulate the observables (alignments). %TODO decide whether to include this
 % Obviously, one might choose to keep $\boldsymbol \alpha$ fixed during the procedure, but it this will not exactly assess the validity of the joint sampler. 
@@ -1233,8 +1234,7 @@ We hope the guidelines described here can enhance both the release rate and stan
 F.K.M. was supported by Marsden grant 16-UOA-277 and by the National Science Foundation (DEB-2040347).
 R.B. was supported by Marsden grant \textcolor{orange}{[Fill out]}.
 L.M.C was partially supported by the Coordenação de Aperfeiçoamento de
-Pessoal de Nível Superior - Brasil (CAPES) - Finance Code 001, and by
-the School of Applied Mathematics \textcolor{orange}{of Fundaç\~{a}o Getulio Vargas [?]}.
+Pessoal de Nível Superior - Brasil (CAPES) - Finance Code 001, and by the School of Applied Mathematics,  Getulio Vargas Foundation.
 A.J.D. was supported by Marsden grant 16-UOA-277.
 
 %----------------------------------------------------------------------------------------
