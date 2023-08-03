@@ -100,7 +100,7 @@
   Both goals are difficult to achieve, among other reasons, because of a still embrionic literature on good statistical software development.
   This manuscript aims to fill this gap.
   Here, we describe and illustrate good practices for assessing the correctness of a model implementation, with an emphasis on Bayesian methods.
-  \textcolor{blue}{We also introduce a suite of methods for automating validation protocols.}
+  We also introduce a suite of methods for automating validation protocols.
   It is our hope that the guidelines presented here help sharpen the focus of discussions on (as well as elevate) expected standards of statistical software for biology.
 \end{abstract}
 \centering [Probabilistic models, Bayesian models, model validation, coverage]
@@ -137,14 +137,13 @@ Within the latter category, probabilistic models have seen a sharp surge in popu
 
 Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness~\citep{darriba18}.
 This is unsurprising given the challenges in funding software research~\citep{siepel19}, and the multidisciplinary nature of method development.
-\textcolor{blue}{Much of the relevant information regarding good coding and statistical practices is out of reach of the average computational biologist, as it is spread across a large number of specialized material, and is often obfuscated by its technical and theoretical presentation.}
-The bioinformatics community is thus in dire need of \textcolor{blue}{synthetic and accessible} resources that provide guidance for code improvement and validation.
+Much of the relevant information regarding good coding and statistical practices is out of reach of the average computational biologist, as it is spread across a large number of specialized material, and is often obfuscated by its technical and theoretical presentation.
+The bioinformatics community is thus in dire need of synthetic and accessible resources that provide guidance for code improvement and validation.
 
 Here, we summarize best practices in probabilistic model validation for method developers, with an emphasis on Bayesian methods.
-\textcolor{blue}{We execute two different validation protocols on variations of a simple phylogenetic model, discuss the results, and expand on how to interpret other potential outcomes.
+We execute two different validation protocols on variations of a simple phylogenetic model, discuss the results, and expand on how to interpret other potential outcomes.
 We further introduce a suite of methods for automating these protocols within the BEAST 2 platform \citep{beast25}.
 Lastly, we propose method development guidelines for new model contributions, for researchers and reviewers who expect new software to meet not only a desirable standard, but also a reasonable one.
-}
 
 % \begin{figure}
 %   \includegraphics[width=\linewidth]{fig1}
@@ -699,17 +698,15 @@ We conclude this section by noting that unidentifiability should not be taken as
 
 \noindent \emph{Rank-uniformity validation (RUV)}
 
-\cite{Talts2018} show\textcolor{blue}{ed} that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
-In particular, \textcolor{blue}{given $\boldsymbol{\theta} =
+\cite{Talts2018} showed that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
+In particular, given $\boldsymbol{\theta} =
   \{\theta_i : 1 \leq i \leq n\}$ (produced according to the protocol
-  in Fig. \ref{fig:flowchart}),} those authors demonstrated (Theorem 1
-therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works
-as intended, the distribution of the rank $r_i$ of
-\textcolor{blue}{$\theta_i$ relative to $\boldsymbol{\theta_i'}$ --
-  i.e., the rank of the $i$-th parameter value relative to its
-  corresponding $L$ MCMC chain samples -- }
+  in Fig. \ref{fig:flowchart}), those authors demonstrated (Theorem 1
+therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of
+$\theta_i$ relative to $\boldsymbol{\theta_i'}$ --
+  i.e., the rank of the $i$-th parameter value relative to its corresponding $L$ MCMC chain samples --
 % $\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$)
- will follow a uniform distribution on $[1, L + 1]$ \textcolor{blue}{(Fig. \ref{fig:sbcflowchart})}.
+ will follow a uniform distribution on $[1, L + 1]$ (Fig. \ref{fig:sbcflowchart}).
 In other words, if one were to sort all true parameter values $\theta_i$ against $\boldsymbol{\theta_i'}$ -- their corresponding $L$ MCMC posterior samples -- the first (smallest ranking) 10\% out of $n$ $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.
 \begin{wrapfigure}{l}{7.35cm}
   \includegraphics[width=7.25cm]{../figures/flowchart_sbc.pdf}
@@ -721,8 +718,8 @@ In other words, if one were to sort all true parameter values $\theta_i$ against
 
 Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021}.
 When a model implementation fails RUV, it can do so in different ways.
-For instance, when the inference machinery leads to consistent overdispersed estimates, \textcolor{red}{\st{one gets}}\textcolor{blue}{it produces} a pattern of ranks concentrating \textcolor{red}{\st{towards}}\textcolor{blue}{around} the middle rank (Fig. \ref{fig:ruv_conceptual}a).
-When underdispersion is present, \textcolor{blue}{on the other hand}, ranks tend to bunch up towards the ends (Fig. \ref{fig:ruv_conceptual}b), creating a pattern of ``horns'', which can also be caused by high autocorrelation in the MCMC draws.
+For instance, when the inference machinery leads to consistent overdispersed estimates, it produces a pattern of ranks concentrating around the middle rank (Fig. \ref{fig:ruv_conceptual}a).
+When underdispersion is present, on the other hand, ranks tend to bunch up towards the ends (Fig. \ref{fig:ruv_conceptual}b), creating a pattern of ``horns'', which can also be caused by high autocorrelation in the MCMC draws.
 This is also why we recommend thinning MCMC draws in order to reduce autocorrelation.
 Figure \ref{fig:ruv_conceptual}c shows the rank patterns when the inference machinery produces biased estimates: ranks will bunch up against one of the ends, depending on whether estimates are biased downwards of upwards.
 In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter at hand is being overestimated.
@@ -730,14 +727,13 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
 \begin{figure}
   \includegraphics[width=\linewidth]{../figures/sbc_conceptual_manual.pdf}
   \caption{
-    Miscalibration patterns \textcolor{blue}{observable after inference} \textcolor{blue}{during} rank-uniformity validation (RUV).
+    Miscalibration patterns observable after inference in rank-uniformity validation (RUV).
     We explain how to interpret the histogram of ranks (middle column) and ECDF plots (right-hand side column) in the main text.
-    \textcolor{blue}{
       (a) Top row: parameter estimates are overdispersed relative to their true values.
       (b) Middle row: parameter estimates are underdispersed relative to their true values.
       (c) Bottom row: parameter estimates are consistently overestimated relative to their true values.
       Light-blue bands and horizontal black line in the middle graphs represent the 95\% confidence interval about the expected rank count and its mean, respectively.
-      Light-blue ellipses in the rightmost graphs represent confidence intervals about the empirical cumulative distribution function (ECDF).}
+      Light-blue ellipses in the rightmost graphs represent confidence intervals about the empirical cumulative distribution function (ECDF).
       }
   % In panel (a) the replicate-averaged posterior (RAP), i.e., the
   % posterior one gets over all \textcolor{blue}{$n \times L$} simulated parameter \textcolor{blue}{values}\textcolor{red}{\st{simulated data sets}}, is overdispersed compared to the prior.
@@ -747,7 +743,7 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
   \label{fig:ruv_conceptual}
 \end{figure}
 
-We conduct\textcolor{blue}{ed} RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
+We conducted RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
 In the interest of brevity, we only show the histograms and ECDFs for $R$, and leave the remaining plots for $\lambda$ to the supplement (but see Box 1 below).
 As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\% confidence intervals (Fig. \ref{fig:ruv_yule}a).
 
@@ -756,28 +752,25 @@ In particular, we observe great overestimation of the Brownian motion rate ($R$)
 In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator, etc).
 We remind the reader that in our experiment, scenario 2 was purposefully set up so that the (prior) models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the RUV procedure.
 
-\textcolor{blue}{Lastly, RUV results for scenario 3 contrasted with what we observed for this scenario's coverage validation (Fig. \ref{fig:yulecalval}c).
+Lastly, RUV results for scenario 3 contrasted with what we observed for this scenario's coverage validation (Fig. \ref{fig:yulecalval}c).
   While the model specified in scenario 3 passed its coverage validation (coverage was acceptable for both $\Lambda$ and $R$), it did not pass the RUV procedure.
   The corresponding rank histogram and ECDF plots indicate that $r$ is underestimated (Fig. \ref{fig:ruv_yule}c).
   This is an interesting result, because it suggests that rank-uniformity validation can be more sensitive than coverage validation, at least for certain types of model misspecification.
-}
 
-\textcolor{blue}{
   Unlike scenario 2, in which we caused an explicit mismatch between the distributions used in simulation and inference, model misspecification under scenario 3 was subtler: simulation and inference models were identical (as in scenario 1), but tree samples from $f_\Phi(\cdot)$ (the Yule prior) were often rejected as $\boldsymbol{\theta}$ was generated.
   The model used in scenario 3 failed RUV because rejecting tree samples induced an implicit Yule model in simulation that differed from the Yule model used in inference. 
   Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. \textcolor{orange}{[Fill out]}), we were able to recapitulate the results in Figure \ref{fig:ruv_yule}.
-}
 
 \begin{figure}
   \centering
   \includegraphics[width=0.9\linewidth]{../figures/sbc_Yule_BM_r_manual.pdf}
   \caption{
-    \textcolor{blue}{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
+    Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
     Panels in the top row show the histograms of $n=100$ ranks, for parameter $R$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
     Panels in the bottom row show the corresponding ECDF plots, for parameter $R$ in each scenario.
     (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
     (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).}
+    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
   }
   % Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$, for each of the scenarios described in the main text.
   % \textcolor{red}{\st{In A we show the rank histograms from 100 replicates}}\textcolor{blue}{(a) Top row: histogram of 100 ranks (given $n=100$ replicates)}, for each scenario, obtained after 10\% burnin and thinning \textcolor{blue}{of posterior samples,} down to\textcolor{red}{\st{ get }} 200 \textcolor{red}{\st{draws from the posterior}} \textcolor{blue}{out of \textcolor{orange}{[Fill out]}}.
@@ -1176,12 +1169,12 @@ We remind the reader that in our experiment, scenario 2 was purposefully set up 
 % happening -- is not a trivial task, and careful diagnostics are
 % necessary on the part of method developers.
 
-\subsection*{\textcolor{blue}{Software}}
+\subsection*{Software}
 
-\textcolor{blue}{We implemented a suite of methods for automating many of the steps involved in coverage validation and RUV.
+We implemented a suite of methods for automating many of the steps involved in coverage validation and RUV.
 These methods were developed in Java and integrated into the BEAST 2 platform \citep{beast25}.
 Code and a tutorial are available on \href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
-}
+
 
 \section*{Bayesian model validation guidelines for developers and reviewers}
 
