@@ -1,13 +1,12 @@
 \documentclass[oneside]{article}
 
-\usepackage{blindtext} % Package to generate dummy text throughout this template 
-\usepackage{graphicx} % FKM: for figures
-\usepackage{wrapfig}
-\usepackage{color} % FKM: for colored text
-\usepackage{float} % FKM: for forcing figure placement
-\usepackage[breakable]{tcolorbox} % FKM: for text box
-\usepackage{enumerate} % FKM: for bullet point lists
-\usepackage{setspace} % FKM: line spacing
+\usepackage{blindtext} % dummy text
+\usepackage{graphicx} % for figures
+\usepackage{color} % for colored text
+\usepackage{float} % for forcing figure placement
+\usepackage[breakable]{tcolorbox} % for text box
+\usepackage{enumerate} % for bullet point lists
+\usepackage{setspace} % line spacing
 \usepackage{soul} % strike through
 \usepackage[normalem]{ulem} % strike through keeping emphasis standard
 \usepackage{cancel} % diagonal strike through
@@ -343,14 +342,24 @@ theoretically.
 
 In this section we provide a mathematical argument that coverage-based validation is sound,  i.e., that sampling from the prior, simulating data and then using the same prior for computing the posterior should give Bayesian credible intervals (BCIs) with nominal frequentist coverage.
 
-For a number $n$ of replicates, simulate
+For a number $n$ of replicates, simulate \textcolor{blue}{parameter
+  values $\theta_i$, and then given those values, simulate data $d_i$:}
 
+\textcolor{red}{
+  (Original to be removed)
 \begin{align*}
 \theta^{(i)} &\sim f_{\Theta}(\cdot), \\
 y^{(i)} \mid \theta^{(i)} &\sim f_{D\mid\Theta}(\cdot \mid \theta^{(i)}).
 \end{align*}
+}
 
-Now  for notational convenience, define $a^{(i)} := a(y^{(i)}, \alpha)$ and $b^{(i)} := b(y^{(i)}, \alpha)$ and recall $I_{\alpha}\left(y^{(i)}\right)$ is such that 
+\textcolor{blue}{
+\begin{align*}
+\theta_i & \sim f_\Theta(\cdot), \\
+d_i & \sim f_{D|\Theta}(\cdot \mid \Theta=\theta_i).
+\end{align*}
+}
+Now for notational convenience, define \textcolor{red}{\st{$a^{(i)} := a(y^{(i)}, \alpha)$}}\textcolor{blue}{$a_i := a(d_i, \alpha)$} and \textcolor{red}{\st{$b^{(i)} := b(y^{(i)}, \alpha)$}}\textcolor{blue}{$b_i := b(d_i, \alpha)$} and recall \textcolor{red}{\st{$I_{\alpha}\left(y^{(i)}\right)$}}\textcolor{blue}{$I_{\alpha}\left(d_i\right)$} is such that:
 
 \begin{align*}
 Q\left(b^{(i)} \mid y^{(i)}\right) - Q\left(a^{(i)} \mid y^{(i)}\right) = p_1 - p_2 = \alpha,
