@@ -318,12 +318,51 @@ These results indicate the PhyloBM simulator produces appropriate confidence int
 % These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity (see Table~\ref{tab:coverage}).
 % A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
 
-\section{A toy example to better understand  RUV}
+\section{A toy example to better understand rank-uniformity validation}
+\label{sec:supp_toy}
+
+In this section we describe a simple (toy) example where we deliberately construct the setup so that rank-uniformity validation (RUV) fails.
+In order to control the level of misspecification we devise the following data-generating process (DGP):
+\begin{align*}
+ \mu & \sim \operatorname{Normal}\left(0, 1\right)T[t, ],\\
+  y_1, \ldots, y_K & \overset{\text{iid}}{\sim} \operatorname{Normal}\left(\mu, 1\right),
+\end{align*}
+where the notation $T[, t]$ means the distribution is truncated \textbf{below} at $t \in \mathbb{R}$, i.e.,
+\begin{equation*}
+    \pi_{t}(\mu) = \frac{\phi(\mu)}{1 - \Phi(t)} \mathbb{I}(\mu > t).
+\end{equation*}
+where $\phi$ and $\Phi$ are the pdf and CDF of a standard normal, respectively.
+Inference is then done under the misspecified model
+\begin{align*}
+ \mu & \sim \operatorname{Normal}\left(0, 1\right),\\
+  y_1, \ldots, y_K & \overset{\text{iid}}{\sim} \operatorname{Normal}\left(\mu, 1\right).
+\end{align*}
+It is well-known that
+\begin{equation}
+\label{eq:toy_normal_posterior}
+    \mu \mid y_1, \ldots, y_K \sim \operatorname{Normal}\left( \frac{\sum_{k = 1}^K y_k}{K + 1},  \frac{1}{K + 1} \right),
+\end{equation}
+i.e., the posterior is known in closed-form so MCMC is not required and one can sample directly and independently form it.
+
+One can thus control how extreme the misspecification of the inference machinery is by increasing $t$.
+Here we explore $t =  \{0, 1, 1.5\}$ and $K = \{5, 10 , 50\}$ in order to show how the method behaves in various misspecification scenarios.
+We ran $n=1000$ replications of the experiment, draw $200$ iid samples directly from the posterior in (\ref{eq:toy_normal_posterior}).
+
+The resulting rank histograms are shown in Figure~\ref{fig:ruv_normal_toy} and show how the posterior consistently underestimates the true mean, thus leading to a pattern of ranks bunching up towards the right of the histogram.
+The pattern is clearer in situations where truncation of the prior is likely to have a stronger impact, i.e., when $K$ is small.
+Moreover, the misspecification becomes more apparent the larger $t$ is, that is, the more extreme the misspecification becomes.
+Note, however, how when the truncation is less extreme ($t = 0$) and there is a substantial amount of data ($K = 50$), RUV fails to detect any problems.
+This is to be expected, as the sensitivity of the method is context-specific.
+An important insight is the RUV validates a pair ${\text{model}, \text{inference machinery}}$ under a given data regime.
+ 
 
 \begin{figure}[!ht]
    \includegraphics[width=\linewidth]{../figures/sbc_normal.pdf}
-  \caption{Rank-uniformity validation (RUV) of the Gaussian toy model. \textcolor{purple}{To be completed soon.}
-   }
+  \caption{Rank-uniformity validation (RUV) of the Gaussian toy model.
+  We show the rank histograms in three misspecification scenarios and three data regimes.
+  Results are based on $n=1000$ replicates of $L= 200$ IID draws each.
+  Horizontal black lines shows the expected count for each rank (the same for all ranks due to uniformity) and the blue shaded  shows the 95\% confidence interval for the counts.
+    }
   \label{fig:ruv_normal_toy}
 \end{figure}
 
