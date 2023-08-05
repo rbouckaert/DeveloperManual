@@ -637,7 +637,7 @@ Credibility level (\%) & $n$ (replicates) & Lower quantile & Upper quantile \\ \
 \end{tabular}
 \end{center}
 \caption{Under a correctly implemented model, the number of true simulated values that fall within their corresponding $\alpha\times 100$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
-  Here we show the 95\% central interquantile intervals for parameter coverage under different credibility levels and numbers of replicates.
+  Here we show the 95\% central interquantile intervals for the number of intervals covering the true parameter value under different credibility levels and numbers of replicates.
   For the experiments described in figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
   }
 \label{tab:coverage2}
@@ -683,7 +683,7 @@ The key insight here is that, although tree size is a random variable being filt
 As long as a parameter value has non-zero probability under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
 Scenario 3 brings home the point that coverage validation is insensitive to parameter estimate location, beyond the calculated coverage.
 Due to the finite size of a Yule tree, which may allow the prior a substantial influence over the posterior, the estimated $\lambda$ may be consistently higher or lower than the true $\lambda$.
-We expand on this point using a different and much simpler model \textcolor{red}{(Supplementary Figs. X; see rank-uniformity validation section below)}.
+We expand on this point using a different and much simpler model (Supplementary Fig. 2; see rank-uniformity validation section below).
 This illustrates that obtaining  appropriate coverage is not enough to ascertain that  the model is correct.
 Potential biases in parameter estimates may remain undetected unless more investigation is done (see the RUV procedure below).
 
@@ -759,7 +759,7 @@ Lastly, RUV results for scenario 3 contrasted with what we observed for this sce
 
   Unlike scenario 2, in which we caused an explicit mismatch between the distributions used in simulation and inference, model misspecification under scenario 3 was subtler: simulation and inference models were identical (as in scenario 1), but tree samples from $f_\Phi(\cdot)$ (the Yule prior) were often rejected as $\boldsymbol{\theta}$ was generated.
   The model used in scenario 3 failed RUV because rejecting tree samples induced an implicit Yule model in simulation that differed from the Yule model used in inference. 
-  Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. \textcolor{orange}{[Fill out]}), we were able to recapitulate the results in Figure \ref{fig:ruv_yule}.
+  Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. 2), we were able to recapitulate the results in Figure \ref{fig:ruv_yule}.
 
 \begin{figure}
   \centering
