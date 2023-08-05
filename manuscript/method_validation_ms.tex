@@ -708,6 +708,7 @@ $\theta_i$ relative to $\boldsymbol{\theta_i'}$ --
 % $\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$)
  will follow a uniform distribution on $[1, L + 1]$ (Fig. \ref{fig:sbcflowchart}).
 In other words, if one were to sort all true parameter values $\theta_i$ against $\boldsymbol{\theta_i'}$ -- their corresponding $L$ MCMC posterior samples -- the first (smallest ranking) 10\% out of $n$ $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.
+
 \begin{wrapfigure}{l}{7.35cm}
   \includegraphics[width=7.25cm]{../figures/flowchart_sbc.pdf}
   \caption{Flowchart of the rank-uniformity validation procedure,
@@ -760,6 +761,7 @@ Lastly, RUV results for scenario 3 contrasted with what we observed for this sce
   Unlike scenario 2, in which we caused an explicit mismatch between the distributions used in simulation and inference, model misspecification under scenario 3 was subtler: simulation and inference models were identical (as in scenario 1), but tree samples from $f_\Phi(\cdot)$ (the Yule prior) were often rejected as $\boldsymbol{\theta}$ was generated.
   The model used in scenario 3 failed RUV because rejecting tree samples induced an implicit Yule model in simulation that differed from the Yule model used in inference. 
   Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. 2), we were able to recapitulate the results in Figure \ref{fig:ruv_yule}.
+  While here we focus on so-called continuous parameters like $R$ and $\Lambda$, it is also possible to conduct RUV to assess correctness on the space of phylogenies, a topic we leave for future research.
 
 \begin{figure}
   \centering
