@@ -96,14 +96,15 @@
 \begin{abstract}
   \noindent Biology has become a highly mathematical discipline in which probabilistic models play a central role.
   As a result, research in the biological sciences is now dependent on computational tools capable of carrying out complex analyses.
-  These tools must not only be efficient, but also correctly implemented.
-  Both goals are difficult to achieve, among other reasons, because of a still embrionic literature on good statistical software development.
+  \textcolor{blue}{These tools should be fast and must be correct.
+  But while the concept of speed is unmysterious, what passes as evidence for correctness varies widely among methodological contributions.
+  Indeed, the literature on statistical software validation within computational biology is still embryonic.}
   This manuscript aims to fill this gap.
   Here, we describe and illustrate good practices for assessing the correctness of a model implementation, with an emphasis on Bayesian methods.
-  We also introduce a suite of methods for automating validation protocols.
+  We also introduce a suite of functionalities for automating validation protocols.
   It is our hope that the guidelines presented here help sharpen the focus of discussions on (as well as elevate) expected standards of statistical software for biology.
 \end{abstract}
-\centering [Probabilistic models, Bayesian models, model validation, coverage]
+\centering [Probabilistic model, Bayesian model, model validation, coverage]
 }
 
 %----------------------------------------------------------------------------------------
@@ -137,7 +138,7 @@ Within the latter category, probabilistic models have seen a sharp surge in popu
 
 Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness~\citep{darriba18}.
 This is unsurprising given the challenges in funding software research~\citep{siepel19}, and the multidisciplinary nature of method development.
-Much of the relevant information regarding good coding and statistical practices is out of reach of the average computational biologist, as it is spread across a large number of specialized material, and is often obfuscated by its technical and theoretical presentation.
+Much of the relevant information regarding good coding and statistical practices is out of reach of the average computational biologist, as it is spread across a variety of specialized sources, often obfuscated by its technical and theoretical presentation.
 The bioinformatics community is thus in dire need of synthetic and accessible resources that provide guidance for code improvement and validation.
 
 Here, we summarize best practices in probabilistic model validation for method developers, with an emphasis on Bayesian methods.
@@ -163,11 +164,11 @@ Probabilistic models mathematically formalize natural phenomena
 having an element of randomness.
 This is done through probability distributions describing both the observed
 empirical data -- seen as the result of one or more random instantiations of the modeled process -- as well the model parameters, which abstract relevant, but usually unknown aspects of the phenomenon at hand.
-In evolutionary biology specifically, the historical, stochastic, and highly dimensional nature of evolutionary processes makes the utility of probabilistic models in evolutionary biology self-evident. 
+In the domain of evolutionary biology specifically, the historical, stochastic, and highly dimensional nature of evolutionary processes makes the utility of probabilistic models self-evident. 
 
 The central component of a probabilistic model, $\text{Pr}(D=d|\Theta=\theta)$, allows us to describe the probability distribution over the data ($D$) given the model parameters ($\Theta$).
 This probability mass function (pmf; or its continuous counterpart, the probability density function, pdf, $f_D(d|\Theta=\theta)$) is sometimes referred to as the likelihood function.
-Just for this section, we will abuse and simplify notation, and drop variable subscripts, e.g., we will write $f_D(D=d|\Theta=\theta)$  as $f(d|\theta)$.
+Just for this section, we will abuse and simplify notation, and drop variable subscripts, e.g., we will write $f_D(d|\Theta=\theta)$  as $f(d|\theta)$.
 As illustrated in the next sections, probabilistic models can be hierarchical, in which case there may be several likelihood functions.
 % (Fig. \ref{fig:graphmodel}).
 In a frequentist statistical framework, $f(d|\theta)$ is the sole component of a probabilistic model, and is maximized across parameter space during parameter estimation and model comparison.
@@ -227,7 +228,7 @@ For example, $\text{S}[\mathcal{M}]$ for the whole integrative model in Figure \
 \begin{enumerate}
   \item $\text{S}[f_\Theta(\cdot)]$ (where $\Theta = \{\Lambda, R, Y_0\}$), which jointly simulates $\theta=\{\lambda,r,y_0\}$,
   \item $\text{S}[f_{\Phi|\Lambda}(\cdot|\lambda)]$, which simulates a Yule tree $\phi$ given a value of $\lambda$ simulated in (1),
-  \item $\text{S}[f_{Y|\Phi,R}(\cdot|\phi,r)]$, which simulates an array of $k$ continuous-trait values, $\boldsymbol{y}$, given a phylogeny $\phi$ with $k$ species and an evolutionary rate $r$ (simulated in (1) and (2), respectively).
+  \item $\text{S}[f_{Y|\Phi,R}(\cdot|\phi,r)]$, which simulates an array with $n$ continuous-trait values (one value per species), $\boldsymbol{y}$, given a phylogeny $\phi$ with $n$ species and an evolutionary rate $r$ (simulated in (1) and (2), respectively).
 \end{enumerate}
 Being able to isolate the building blocks of a hierarchical model simulator helps divide and conquer the validation task, especially when some but not all of the sampling distributions are well-known parametric distributions, or when they result from well characterized stochastic processes (see below).
 
@@ -236,7 +237,7 @@ These parameters can be seen as characterizing a ``population'' of the entities 
 For each data set, one can then construct $\alpha \times 100 \%$-confidence intervals (where $\alpha \in (0,1)$ gives the confidence level) for certain summary statistics (e.g., mean, variance, covariance).
 If the simulator is behaving as expected, one should be able to verify that the (population or ``true'') summary statistic is contained approximately $\alpha$\% of the time within their $\alpha \times 100\%$-confidence intervals.
 An example is the Yule model (also known as the pure-birth model; \citealt{yule24}), a continuous-time Markov process that has been classically employed in phylogenetics to model the number of species in a clade \citep{yule24,aldous01}.
-Under a Yule process with a species birth rate of $\Lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
+Under a Yule process with a species birth rate of $\lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
 \vspace{.5cm}
 
 % Start: BM BOX
@@ -254,16 +255,11 @@ The pdf characterizing this model's sampling distribution is in fact the pdf of 
 \end{equation}
 
 \noindent where $\boldsymbol{y}$ corresponds to the observed values of a trait scored for $n$ species, $\boldsymbol{y_0}$ is the trait value at the root of the tree, $r$ is the instantaneous rate of change (i.e., the evolutionary rate, and sometimes represented by $\sigma^2$), and $r\boldsymbol{T}$ is the variance-covariance matrix.
-$\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree $\Phi$'s topology and branch lengths; see Fig. 1 below).
+$\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree $\phi$'s topology and branch lengths; see Fig. 1 below).
 
 \vspace{.25cm}
-The probability density function in equation \eqref{eq:bm} describes the distribution
-that would result from an infinite number of BM ``experiments'' (each experiment
-being non-mean-reverting, and representing an independent evolutionary trajectory).
-Under this model, $\boldsymbol{\theta} = \{\boldsymbol{y_0}, r, \boldsymbol{T}\}$ and
-$d = \{\boldsymbol{y}\}$ (but note that sometimes researchers treat $\phi$ and
-consequently $\boldsymbol{T}$ as
-data).
+The probability density function in equation \eqref{eq:bm} describes the distribution that would result from an infinite number of BM ``experiments'' (each experiment being non-mean-reverting, and representing an independent evolutionary trajectory).
+Under this model, $\theta = \{\boldsymbol{y_0}, r, \boldsymbol{T}\}$ and $d = \{\boldsymbol{y}\}$ (but note that sometimes researchers treat $\phi$ and consequently $\boldsymbol{T}$ as data).
 
 \begin{center}
 \includegraphics[width=11cm]{../figures/bmsim.pdf}
@@ -281,13 +277,9 @@ data).
 \emph{Validating a phylogenetic BM simulator}
 
 The MVN is a well-characterized parametric distribution.
-When used as the sampling distribution of the phylogenetic BM
-process, it explicitly defines the expected trait value for
-each species ($\boldsymbol{y_0}$), as well as their trait value
-variances and covariances.
-The latter comes from the variance-covariance matrix; for the
-tree shown in Figure 1 % \ref{fig:bmsim}
-and with $r = 0.1$, this matrix
+When used as the sampling distribution of the phylogenetic BM process, it explicitly defines the expected trait value for each species ($\boldsymbol{y_0}$), as well as their trait value variances and covariances.
+The latter comes from the variance-covariance matrix; for the tree shown in Figure 1 % \ref{fig:bmsim}
+ and with $r = 0.1$, this matrix
 is:
 % For example, given $\boldsymbol{y_0} = [0.0, 0.0, 0.0]$, $r = 0.1$, and $\boldsymbol{T}$
 % derived from the tree shown in Figure \ref{fig:bmsim}
@@ -342,7 +334,7 @@ More rigorously, one can follow the method described in the main text and verify
 \end{equation}
 
 \noindent One can then verify if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
-Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
+Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
 In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{felsenstein73}).
 Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also automatically validate $\text{S}[\mathcal{M}]$.
 
@@ -479,7 +471,7 @@ A large number of parameters can cause overfitting and weak identifiability, and
 % In order to achieve correct inferences, it is of utmost importance to guarantee that inferential machinery returns quantifiably correct answers.
 % In practice, however, this is impossible to achieve due to the models under consideration being almost always badly misspecified for the data at hand.
 Deciding on the utility of a model for real-world problems is a daunting task \citep{brown18,shepherd18}, and is a challenge we do not address in the present contribution.
-Such model appraisals are normally carried out after a model is published, often in multiple  contribution bouts, and are critical for a model's longevity.
+Such model appraisals (what we call ``model characterization'' below) are normally carried out after a model is published, often in multiple  contribution bouts, and are critical for a model's longevity.
 Analyses of model fit against data are normally accompanied by discussions on assumption validity, and more rarely by benchmarking and scrutinization of model behavior and implementation (e.g., \citealp{maddison07,stadler10,rabosky13,rabosky15,moore16}).
 
 % Simulating data from a probabilistic generative model can thus be helpful to understand when the inferential machinery under development
@@ -493,7 +485,7 @@ probabilistic data-generating process (see previous section).
   \includegraphics[width=7cm]{../figures/flowchart.pdf}
   \caption{Flowchart of the coverage validation of a Bayesian
     model. The red dotted box encloses the stages of the pipeline that
-  differ from the simulation-based calibration (SBC) procedure
+  differ from the rank-uniformity validation (RUV) procedure
   described in the text (see also Fig. \ref{fig:sbcflowchart})}
 \label{fig:flowchart}
 \vspace{2cm}
@@ -532,8 +524,8 @@ $\boldsymbol{d} = \{d_i: 1 \leq i \leq n\}$
 , we use the inferential machinery $\text{I}[\mathcal{M}]$ under
 evaluation to compute
 % $p(\theta \mid y^{(i)})$
-$f_{\Theta|D}(\Theta=\theta_i|D=d_i)$ for each $d_i$.
-Recall that we assume the posterior distribution defined by $f_{\Theta|D}(\Theta=\theta|D=d)$ over $\Theta$ will be approximated with MCMC, an algorithm that generates a large sample of size $L$ of parameter values from that posterior distribution, $\boldsymbol{\theta}' = \{ \theta_i^j: 1 \leq i \leq n, 1 \leq j \leq L\}$.
+$f_{\Theta|D}(\theta_i|D=d_i)$ for each $d_i$.
+Recall that we assume the posterior distribution defined by $f_{\Theta|D}(\theta|D=d)$ over $\Theta$ will be approximated with MCMC, an algorithm that generates a large sample of size $L$ of parameter values from that posterior distribution, $\boldsymbol{\theta}' = \{ \theta_i^j: 1 \leq i \leq n, 1 \leq j \leq L\}$.
 % $\boldsymbol\theta_s^{(i)} = \{\theta_{s1}^{(i)}, \ldots, \theta_{sL}^{(i)}\}$ of size $L$}.
 At this point, we have concluded the inference stage of this validation pipeline.
 
@@ -542,7 +534,7 @@ At this point, we have concluded the inference stage of this validation pipeline
 The third stage and final stage consists of investigating coverage properties of uncertainty intervals.
 The critical expectation here is that if the inferential engine is correct, we will be able to obtain interval estimates with precise coverage properties.
 More concretely, let us first define the highest posterior density (HPD) interval.
-For a credibility level $\alpha \in (0, 1)$, we define $I_\alpha(y) := (a(y, \alpha), b(y, \alpha))$
+For a credibility level $\alpha \in (0, 1)$, we define $I_\alpha(d) := (a(d, \alpha), b(d, \alpha))$
 such that:
 
 %\begin{center}
@@ -551,19 +543,19 @@ such that:
 %\end{center}
 
 \begin{equation*}
-  \frac{1}{f_D(D=y)} \int_{a(y, \alpha)}^{b(y,\alpha)} f_{D|\Theta}(D=y | \Theta=\theta)f_\Theta(\Theta=\theta)\, d\Theta = \alpha,
+  \frac{1}{f_D(d)} \int_{a(d, \alpha)}^{b(d,\alpha)} f_{D|\Theta}(d | \Theta=\theta)f_\Theta(\theta)\, d\Theta = \alpha,
 \end{equation*}
 
 \noindent where
 % \st{$m(y) = \int_{\Theta} f(y \mid t)\pi(t)\,dt$}
-$f_D(D=y)$
+$f_D(d)$
 % = \int_\Theta f(d|\theta)f(\theta)d\theta$
 is a constant that can be ignored.
-By defining $\text{Cred}(I_\alpha(y)) = \alpha$,
+By defining $\text{Cred}(I_\alpha(d)) = \alpha$,
 
 \begin{center}
   \hspace{0cm}
-  $\inf_{b(y, \alpha)-a(y, \alpha)} \left \{ I_\alpha(y) : \text{Cred}(I_\alpha(y)) = \alpha \right\}$
+  $\inf_{b(d, \alpha)-a(d, \alpha)} \left \{ I_\alpha(d) : \text{Cred}(I_\alpha(d)) = \alpha \right\}$
 \end{center}
 
 % \begin{equation*}
@@ -573,7 +565,7 @@ By defining $\text{Cred}(I_\alpha(y)) = \alpha$,
 \noindent yields the shortest interval with the required credibility.
 % We are now prepared to discuss how to validate a (Bayesian) inference engine.
 % Consider the following generative model:
-Note that we approximate a particular $I_\alpha(y_i)$ from the $i$-th $L$ samples obtained with MCMC, in $\boldsymbol{\theta}'$.
+Note that we approximate a particular $I_\alpha(d_i)$ from the $i$-th $L$ samples obtained with MCMC, in $\boldsymbol{\theta}'$.
 
 Now taking a set of parameter values $\theta_i$ sampled from $f_\Theta(\cdot)$
 % respectively,
@@ -583,9 +575,9 @@ Now taking a set of parameter values $\theta_i$ sampled from $f_\Theta(\cdot)$
 % \end{align*}
 it can be shown that
 % $\operatorname{Pr}\left(\theta_0 \in I_\alpha(Y) \right) = \alpha$
-$\operatorname{Pr}\left(\theta_i \in I_\alpha(y) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs have nominal coverage under the true generative model (a proof is provided in the supplementary material).
+$\operatorname{Pr}\left(\theta_i \in I_\alpha(d) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs have nominal coverage under the true generative model (a proof is provided in the supplementary material).
 More formally, the coverage of $n$ intervals obtained as above will be distributed as binomial random variable with $n$ trials and success probability $\alpha$.
-When $n=100$ and $\alpha = 0.95$, the confidence interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage22}).
+When $n=100$ and $\alpha = 0.95$, the 95\% central interquantile interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage2}).
 If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces coverage lying within the expected bounds, we say the model has passed the coverage validation, and is well-calibrated and correct.
 
 % \begin{figure}
@@ -624,7 +616,7 @@ If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces covera
 \begin{center}
 \begin{tabular}{cccc}
 \hline
-Credibility level (\%) & $n$ (replicates) & Lower quantile & Upper quantile \\ \hline
+Credibility level $\%$ ($100 \times \alpha$) & $n$ (replicates) & Lower quantile & Upper quantile \\ \hline
   \rowcolor{gray!10}   & 100            & 84    & 95    \\
   \rowcolor{gray!10}90 & 200            & 171   & 188   \\
   \rowcolor{gray!10}   & 500            & 436   & 463   \\
@@ -636,9 +628,10 @@ Credibility level (\%) & $n$ (replicates) & Lower quantile & Upper quantile \\ \
   \rowcolor{gray!10}   & 500            & 490   & 499   \\ \hline%\cmidrule(l){1-4} 
 \end{tabular}
 \end{center}
-\caption{Under a correctly implemented model, the number of true simulated values that fall within their corresponding $\alpha\times 100$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
-  Here we show the 95\% central interquantile intervals for the number of intervals covering the true parameter value under different credibility levels and numbers of replicates.
-  For the experiments described in figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
+\caption{% Under a correctly implemented model, the number of true simulated values that fall within their corresponding $100 \times \alpha$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
+  The 95\% central interquantile intervals for the number of HPD intervals covering the true parameter value (obtained during coverage validation), under different credibility levels and numbers of replicates.
+  Assuming model correctness, the number of true simulated values that fall within their corresponding $100 \times \alpha$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
+  % For the experiments described in figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
   }
 \label{tab:coverage2}
 \end{table}
@@ -653,7 +646,7 @@ Credibility level (\%) & $n$ (replicates) & Lower quantile & Upper quantile \\ \
     Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
     (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
     (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
+    (c) In ``Scenario 3'' the model was specified just as in ``Scenario 1'', with the difference that rejection sampling was substantially greater (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
   }
   \label{fig:yulecalval}
 \end{figure}
@@ -674,23 +667,23 @@ These numbers indicate that one or more of the parts comprising model $\mathcal{
 This result was expected because we purposefully made the models in simulation and inference differ; we know $\text{I}[\mathcal{M}]$ is correct because of the results from scenario 1.
 Of course, in a real-world validation experiment the model should be correctly specified, and such a result would suggest a problem with the inferential machinery (provided the the simulator had been previously validated).
 
-Lastly, in ``Scenario 3'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}c), we again correctly specified the model, but carried out substantial rejection sampling in simulation.
+Lastly, in ``Scenario 3'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}c), we specified the model just like in scenario 1, but carried out substantial rejection sampling in simulation.
 Approximately 90\% of all simulated trees were rejected based on their taxon count; trees were rejected if they had fewer than 100 or more than 200 taxa.
 As with scenario 1, coverage fell within the expected ranges for a correct model implementation.
 This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
-The key insight here is that, although tree size is a random variable being filtered in simulation, it was not a free parameter when we carried out inference, being instead fixed to the truth.
+\textcolor{blue}{For example, one may have expected the estimated $\lambda$ to be consistently higher or lower than the true $\lambda$.
+$\Lambda$ is nonetheless challenging to infer under the current model, so its estimates fell around the corresponding prior mean value; unlike in scenario 2, however, here the prior mean parameter was correctly specified.
+As a result, coverage validation was not capable of detecting any symptoms arising from the rejection of tree samples.}
 
-As long as a parameter value has non-zero probability under the prior, and the same $\mathcal{M}$ is used in both simulation and inference, $\alpha$\% HPD intervals are expected to contain the truth around $\alpha$\% of the time.
-Scenario 3 brings home the point that coverage validation is insensitive to parameter estimate location, beyond the calculated coverage.
-Due to the finite size of a Yule tree, which may allow the prior a substantial influence over the posterior, the estimated $\lambda$ may be consistently higher or lower than the true $\lambda$.
-We expand on this point using a different and much simpler model (Supplementary Fig. 2; see rank-uniformity validation section below).
-This illustrates that obtaining  appropriate coverage is not enough to ascertain that  the model is correct.
-Potential biases in parameter estimates may remain undetected unless more investigation is done (see the RUV procedure below).
+\textcolor{blue}{Scenario 3 brings home the point that an incorrect model implementation may pass coverage validation, unless model misspecification is sufficiently severe (e.g., scenario 2), or parameter estimate locations are highly responsive to the evidence in the data (unlike $\Lambda$ in the model at hand).
+(We expand on this point using a different and simpler model, and show that even coverage validation detects stringent rejection schemes as a model misspecification issue; \textcolor{orange}{Supplementary Table X}.)
+Put simply, obtaining appropriate coverage may not be enough to ascertain that a model is correct.
+Potential biases in parameter estimates may remain undetected unless more investigation is done (see rank-uniformity validation below).}
 
 The three scenarios we explored above illustrate how coverage validation results can be interpreted in terms of model implementation correctness.
 One can additionally capitalize on this validation setup and gauge how accurate our inferential tool can be for different parameters. 
 The more identifiable a parameter is, the higher should be the correlation between its posterior mean and its generating ``true'' value.
-In our scenarios 1 and 3, the species birth-rate $\Lambda$ was not easily identifiable given the sizes of the phylogenetic trees.
+In our scenarios 1 and 3, the species birth rate $\Lambda$ was not easily identifiable given the sizes of the phylogenetic trees.
 Conversely, the continuous-trait evolutionary rate, $R$, was more easily identifiable, as revealed by the higher correlation between its true values and their posterior means.
 We conclude this section by noting that unidentifiability should not be taken as a sign that a model is incorrect -- in Figure \ref{fig:yulecalval}, coverage is still appropriate for scenarios 1 and 3.
 
