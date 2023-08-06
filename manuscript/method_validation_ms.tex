@@ -96,9 +96,9 @@
 \begin{abstract}
   \noindent Biology has become a highly mathematical discipline in which probabilistic models play a central role.
   As a result, research in the biological sciences is now dependent on computational tools capable of carrying out complex analyses.
-  \textcolor{blue}{These tools should be fast and must be correct.
-  But while the concept of speed is unmysterious, what passes as evidence for correctness varies widely among methodological contributions.
-  Indeed, the literature on statistical software validation within computational biology is still embryonic.}
+  These tools should be fast and must be correct.
+  But while the concept of speed is relatively straightforward, what passes as evidence for correctness varies widely among methodological contributions.
+  Indeed, the literature on statistical software validation within computational biology is still embryonic.
   This manuscript aims to fill this gap.
   Here, we describe and illustrate good practices for assessing the correctness of a model implementation, with an emphasis on Bayesian methods.
   We also introduce a suite of functionalities for automating validation protocols.
@@ -671,14 +671,14 @@ Lastly, in ``Scenario 3'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalv
 Approximately 90\% of all simulated trees were rejected based on their taxon count; trees were rejected if they had fewer than 100 or more than 200 taxa.
 As with scenario 1, coverage fell within the expected ranges for a correct model implementation.
 This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
-\textcolor{blue}{For example, one may have expected the estimated $\lambda$ to be consistently higher or lower than the true $\lambda$.
+For example, one may have expected the estimated $\lambda$ to be consistently higher or lower than the true $\lambda$.
 $\Lambda$ is nonetheless challenging to infer under the current model, so its estimates fell around the corresponding prior mean value; unlike in scenario 2, however, here the prior mean parameter was correctly specified.
-As a result, coverage validation was not capable of detecting any symptoms arising from the rejection of tree samples.}
+As a result, coverage validation was not capable of detecting any symptoms arising from the rejection of tree samples.
 
-\textcolor{blue}{Scenario 3 brings home the point that an incorrect model implementation may pass coverage validation, unless model misspecification is sufficiently severe (e.g., scenario 2), or parameter estimate locations are highly responsive to the evidence in the data (unlike $\Lambda$ in the model at hand).
-(We expand on this point using a different and simpler model, and show that even coverage validation detects stringent rejection schemes as a model misspecification issue; \textcolor{orange}{Supplementary Table X}.)
+Scenario 3 brings home the point that an incorrect model implementation may pass coverage validation, unless model misspecification is sufficiently severe (e.g., scenario 2), or parameter estimate locations are highly responsive to the evidence in the data (unlike $\Lambda$ in the model at hand).
+We expand on this point using a different and simpler model, and show that even coverage validation detects stringent rejection schemes as a model misspecification issue; Supplementary Table 2.
 Put simply, obtaining appropriate coverage may not be enough to ascertain that a model is correct.
-Potential biases in parameter estimates may remain undetected unless more investigation is done (see rank-uniformity validation below).}
+Potential biases in parameter estimates may remain undetected unless more investigation is done (see rank-uniformity validation below).
 
 The three scenarios we explored above illustrate how coverage validation results can be interpreted in terms of model implementation correctness.
 One can additionally capitalize on this validation setup and gauge how accurate our inferential tool can be for different parameters. 

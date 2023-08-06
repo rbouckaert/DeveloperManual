@@ -367,6 +367,28 @@ An important insight is the RUV validates a pair ${\text{model}, \text{inference
 \end{figure}
 
 
+\begin{table}[]
+\caption{Coverage results for the 95\% HPD in the normal toy example.
+For each combination of truncation ($t$) and data set size ($K$), we show the estimated coverage over $n=1000$ replicates and whether the coverage procedure passes.
+Note how sometimes the coverage procedure fails to detect problems (e.g. when $t=0$ and $K=10$).
+}
+\begin{center}
+\begin{tabular}{@{}cccc@{}}
+\toprule
+Truncation ($t$) & Number of observations ($K$) & Estimated coverage & Passes \\ \midrule
+0                & 5                           & 0.93              & No     \\
+1                & 5                           & 0.92              & No     \\
+1.5              & 5                           & 0.90              & No     \\
+0                & 10                          & 0.95              & Yes    \\
+1                & 10                          & 0.91              & No     \\
+1.5              & 10                          & 0.91              & No     \\
+0                & 50                          & 0.96              & Yes    \\
+1                & 50                          & 0.93               & No     \\
+1.5              & 50                          & 0.93               & No     \\ \bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
 \newpage
 \section{Supplementary Figures}
 \label{appendix::sec:supp_figures}
