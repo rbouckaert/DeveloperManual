@@ -1,18 +1,18 @@
 \documentclass[oneside]{article}
 
-\usepackage{blindtext} % Package to generate dummy text throughout this template 
-\usepackage{graphicx} % FKM: for Figures
+\usepackage{blindtext} % dummy text throughout this template 
+\usepackage{graphicx} % figures
 \usepackage{wrapfig}
 \usepackage{color} % for colored text
 \usepackage{colortbl} % for colored text
-\usepackage{float} % FKM: for forcing Figure placement
-\usepackage[breakable]{tcolorbox} % FKM: for text box
-\usepackage{enumerate} % FKM: for bullet point lists
-\usepackage{setspace} % FKM: line spacing
+\usepackage{float} % for forcing Figure placement
+\usepackage[breakable]{tcolorbox} % text box
+\usepackage{enumerate} % bullet point lists
+\usepackage{setspace} % line spacing
 \usepackage{soul} % strike through
 \usepackage[normalem]{ulem} % strike through keeping emphasis standard
 \usepackage{cancel} % diagonal strike through
-\usepackage[margin=1in]{geometry} % FKM: margins
+\usepackage[margin=1in]{geometry} % margins
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
 % \linespread{1.05} % Line spacing - Palatino needs more space between lines
@@ -96,10 +96,10 @@
 \begin{abstract}
   \noindent Biology has become a highly mathematical discipline in which probabilistic models play a central role.
   As a result, research in the biological sciences is now dependent on computational tools capable of carrying out complex analyses.
-  These tools should be fast and must be correct.
-  But while the concept of speed is relatively straightforward, what passes as evidence for correctness varies widely among methodological contributions.
-  Indeed, the literature on statistical software validation within computational biology is still embryonic.
-  This manuscript aims to fill this gap.
+  These tools must be validated before they can be used, but what is
+  understood as validation varies widely among methodological contributions.
+  This may be a consequence of the still embryonic stage of the literature on statistical software validation for computational biology.
+  Our manuscript aims to advance this literature.
   Here, we describe and illustrate good practices for assessing the correctness of a model implementation, with an emphasis on Bayesian methods.
   We also introduce a suite of functionalities for automating validation protocols.
   It is our hope that the guidelines presented here help sharpen the focus of discussions on (as well as elevate) expected standards of statistical software for biology.
@@ -308,7 +308,7 @@ either ``A'' or ``B'').
 
 \vspace{.25cm}
 
-Figure 1 shows the distributions of trait values and their variances and covariances for one sample of \textcolor{red}{X} independent realizations of phylogenetic BM processes. 
+Figure 1 shows the distributions of trait values and their variances and covariances for one sample of one thousand independent realizations of phylogenetic BM processes. 
 One can see that the sample's average trait value and the variances and covariances approach their expectations. 
 More rigorously, one can follow the method described in the main text and verify that those expectations fall within their 95\% confidence intervals 95\% of the time, as calculated from a large number of samples (Supplementary Fig. \ref{supfig:bmsimcis} and Supplementary Table \ref{suptab:bmsimcis}).
 %
@@ -344,7 +344,7 @@ Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also automatic
   \begin{subfigure}[t]{0.5\textwidth}
     \caption{}
     \centering
-    \begin{tabular}{ c|c }
+    \begin{tabular}{ cc }
     \hline
     Birth rate ($\lambda$) & E[$t_{\text{root}}$] $\in$ 95\% CI (\%)\\
     \hline  
@@ -402,7 +402,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
     mvMORPH & Continuous trait evolution models & R & \citealp{clavel15}\\
     \rowcolor{gray!10}diversitree & Several birth-death models & R & \citealp{fitzjohn12}\\
     MASTER & Several birth-death models & BEAST 2 & \citealp{vaughan13}\\
-    \rowcolor{gray!10}LPhy & Several evolutionary models & Standalone & \citealp{drummond22}\\ 
+    \rowcolor{gray!10}LPhy & Several evolutionary models & Standalone & \citealp{drummond23}\\ 
     \hline
   \end{tabular}
   \end{table}
@@ -530,7 +530,6 @@ Recall that we assume the posterior distribution defined by $f_{\Theta|D}(\theta
 At this point, we have concluded the inference stage of this validation pipeline.
 
 % \noindent \emph{Well-calibrated validation study}
-% \textcolor{red}{FKM will fill this section.}
 The third stage and final stage consists of investigating coverage properties of uncertainty intervals.
 The critical expectation here is that if the inferential engine is correct, we will be able to obtain interval estimates with precise coverage properties.
 More concretely, let us first define the highest posterior density (HPD) interval.
@@ -672,34 +671,29 @@ Approximately 90\% of all simulated trees were rejected based on their taxon cou
 As with scenario 1, coverage fell within the expected ranges for a correct model implementation.
 This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
 For example, one may have expected the estimated $\lambda$ to be consistently higher or lower than the true $\lambda$.
-$\Lambda$ is nonetheless challenging to infer under the current model, so its estimates fell around the corresponding prior mean value; unlike in scenario 2, however, here the prior mean parameter was correctly specified.
+$\Lambda$ is nonetheless challenging to infer under the current model, as suggested by estimates falling around the corresponding prior mean value; unlike in scenario 2, however, here the prior mean parameter was correctly specified.
 As a result, coverage validation was not capable of detecting any symptoms arising from the rejection of tree samples.
 
-Scenario 3 brings home the point that an incorrect model implementation may pass coverage validation, unless model misspecification is sufficiently severe (e.g., scenario 2), or parameter estimate locations are highly responsive to the evidence in the data (unlike $\Lambda$ in the model at hand).
-We expand on this point using a different and simpler model, and show that even coverage validation detects stringent rejection schemes as a model misspecification issue; Supplementary Table 2.
+Scenario 3 brings home the point that an incorrect model implementation may pass coverage validation, unless model misspecification is sufficiently severe (e.g., scenario 2), or parameter estimate location is highly responsive to the evidence in the data -- unlike $\Lambda$ in the examined model.
+(In the supplement we expand on this point using a different and simpler model, and show that, if extreme, rejection schemes will be detected by coverage validation as a model misspecification issue; Supplementary Table \ref{suptab:bmsimcis}.)
 Put simply, obtaining appropriate coverage may not be enough to ascertain that a model is correct.
 Potential biases in parameter estimates may remain undetected unless more investigation is done (see rank-uniformity validation below).
 
 The three scenarios we explored above illustrate how coverage validation results can be interpreted in terms of model implementation correctness.
 One can additionally capitalize on this validation setup and gauge how accurate our inferential tool can be for different parameters. 
-The more identifiable a parameter is, the higher should be the correlation between its posterior mean and its generating ``true'' value.
-In our scenarios 1 and 3, the species birth rate $\Lambda$ was not easily identifiable given the sizes of the phylogenetic trees.
+The easier it is to estimate a parameter, the higher should be the correlation between its posterior mean and its generating ``true'' value.
+In our scenarios 1 and 3, the species birth rate $\Lambda$ was hard to estimate given the sizes of the phylogenetic trees.
 Conversely, the continuous-trait evolutionary rate, $R$, was more easily identifiable, as revealed by the higher correlation between its true values and their posterior means.
-We conclude this section by noting that unidentifiability should not be taken as a sign that a model is incorrect -- in Figure \ref{fig:yulecalval}, coverage is still appropriate for scenarios 1 and 3.
+We conclude this section by noting that no correlation between parameter estimates and their true values (i.e., weak unidentifiability) should not be taken as a sign that a model is incorrect -- inappropriate coverage values should.
 
 \vspace{.25cm}
 
 \noindent \emph{Rank-uniformity validation (RUV)}
 
 \cite{Talts2018} showed that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
-In particular, given $\boldsymbol{\theta} =
-  \{\theta_i : 1 \leq i \leq n\}$ (produced according to the protocol
-  in Fig. \ref{fig:flowchart}), those authors demonstrated (Theorem 1
-therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of
-$\theta_i$ relative to $\boldsymbol{\theta_i'}$ --
-  i.e., the rank of the $i$-th parameter value relative to its corresponding $L$ MCMC chain samples --
+In particular, given $\boldsymbol{\theta} = \{\theta_i : 1 \leq i \leq n\}$ (produced according to the protocol in Fig. \ref{fig:flowchart}), those authors demonstrated (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of $\theta_i$ relative to $\boldsymbol{\theta_i'}$ -- i.e., the rank of the $i$-th parameter value relative to its corresponding $L$ MCMC chain samples --
 % $\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$)
- will follow a uniform distribution on $[1, L + 1]$ (Fig. \ref{fig:sbcflowchart}).
+will follow a uniform distribution on $[1, L + 1]$ (Fig. \ref{fig:sbcflowchart}).
 In other words, if one were to sort all true parameter values $\theta_i$ against $\boldsymbol{\theta_i'}$ -- their corresponding $L$ MCMC posterior samples -- the first (smallest ranking) 10\% out of $n$ $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.
 
 \begin{wrapfigure}{l}{7.35cm}
@@ -723,12 +717,12 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
   \caption{
     Miscalibration patterns observable after inference in rank-uniformity validation (RUV).
     We explain how to interpret the histogram of ranks (middle column) and ECDF plots (right-hand side column) in the main text.
-      (a) Top row: parameter estimates are overdispersed relative to their true values.
-      (b) Middle row: parameter estimates are underdispersed relative to their true values.
-      (c) Bottom row: parameter estimates are consistently overestimated relative to their true values.
-      Light-blue bands and horizontal black line in the middle graphs represent the 95\% confidence interval about the expected rank count and its mean, respectively.
-      Light-blue ellipses in the rightmost graphs represent confidence intervals about the empirical cumulative distribution function (ECDF).
-      }
+    (a) Top row: parameter estimates are overdispersed relative to their true values.
+    (b) Middle row: parameter estimates are underdispersed relative to their true values.
+    (c) Bottom row: parameter estimates are consistently overestimated relative to their true values.
+    In the middle graphs, light-blue bands represent the 95\% confidence interval about the expected rank count, and horizontal black lines mark the rank count mean.
+    Light-blue ellipses in the rightmost graphs represent confidence intervals about the empirical cumulative distribution function (ECDF).
+  }
   % In panel (a) the replicate-averaged posterior (RAP), i.e., the
   % posterior one gets over all \textcolor{blue}{$n \times L$} simulated parameter \textcolor{blue}{values}\textcolor{red}{\st{simulated data sets}}, is overdispersed compared to the prior.
   % This leads to the ranks being concentrated away from the extremes.
@@ -738,23 +732,23 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
 \end{figure}
 
 We conducted RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
-In the interest of brevity, we only show the histograms and ECDFs for $R$, and leave the remaining plots for $\lambda$ to the supplement (but see Box 1 below).
+In the interest of brevity, we only show the histograms and ECDFs for $R$, and leave the remaining plots for $\Lambda$ to the supplement (but see Box 1 below).
 As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\% confidence intervals (Fig. \ref{fig:ruv_yule}a).
 
 Under scenario 2, again as expected, our method failed RUV (Fig.~\ref{fig:ruv_yule}b).
-In particular, we observe great overestimation of the Brownian motion rate ($R$).
+In particular, we observes great overestimation of the Brownian motion rate ($R$).
 In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator, etc).
 We remind the reader that in our experiment, scenario 2 was purposefully set up so that the (prior) models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the RUV procedure.
 
 Lastly, RUV results for scenario 3 contrasted with what we observed for this scenario's coverage validation (Fig. \ref{fig:yulecalval}c).
-  While the model specified in scenario 3 passed its coverage validation (coverage was acceptable for both $\Lambda$ and $R$), it did not pass the RUV procedure.
-  The corresponding rank histogram and ECDF plots indicate that $r$ is underestimated (Fig. \ref{fig:ruv_yule}c).
-  This is an interesting result, because it suggests that rank-uniformity validation can be more sensitive than coverage validation, at least for certain types of model misspecification.
+While the model specified in scenario 3 passed its coverage validation (coverage was acceptable for both $\Lambda$ and $R$), it did not pass the RUV procedure.
+The corresponding rank histogram and ECDF plots indicate that $R$ is underestimated (Fig. \ref{fig:ruv_yule}c).
+This result suggests that rank-uniformity validation can be more sensitive than coverage validation, at least for certain types of model misspecification, such as those affecting parameter estimate location.
 
-  Unlike scenario 2, in which we caused an explicit mismatch between the distributions used in simulation and inference, model misspecification under scenario 3 was subtler: simulation and inference models were identical (as in scenario 1), but tree samples from $f_\Phi(\cdot)$ (the Yule prior) were often rejected as $\boldsymbol{\theta}$ was generated.
-  The model used in scenario 3 failed RUV because rejecting tree samples induced an implicit Yule model in simulation that differed from the Yule model used in inference. 
-  Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. 2), we were able to recapitulate the results in Figure \ref{fig:ruv_yule}.
-  While here we focus on so-called continuous parameters like $R$ and $\Lambda$, it is also possible to conduct RUV to assess correctness on the space of phylogenies, a topic we leave for future research.
+Unlike scenario 2, in which we caused an explicit mismatch between the distributions used in simulation and inference, model misspecification under scenario 3 was subtler: simulation and inference models were identical (as in scenario 1), but tree samples from $f_\Phi(\cdot)$ (the Yule prior) were often rejected as $\boldsymbol{\theta}$ was generated.
+The model used in scenario 3 failed RUV because rejecting tree samples induced an implicit Yule model in simulation that differed from the Yule model used in inference. 
+Indeed, using a much simpler model and an analogous rejection scheme (Supplementary Fig. \ref{supfig:ruv_normal_toy}), we were able to recapitulate the results in Figure \ref{fig:ruv_yule}.
+While here we focus on so-called continuous parameters like $R$ and $\Lambda$, it is also possible to conduct RUV to assess correctness on the space of phylogenies, a topic we leave for future research.
 
 \begin{figure}
   \centering
@@ -765,7 +759,7 @@ Lastly, RUV results for scenario 3 contrasted with what we observed for this sce
     Panels in the bottom row show the corresponding ECDF plots, for parameter $R$ in each scenario.
     (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
     (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
+    (c) In ``Scenario 3'' the model was specified just as in ``Scenario 1'', with the difference that rejection sampling was substantially greater (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
   }
   % Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$, for each of the scenarios described in the main text.
   % \textcolor{red}{\st{In A we show the rank histograms from 100 replicates}}\textcolor{blue}{(a) Top row: histogram of 100 ranks (given $n=100$ replicates)}, for each scenario, obtained after 10\% burnin and thinning \textcolor{blue}{of posterior samples,} down to\textcolor{red}{\st{ get }} 200 \textcolor{red}{\st{draws from the posterior}} \textcolor{blue}{out of \textcolor{orange}{[Fill out]}}.
@@ -1191,8 +1185,10 @@ These investigations are thus critical for the longevity and popularity of a mod
 It is possible to characterize certain aspects of model behavior while simultaneously verifying its correctness, as discussed in the coverage validation section above.
 For example, one can observe how accurate parameter estimates are (e.g., if the points in Fig. \ref{fig:yulecalval} fall on the identity line) under both correctly and incorrectly specified models.
 However, the requirement of simulating parameter values from a prior distribution $f_{\Theta}(\cdot)$ during the validation of a model can complicate its characterization.
-Depending on the characterization experiment's goals and design, researchers may find themselves rejecting a large fraction of simulated data sets, a problem that worsens the more dimensions of parameter space are allowed to vary.
-In most cases, it may make more sense to first verify model correctness by following the procedures we described above, and then characterize model behavior further in a subsequent batch of analyses.
+Depending on the characterization experiment's goals and design, researchers may find themselves rejecting a large fraction of simulated data sets -- perhaps because data sets do not resemble those in real life, or because they are too large to analyze.
+But as we showed, rejecting draws in simulation may then be picked up by the validation protocol as an incorrectly implemented model.
+This problem can only worsen the more dimensions of parameter space are allowed to vary.
+In most cases, it may thus make more sense to first verify model correctness by following the procedures we described above, and then characterize model behavior further in a subsequent batch of analyses.
 
 We conclude this section by proposing that scientists contributing or reviewing a new model ask the following question: Is the contribution at hand carrying out an empirical analysis that will specifically profit from scrutinizing model behavior?
 If not, then model characterization efforts are not justified, and should take place at a different time and place, and be shouldered by the scientific community at large.
@@ -1205,8 +1201,8 @@ If not, then model characterization efforts are not justified, and should take p
 % \end{itemize}
 
 In order to keep up with the large amounts of data of different kinds accumulating in public databases, researchers in the life sciences must constantly update their computational tool boxes.
-New models are implemented in computational methods every day, but if implementation is not correct, downstream conclusions from using those methods will be void of any significance.
-In the present study, we described and executed two distinct validation protocols for verifying that a Bayesian model has been correctly implemented.
+New models are implemented in computational methods every day, but if they are not properly validated, downstream conclusions from using those methods will be void of any significance.
+In the present study, we described and executed two distinct validation protocols that verify a Bayesian model has been correctly implemented.
 Although we looked at examples from statistical phylogenetics, these two simulation-based protocols work for any and all Bayesian models.
 
 We further elaborate on the difference between experiments in model validation versus model characterization.
