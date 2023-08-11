@@ -66,7 +66,7 @@
 %\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 %\posttitle{\end{center}} % Article title closing formatting
 
-\title{How to validate a Bayesian model} % Article title
+\title{How to validate a Bayesian evolutionary model} % Article title
 %LM: strictly speaking, we're 'validating' the inference machinery.
 %% Validating a model involves epistemic considerations that are, as far as I understand, outside the scope of this paper.
 \author{\textsc{F\'{a}bio K. Mendes$^{1\dagger*}$}, \textsc{Remco Bouckaert$^{2\dagger}$},\\
@@ -104,12 +104,12 @@
 
 \section{Validating a phylogenetic Brownian motion simulator}
 
-In this section we focus on validating a simulator for the phylogenetic Brownian motion model (``PhyloBM''; \citealp{felsenstein73}).
+In this section we focus on validating a simulator for the phylogenetic Brownian motion model (``PhyloBM''; \citealp{fel73}).
 As explained in the main text, our goal is to verify that the expected value of certain summary statistics (given a specific combination of parameter values) falls within its $\alpha$-confidence intervals approximately $\alpha$\% of the time.
-We will build confidence intervals about statistics calculated from several PhyloBM samples of size \textcolor{red}{Z}, and then ask if the ``population'' value of  a statistic -- given by the parameters of the multivariate normal sampling distribution -- is contained within its confidence interval frequently enough.
+We will build confidence intervals about statistics calculated from several PhyloBM samples of size 10,000, and then ask if the ``population'' value of  a statistic -- given by the parameters of the multivariate normal sampling distribution -- is contained within its confidence interval frequently enough.
 
 For summary statistics, we pay attention to the trait value's (i) species mean, (ii) species variance, (iii) among-species covariance, and (iv) among-species correlation coefficient.
-Supplementary figure \ref{supfig:bmsimcis} shows one hundred confidence intervals for each of these statistics, under multivariate normal $\text{MVN}(\boldsymbol{y},r\boldsymbol{T})$, where $\boldsymbol{y}=\{0,0,0\}$, $r=0.1$ and $\boldsymbol{T}$ is given by the tree in Fig. 2 in the main text.
+Supplementary figure \ref{supfig:bmsimcis} shows one hundred confidence intervals for each of these statistics, under multivariate normal $\text{MVN}(\boldsymbol{y_0},r\boldsymbol{T})$, where $\boldsymbol{y_0}=\{0,0,0\}$, $r=0.1$ and $\boldsymbol{T}$ is given by the tree in Fig. 2 in the main text.
 Supplementary table \ref{suptab:bmsimcis} summarizes how often each statistic fell within its 95\% confidence interval.
 These results indicate the PhyloBM simulator produces appropriate confidence intervals and behaves as expected.
 
@@ -124,7 +124,7 @@ These results indicate the PhyloBM simulator produces appropriate confidence int
 
 \begin{table}[h]
   \caption{The number of times $k$ that a summary statistic was contained within its corresponding 95\% confidence interval.
-    Each statistic was calculated from 100 datasets of size \textcolor{red}{x} simulated under the PhyloBM model described in the text and in Box 1 in the main text.}
+    Each statistic was calculated from 100 datasets of size 10,000 simulated under the PhyloBM model described in the text and in Box 1 in the main text.}
   \label{suptab:bmsimcis}
   \centering
   \begin{tabular}{ ccc }
@@ -132,7 +132,7 @@ These results indicate the PhyloBM simulator produces appropriate confidence int
     Statistic & Species $s$ (and $v$)& $k$\\
     \hline  
     \rowcolor{gray!10}                      & A & 95\\
-    \rowcolor{gray!10} $\text{E}[y_d]$      & B & 97\\
+    \rowcolor{gray!10} $\text{E}[y_s]$      & B & 97\\
     \rowcolor{gray!10}                      & C & 98\\
                                             & A & 93\\
                        $\text{Var}[y_s]$    & B & 97\\
@@ -351,14 +351,14 @@ One can thus control how extreme the model misspecification will be during infer
 Here we explore $t =  \{0, 1, 1.5\}$ and $K = \{5, 10 , 50\}$ in order to show how the method behaves in various misspecification scenarios.
 We ran $n=1000$ replications of the experiment, draw $200$ i.i.d. samples directly from the posterior in (\ref{eq:toy_normal_posterior}).
 
-The resulting rank histograms (Supplementary Fig.~\ref{fig:ruv_normal_toy}) show how the posterior consistently underestimates the true mean, as indicated by a pattern of ranks bunching up towards the right-hand side of the histogram.
+The resulting rank histograms (Supplementary Fig.~\ref{supfig:ruv_normal_toy}) show how the posterior consistently underestimates the true mean, as indicated by a pattern of ranks bunching up towards the right-hand side of the histogram.
 The pattern is clearer in situations where the evidence in the data is weaker (e.g., when $K$ is small), and the effect of the prior on the posterior is stronger.
 Moreover, the misspecification becomes more apparent the larger $t$ is, that is, the more extreme the misspecification becomes.
 
 It is worth noting a couple of things.
 First, unlike what we observed and reported for the model in the main text, coverage validation does suggest an incorrectly specified model for certain combinations of $t$ and $K$ (Supplementary Table 2).
 Second, when the truncation is less extreme ($t = 0$) and there is a substantial amount of data ($K = 50$), RUV fails to detect any problems.
-This is an important about validation protocols: their sensitivity is context-dependent, and responds to the combination of model and data regime.
+This is an important insight about validation protocols: their sensitivity is context-dependent, and responds to the combination of model and data regime.
 
 \begin{figure}[!ht]
    \includegraphics[width=\linewidth]{../figures/sbc_normal_manual.pdf}
@@ -437,7 +437,7 @@ We may re-write the limit as:
 &= F_U(p_1) - F_U(p_2) = \alpha,
 \end{align*}
 
-\noindent where the last line follows from the fact that the CDF of $\theta_i$ is uniformly distributed on $(0, 1$) (Theorem 1 in \citealp{Cook2006}) and almost sure convergence of the ECDF to the true CDF due to the  Glivenko-Cantelli theorem~\cite[page 275]{Billingsley1986}.
+\noindent where the last line follows from the fact that the CDF of $\theta_i$ is uniformly distributed on $(0, 1$) (Theorem 1 in \citealp{Cook06}) and almost sure convergence of the ECDF to the true CDF due to the  Glivenko-Cantelli theorem~\cite[page 275]{Billingsley1986}.
 \bibliography{refs}
 
 \end{document}
