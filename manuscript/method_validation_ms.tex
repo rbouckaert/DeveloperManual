@@ -200,11 +200,14 @@ It is $\text{I}[\mathcal{M}]$ that will be employed by users in empirical analys
 
 \begin{figure}%{l}{5.5cm}
   \centering
-  \includegraphics[width=12cm]{../figures/graphical_model_manual.pdf}    
+  \includegraphics[width=\linewidth]{../figures/graphical_model_manual.pdf}    
   \caption{
     A simple probabilistic graphical (Bayesian) model we will validate in this work.
-    When read from top to bottom, the graphical model describes a generative process (see the legend for the meaning of vertical lines and downward-pointing arrows).
+    (a) When read from top to bottom, the graphical model describes a generative process (see the legend for the meaning of vertical lines and downward-pointing arrows).
     If read from bottom to top, the graphical model describes the process of inference (assuming arrows having opposite orientation denoting the flow of information); in this case, the blue and yellow circles represent the data and the parameters being estimated, respectively.
+    (b) Each random variable node in the model, and how they should be interpreted.
+    Table \ref{tab:dists} presents more detail on each of the sampling distributions.
+    Briefly, ``LN'' stands for log-normal, ``Yule'' for a Yule process also known as a pure-birth model, and ``PhyloBM'' stands for a phylogenetic Brownian motion model.
   }  
   \label{fig:pgm} 
 \end{figure}
@@ -237,8 +240,7 @@ Being able to isolate the building blocks of a hierarchical model simulator help
     \rowcolor{gray!10}$\text{LN}_{\Lambda}(-3.25,0.2)$ & Log-normal & $f_{\Lambda | M_\Lambda,\Sigma_\Lambda}(\cdot |M_\Lambda\mathord{=}{-3.25},\Sigma_\Lambda\mathord{=}0.2)$ & $f_{\Lambda | M_\Lambda,\Sigma_\Lambda}(\lambda |M_\Lambda\mathord{=}{-3.25},\Sigma_\Lambda\mathord{=}0.2)$\\
     $\text{LN}_{R}(-3.25,0.2)$ & Log-normal & $f_{R | M_R,\Sigma_R}(\cdot |M_R\mathord{=}{-2.5},\Sigma_R\mathord{=}0.5)$ & $f_{R | M_R,\Sigma_R}(\lambda |M_R\mathord{=}{-2.5},\Sigma_R\mathord{=}0.5)$\\
     \rowcolor{gray!10}Yule & Pure-birth & $f_{\Theta |\mathcal{O},\Lambda}(\cdot |\mathcal{O}\mathord{=}o,\Lambda\mathord{=}\lambda)$ & $f_{\Theta |\Lambda}(\lambda|\mathcal{O}\mathord{=}o,\Lambda\mathord{=}\lambda)$\\
-    PhyloBM & Phylogenetic Brownian motion & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\cdot |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$ & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\boldsymbol{y} |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$\\
-    \hline 
+    PhyloBM & Phylogenetic Brownian motion & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\cdot |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$ & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\boldsymbol{y} |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$
   \end{tabular}
   \end{table}
 \end{center}
