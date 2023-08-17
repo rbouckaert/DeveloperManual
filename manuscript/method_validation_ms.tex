@@ -37,7 +37,6 @@
 
 \usepackage{subcaption} % for subfigures side by side
 \captionsetup[subfigure]{singlelinecheck=false} % to put (a) and (b) at the top-left of subfigures
-
 \usepackage[shortlabels]{enumitem} % customized lists (shortlabels
                                 % necessary to have i., ii., etc., in enumerate)
 \setlist[itemize]{noitemsep} % Make itemize lists more compact
@@ -342,13 +341,12 @@ Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also automatic
     \hline
     Birth rate ($\lambda$) & E[$t_{\text{root}}$] $\in$ 95\% CI (\%)\\
     \hline  
-    0.5 & 94\\
+    \rowcolor{gray!10}0.5 & 94\\
     0.6 & 91\\
-    0.7 & 98\\
+    \rowcolor{gray!10}0.7 & 98\\
     0.8 & 95\\
-    0.9 & 96\\
-    1.0 & 92\\
-    \hline
+    \rowcolor{gray!10}0.9 & 96\\
+    1.0 & 92
   \end{tabular}
   \end{subfigure}
   \vspace{0pt}
@@ -429,7 +427,13 @@ probabilistic data-generating process (see previous section).
   \includegraphics[width=14cm]{../figures/flowchart_manual.pdf}
   \caption{Flowchart of the validation of a Bayesian model.
     Standard flowchart symbols are explained in the legend.
-    ``Parameter samples'' can be obtained in different ways, the most common being through MCMC sampling.
+    S($\mathcal{M}$) and I($\mathcal{M}$) denote the simulator and the inference engine of a model $\mathcal{M}$, respectively.
+    $\boldsymbol{\theta}$ denotes a vector with $n$ elements, where each element is an i.i.d. parameter(s) sample from its (their) corresponding prior(s) $f_\Theta(\cdot)$.
+    Analogously, $\boldsymbol{d}$ denotes a vector with $n$ elements, where each element is an i.i.d. data sample from the corresponding likelihood(s) $f_{D|\Theta}(\cdot)$.
+    Note that we simplify the notation in the main text, with $f_{D|\Theta}(\cdot|\Theta=\theta)$ written simply as $f_{D|\Theta}(\cdot)$.
+    ``Parameter samples'' $\boldsymbol{\theta}'$ hold $n \times L$ elements, with each being one of the $L$ posterior samples for each of the $n$ parameter samples in $\boldsymbol{\theta}$.
+    All $L$ posterior samples obtained from the $i$-th data set $d_i$ comprise together what one would call the posterior distribution over $\theta_i$.
+    Posterior samples are commonly obtained through MCMC.
     The acquamarine dotted box encloses the stages of the pipeline that are exclusive to the coverage validation procedure.
     The pink dotted box encloses the stages of the pipeline that are exclusive to the rank-uniformity validation (RUV) procedure.}
 \label{fig:flowchart}
