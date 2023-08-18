@@ -204,6 +204,7 @@ It is $\text{I}[\mathcal{M}]$ that will be employed by users in empirical analys
     A simple probabilistic graphical (Bayesian) model we will validate in this work.
     (a) When read from top to bottom, the graphical model describes a generative process (see the legend for the meaning of vertical lines and downward-pointing arrows).
     If read from bottom to top, the graphical model describes the process of inference (assuming arrows having opposite orientation denoting the flow of information); in this case, the blue and yellow circles represent the data and the parameters being estimated, respectively.
+    A random variable within a rectangular box signifies a parameter whose value is assumed by the user; these are normally nuisance hyperparameters, or parameters estimated elsewhere (e.g., the phylogeny in a comparative analysis) that are not of immediate interest.
     (b) Each random variable node in the model, and how they should be interpreted.
     Table \ref{tab:dists} presents more detail on each of the sampling distributions.
     Briefly, ``LN'' stands for log-normal, ``Yule'' for a Yule process also known as a pure-birth model, and ``PhyloBM'' stands for a phylogenetic Brownian motion model.
@@ -424,14 +425,14 @@ probabilistic data-generating process (see previous section).
 \begin{figure}
   \centering
   % % \includestandalone[width=7cm]{../figures/flowchart}
-  \includegraphics[width=14cm]{../figures/flowchart_manual.pdf}
+  \includegraphics[width=14cm]{../figures/flowchart_manual2.pdf}
   \caption{Flowchart of the validation of a Bayesian model.
     Standard flowchart symbols are explained in the legend.
     S($\mathcal{M}$) and I($\mathcal{M}$) denote the simulator and the inference engine of a model $\mathcal{M}$, respectively.
     $\boldsymbol{\theta}$ denotes a vector with $n$ elements, where each element is an i.i.d. parameter(s) sample from its (their) corresponding prior(s) $f_\Theta(\cdot)$.
     Analogously, $\boldsymbol{d}$ denotes a vector with $n$ elements, where each element is an i.i.d. data sample from the corresponding likelihood(s) $f_{D|\Theta}(\cdot)$.
-    Note that we simplify the notation in the main text, with $f_{D|\Theta}(\cdot|\Theta=\theta)$ written simply as $f_{D|\Theta}(\cdot)$.
-    ``Parameter samples'' $\boldsymbol{\theta}'$ hold $n \times L$ elements, with each being one of the $L$ posterior samples for each of the $n$ parameter samples in $\boldsymbol{\theta}$.
+    % Note that we simplify the notation in the main text, with $f_{D|\Theta}(\cdot|\Theta=\theta)$ written simply as $f_{D|\Theta}(\cdot)$.
+    $\boldsymbol{\theta}'$ holds $n \times L$ elements, with each being one of the $L$ posterior samples for each of the $n$ parameter samples in $\boldsymbol{\theta}$.
     All $L$ posterior samples obtained from the $i$-th data set $d_i$ comprise together what one would call the posterior distribution over $\theta_i$.
     Posterior samples are commonly obtained through MCMC.
     The acquamarine dotted box encloses the stages of the pipeline that are exclusive to the coverage validation procedure.
