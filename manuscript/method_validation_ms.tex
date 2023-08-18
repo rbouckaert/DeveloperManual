@@ -425,16 +425,19 @@ probabilistic data-generating process (see previous section).
 \begin{figure}
   \centering
   % % \includestandalone[width=7cm]{../figures/flowchart}
-  \includegraphics[width=14cm]{../figures/flowchart_manual2.pdf}
+  \includegraphics[width=13cm]{../figures/flowchart_manual2.pdf}
   \caption{Flowchart of the validation of a Bayesian model.
     Standard flowchart symbols are explained in the legend.
-    S($\mathcal{M}$) and I($\mathcal{M}$) denote the simulator and the inference engine of a model $\mathcal{M}$, respectively.
+    The flowchart area with a clear background is where (true) parameters and data are generated, and where the model simulator(s) is validated.
+    The flowchart area shaded in pink mark the steps involved in validating the inference engine once the data has been generated.
+    % S($\mathcal{M}$) and I($\mathcal{M}$) denote the simulator and the inference engine of a model $\mathcal{M}$, respectively.
     $\boldsymbol{\theta}$ denotes a vector with $n$ elements, where each element is an i.i.d. parameter(s) sample from its (their) corresponding prior(s) $f_\Theta(\cdot)$.
-    Analogously, $\boldsymbol{d}$ denotes a vector with $n$ elements, where each element is an i.i.d. data sample from the corresponding likelihood(s) $f_{D|\Theta}(\cdot)$.
+    Analogously, $\boldsymbol{d}$ denotes a vector with $n$ elements, where each element is an i.i.d. data sample from the corresponding likelihood(s) $f_{D|\Theta}(\cdot|\Theta\mathop{=}\theta)$.
     % Note that we simplify the notation in the main text, with $f_{D|\Theta}(\cdot|\Theta=\theta)$ written simply as $f_{D|\Theta}(\cdot)$.
     $\boldsymbol{\theta}'$ holds $n \times L$ elements, with each being one of the $L$ posterior samples for each of the $n$ parameter samples in $\boldsymbol{\theta}$.
     All $L$ posterior samples obtained from the $i$-th data set $d_i$ comprise together what one would call the posterior distribution over $\theta_i$.
     Posterior samples are commonly obtained through MCMC.
+    $\text{U}(l, u)$ denotes a uniform distribution with and including lower and upper bounds $l$ and $u$, respectively.
     The acquamarine dotted box encloses the stages of the pipeline that are exclusive to the coverage validation procedure.
     The pink dotted box encloses the stages of the pipeline that are exclusive to the rank-uniformity validation (RUV) procedure.}
 \label{fig:flowchart}
