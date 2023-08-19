@@ -698,14 +698,14 @@ While here we focus on so-called continuous parameters like $R$ and $\Lambda$, i
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.9\linewidth]{../figures/sbc_Yule_BM_r_manual.pdf}
+  \includegraphics[width=0.95\linewidth]{../figures/sbc_Yule_BM_r.pdf}
   \caption{
     Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
     Panels in the top row show the histograms of $n=100$ ranks, for parameter $R$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
     Panels in the bottom row show the corresponding ECDF plots, for parameter $R$ in each scenario.
-    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
-    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    (c) In ``Scenario 3'' the model was specified just as in ``Scenario 1'', with the difference that rejection sampling was substantially greater (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
+    (a) In ``Scenario 1'', the model was correctly specified and we can see that the ranks are compatible with a uniform distribution (within the blue band). 
+    (b) In ``Scenario 2'', the inference machinery was misspecified and a clear pattern of overestimation shows up in the ranks, meaning the ranks for the data-generating values are usually smaller than expected under correctness.
+    (c) In ``Scenario 3'' we can see a pattern of underestimation, evidenced by ranks bunching up to the right.
   }
   % Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$, for each of the scenarios described in the main text.
   % \textcolor{red}{\st{In A we show the rank histograms from 100 replicates}}\textcolor{blue}{(a) Top row: histogram of 100 ranks (given $n=100$ replicates)}, for each scenario, obtained after 10\% burnin and thinning \textcolor{blue}{of posterior samples,} down to\textcolor{red}{\st{ get }} 200 \textcolor{red}{\st{draws from the posterior}} \textcolor{blue}{out of \textcolor{orange}{[Fill out]}}.
