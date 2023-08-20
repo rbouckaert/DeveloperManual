@@ -606,11 +606,11 @@ When the model is correctly specified between simulation and inference (``Scenar
 
 In ``Scenario 2'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}b), however, we misspecify the model during inference, setting the prior distribution on $\Lambda$ to be a log-normal with a mean of -2.0 (rather than -3.25, as specified in the simulation procedure; Fig. \ref{fig:pgm}).
 In contrast with scenario 1, coverage is 0.0 for $\Lambda$ and 70\% for $R$, both much lower and outside the expected coverage bounds (Table \ref{tab:coverage2}).
-These numbers indicate that one or more of the parts comprising model $\mathcal{M}$ used in $\text{I}[\mathcal{M}]$ differs from their counterparts in $\text{S}[\mathcal{M}]$ differs.
+These numbers indicate that one or more of the parts comprising model $\mathcal{M}$ used in $\text{I}[\mathcal{M}]$ differs from their counterparts in $\text{S}[\mathcal{M}]$.
 This result was expected because we purposefully made the models in simulation and inference differ; we know $\text{I}[\mathcal{M}]$ is correct because of the results from scenario 1.
 Of course, in a real-world validation experiment the model should be correctly specified, and such a result would suggest a problem with the inferential machinery (provided the the simulator had been previously validated).
 
-Lastly, in ``Scenario 3'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}c), we specified the model just like in scenario 1, but carried out substantial rejection sampling in simulation.
+Lastly, in ``Scenario 3'' of Figure \ref{fig:yulecalval} (Fig. \ref{fig:yulecalval}c), we specified the model just like in scenario 1, but carried out substantial rejection sampling during simulation.
 Approximately 90\% of all simulated trees were rejected based on their taxon count; trees were rejected if they had fewer than 100 or more than 200 taxa.
 As with scenario 1, coverage fell within the expected ranges for a correct model implementation.
 This result may strike the reader as odd: if $\text{I}[\mathcal{M}]$ expects trees with a wide range of tip numbers, and we feed it simulated trees within a narrow tip number interval, should this not lower coverage?
@@ -628,7 +628,7 @@ One can additionally capitalize on this validation setup and gauge how accurate 
 The easier it is to estimate a parameter, the higher should be the correlation between its posterior mean and its generating ``true'' value.
 In our scenarios 1 and 3, the species birth rate $\Lambda$ was hard to estimate given the sizes of the phylogenetic trees.
 Conversely, the continuous-trait evolutionary rate, $R$, was more easily identifiable, as revealed by the higher correlation between its true values and their posterior means.
-We conclude this section by noting that no correlation between parameter estimates and their true values (i.e., weak unidentifiability) should not be taken as a sign that a model is incorrect -- inappropriate coverage values should.
+We conclude this section by noting that the absence of correlation between parameter estimates and their true values (sometimes referred to as ``weak unidentifiability'') should not be taken as a sign that a model is incorrect -- inappropriate coverage values should.
 
 \vspace{.25cm}
 
@@ -698,7 +698,7 @@ While here we focus on so-called continuous parameters like $R$ and $\Lambda$, i
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.95\linewidth]{../figures/sbc_Yule_BM_r.pdf}
+  \includegraphics[width=0.95\linewidth]{../figures/sbc_Yule_BM_r_manual.pdf}
   \caption{
     Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
     Panels in the top row show the histograms of $n=100$ ranks, for parameter $R$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
@@ -1137,7 +1137,7 @@ This problem can only worsen the more dimensions of parameter space are allowed 
 In most cases, it may thus make more sense to first verify model correctness by following the procedures we described above, and then characterize model behavior further in a subsequent batch of analyses.
 
 We conclude this section by proposing that scientists contributing or reviewing a new model ask the following question: Is the contribution at hand carrying out an empirical analysis that will specifically profit from scrutinizing model behavior?
-If not, then model characterization efforts are not justified, and should take place at a different time and place, and be shouldered by the scientific community at large.
+If not, then model characterization efforts will likely serve their purpose better elsewhere, and profit from being shouldered by the scientific community at large.
 
 
 \section*{Concluding remarks}
@@ -1145,12 +1145,12 @@ If not, then model characterization efforts are not justified, and should take p
 In order to keep up with the large amounts of data of different kinds accumulating in public databases, researchers in the life sciences must constantly update their computational tool boxes.
 New models are implemented in computational methods every day, but if they are not properly validated, downstream conclusions from using those methods will be void of any significance.
 In the present study, we described and executed two distinct validation protocols that verify a Bayesian model has been correctly implemented.
-Although we looked at examples from statistical phylogenetics, these two simulation-based protocols work for any and all Bayesian models.
+Although we looked at examples from evolutionary biology, specifically statistical phylogenetics, these two simulation-based protocols work for any and all Bayesian models.
 
 We further elaborate on the difference between experiments in model validation versus model characterization.
 The former are strictly concerned with theoretical expectations (e.g., about coverage) a model must meet if correctly implemented.
 The latter, in contrast, include procedures more widely examining how model behavior responds to data set and model attributes; here, researchers often make predictions that are not theoretically guaranteed.
-Some form of model validation should always be carried out when models are newly implemented, but the need for model characterization efforts is contextual.
+Newly implemented models can only profit from undergoing validation as we described here, but the need for model characterization efforts is contextual.
 Experiments probing model behavior beyond correctness are best designed and justified when empirically motivated.
 
 We hope the guidelines described here can enhance both the release rate and standards of statistical software for biology, by assisting its users, developers and referees in quickly finding common ground when evaluating new modeling work.
