@@ -637,7 +637,7 @@ We conclude this section by noting that the absence of correlation between param
 \cite{Talts2018} showed that one can devise other tests that might be more powerful to detect problems than just looking at the coverage of Bayesian HPD intervals.
 In particular, given $\boldsymbol{\theta} = \{\theta_i : 1 \leq i \leq n\}$ (produced according to the protocol in Fig. \ref{fig:flowchart}), those authors demonstrated (Theorem 1 therein) that if the inference machinery $\text{I}[\mathcal{M}]$ works as intended, the distribution of the rank $r_i$ of $\theta_i$ relative to $\boldsymbol{\theta_i'}$ -- i.e., the rank of the $i$-th parameter value relative to its corresponding $L$ MCMC chain samples --
 % $\boldsymbol{\theta_i'} = \{\theta_i^j: 1 \leq j \leq L\}$)
-will follow a uniform distribution on $[1, L + 1]$ (Fig. \ref{fig:flowchart}, pink dotted box).
+will follow a uniform distribution on $[1, L + 1]$ (Fig. \ref{fig:flowchart}, pink dotted box; Fig. \ref{fig:ruv_conceptual}a).
 In other words, if one were to sort all true parameter values $\theta_i$ against $\boldsymbol{\theta_i'}$ -- their corresponding $L$ MCMC posterior samples -- the first (smallest ranking) 10\% out of $n$ $\theta_i$ values should account for approximately 10\% of the total rank mass; the next 10\% of (higher ranking) $\theta_i$ values should account, again, for approximately 10\% of the total rank mass, and so on.
 
 % \begin{wrapfigure}{l}{7.35cm}
@@ -650,22 +650,22 @@ In other words, if one were to sort all true parameter values $\theta_i$ against
 
 Adherence to this distribution can be investigated by constructing histograms \citep{Talts2018} as well as by looking at the empirical cumulative distribution function (ECDF) and their confidence bands \citep{Sailynoja2021}.
 When a model implementation fails RUV, it can do so in different ways.
-For instance, when the inference machinery leads to consistent overdispersed estimates, it produces a pattern of ranks concentrating around the middle rank (Fig. \ref{fig:ruv_conceptual}a).
-When underdispersion is present, on the other hand, ranks tend to bunch up towards the ends (Fig. \ref{fig:ruv_conceptual}b), creating a pattern of ``horns'', which can also be caused by high autocorrelation in the MCMC draws.
+For instance, when the inference machinery leads to consistent overdispersed estimates, it produces a pattern of ranks concentrating around the middle rank (Fig. \ref{fig:ruv_conceptual}b).
+When underdispersion is present, on the other hand, ranks tend to bunch up towards the ends (Fig. \ref{fig:ruv_conceptual}c), creating a pattern of ``horns'', which can also be caused by high autocorrelation in the MCMC draws.
 This is also why we recommend thinning MCMC draws in order to reduce autocorrelation.
-Figure \ref{fig:ruv_conceptual}c shows the rank patterns when the inference machinery produces biased estimates: ranks will bunch up against one of the ends, depending on whether estimates are biased downwards of upwards.
+Figure \ref{fig:ruv_conceptual}d shows the rank patterns when the inference machinery produces biased estimates: ranks will bunch up against one of the ends, depending on whether estimates are biased downwards of upwards.
 In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter at hand is being overestimated.
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{../figures/sbc_conceptual.pdf}
+  \includegraphics[width=\linewidth]{../figures/sbc_conceptual_manual.pdf}
   \caption{
     Patterns observable after inference in rank-uniformity validation (RUV).
     We explain how to interpret the histogram of ranks (middle column) and ECDF plots (right-hand side column) in the main text.
-    We show the prior (light shade blue) and replicate-averaged posterior (RAP, dark shade blue), also called the data-averaged posterior.
-    (a): parameter estimates are overdispersed relative to their true values.
-    (b): parameter estimates are underdispersed relative to their true values.
-    (c): parameter estimates are consistently overestimated relative to their true values.
-    (d): correctly specified model and inference machinery.
+    (a) Model implementation is correct.
+    (b) Parameter estimates are overdispersed relative to their true values.
+    (c) Parameter estimates are underdispersed relative to their true values.
+    (d) Parameter estimates are consistently overestimated relative to their true values.
+    In the left-hand side column, the prior and replicate-averaged posterior (also known as the data-averaged posterior) distributions over some parameter $\theta$ are shown in light blue and dark blue, respectively.
     In the middle graphs, light-blue bands represent the 95\% confidence interval about the expected rank count, and horizontal black lines mark the rank count mean.
     Light-blue ellipses in the rightmost graphs represent confidence intervals about the empirical cumulative distribution function (ECDF).
   }
