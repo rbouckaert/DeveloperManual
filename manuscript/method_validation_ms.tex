@@ -51,7 +51,7 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Mendes et al. $\bullet$ August 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
+\fancyhead[C]{Mendes et al. $\bullet$ September 2023} %$\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 \usepackage{natbib}
@@ -125,14 +125,14 @@ Critical technological innovations such as the advent of massive parallel sequen
 Not only has intraspecific data from multiple individuals allowed progress in fields like medicine and epidemiology
 \citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.,][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{pease2016,kawahara19,upham19}.
 % martin13,brawand14,jarvis14,novikova16
-However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care needed to analyze it. 
+% However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care needed to analyze it. 
 Almost on par with with data accumulation is the rate at which new computational tools are being proposed, as evidenced by journals entirely dedicated to method advances, methodological sections in biological journals, and computational biology degrees being offered by institutions around the world.
 
 One extreme case is the discipline of evolutionary biology, on which we focus our attention.
 While it could be said that many decade-old questions and hypotheses in evolutionary biology have aged well and stood up the test of time (e.g., the Red Queen hypothesis, \citealt{vanvalen73,lively87,morran11,gibson15}; the Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
 In particular, evolutionary biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
 
-Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99,mendes18}), to models that interact directly with data through explicit mathematical functions \citep{yule24,fel73,hky,hudson90}.
+Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,fel73,hky,hudson90}.
 Within the latter category, probabilistic models have seen a sharp surge in popularity within evolutionary biology, in conjunction with computational tools implementing them.
 
 Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness~\citep{darriba18}.
@@ -161,10 +161,10 @@ This probability mass function (pmf; or its continuous counterpart, the probabil
 Just for this section, we will abuse and simplify notation, and drop variable subscripts, e.g., we will write $f_D(d|\Theta=\theta)$  as $f(d|\theta)$.
 As illustrated in the next sections, probabilistic models can be hierarchical, in which case there may be several likelihood functions.
 % % (Fig. \ref{fig:graphmodel}).
-In a frequentist statistical framework, $f(d|\theta)$ is the sole component of a probabilistic model, and is maximized across parameter space during parameter estimation and model comparison.
+In a frequentist statistical framework, $f(d|\theta)$ is the sole component of an inferential procedure, and is maximized across parameter space during parameter estimation and model comparison.
 
-In the present study we focus on Bayesian inference, however, where a probabilistic model $\mathcal{M}$ defines a posterior  probability distribution for its parameters, $f(\theta|d) = \frac{f(d|\theta)f(\theta)}{f(d)}$.
-Here, our prior inferences or beliefs about the natural world -- represented by the prior distribution $f(\theta)$ -- are confronted with and updated by the data through the likelihood function (or multiple likelihood functions).
+In the present study we focus on Bayesian inference, where a probabilistic model $\mathcal{M}$ defines a posterior  probability distribution for its parameters, $f(\theta|d) = \frac{f(d|\theta)f(\theta)}{f(d)}$.
+Here, our prior inferences or beliefs about the natural world -- represented by the prior distribution $f(\theta)$ -- are confronted with and updated by the data through the likelihood function.
 $f(d) = \int_\Theta f(d|\theta)f(\theta)d\theta$, the probability of the data, is also known as the marginal likelihood or the model evidence.
 Crucially, a Bayesian model includes a prior, $f(\theta)$: when models are compared, for example, $f(\theta)$ needs to be taken into account when computing the model evidence $f(d)$.
 
@@ -172,8 +172,7 @@ Models routinely used in evolutionary biology are often characterized by continu
 In those cases, one can make use of the fact that $f(d)$ is a constant with respect to the parameters that can be ignored (i.e., $f(\theta|d) \propto f(\theta|d)f(\theta)$), and use techniques like Markov chain Monte Carlo (MCMC) to sample the posterior distribution.
 This is because MCMC is usually implemented in the form of the Metropolis-Hastings \citep{metropolis53,mh} algorithm, which only requires the posterior to be evaluated up to a constant.
 
-In practice, the Metropolis-Hastings algorithm samples the posterior
-distribution (also referred to as the ``target'' distribution) by means of a
+In practice, the Metropolis-Hastings algorithm samples the posterior distribution (also referred to as the ``target'' distribution) by means of a
 transition mechanism. 
 If the proposal distribution generated by this mechanism is irreducible, positive recurrent, and aperiodic, and the resulting chain is long enough, then the sampled posterior distribution will closely approximate the target distribution $f(\theta|d)$ \citep{smith93,tierney94,gelman}.
 
@@ -188,14 +187,17 @@ We refer the reader interested in these and related topics to \cite{rwty}, \cite
 
 \section*{Validating a Bayesian model}
 
-In this section we discuss a host of procedures for validating an implementation of a Bayesian model.
-This entails validating both the (data) simulator and the inferential engine.
+In this section we discuss procedures for validating an implementation of a Bayesian model $\mathcal{M}$.
+Whenever necessary, we will differentiate between a model implemented as a simulator ($\text{S}[\mathcal{M}]$) and as a tool for inference ($\text{I}[\mathcal{M}]$).
+Both $\text{S}[\mathcal{M}]$ and $\text{I}[\mathcal{M}]$ must be inspected in order to validate a model $\mathcal{M}$.
 
 \subsection*{Validating the simulator, $\text{S}[\mathcal{M}]$}
 \label{verify-correctness-of-simulator-implementation}
 
-When a probabilistic model $\mathcal{M}$ is implemented for the first time, a simulator $\text{S}[\mathcal{M}]$ must be devised and itself validated before we can validate an inferential engine $\text{I}[\mathcal{M}]$.
-It is $\text{I}[\mathcal{M}]$ that will be employed by users in empirical analyses.
+When a new probabilistic model $\mathcal{M}$ is introduced an its inferential engine, $\text{I}[\mathcal{M}]$ -- what users employ in empirical analyses -- is implemented for the first time, validating $\text{I}[\mathcal{M}]$ requires that a simulator for $\mathcal{M}$, $\text{S}[\mathcal{M}]$, be devised and itself validated.
+A simulator conventionally requires a parameter value as input (i.e., a value for $\Theta$, $\theta$, where $\theta$ might represent the values of more than one parameter), or a prior distribution on those values, $f_\Theta(\cdot)$. 
+Note that we use ``$\cdot$'' when referring specifically to the generative function, rather than the value it takes given input.
+The simulator then outputs a sample of random variable(s), which for hierarchical models will include not only an instantiation $d$ of data $\text{D}$, but also the parameters in $\Theta$.
 
 \begin{figure}%{l}{5.5cm}
   \centering
@@ -212,16 +214,13 @@ It is $\text{I}[\mathcal{M}]$ that will be employed by users in empirical analys
   \label{fig:pgm} 
 \end{figure}
 %(\cdot|\Mu_\Lambda=-3.25,\Sigma_\Lambda=0.2)$ 
-A simulator conventionally requires a parameter value as input (i.e., a value for $\Theta$, $\theta$, where $\theta$ might represent the values of more than one parameter), or a prior distribution on those values, $f_\Theta(\cdot)$. 
-Note that we use ``$\cdot$'' when referring specifically to the generative function, rather than the value it takes given input.
-The simulator then outputs a sample of random variable(s), which for hierarchical models will include not only an instantiation $d$ of data $\text{D}$, but also of a subset of the parameters in $\Theta$.
  
 In the case of hierarchical models, it is sometimes useful to consider $\text{S}[\mathcal{M}]$ as a collection of component simulators, each characterized by a different sampling distribution.
 For example, $\text{S}[\mathcal{M}]$ for model we will work with below (Fig. \ref{fig:pgm}; Table \ref{tab:dists}) can be seen as an ensemble comprised by:
 
 \begin{enumerate}
-  \item $\text{S}[f_\Theta(\cdot)]$ (where $\Theta = \{\mathcal{O},\Lambda, R, \boldsymbol{Y_0}\}$), which jointly simulates $\theta=\{o,\lambda,r,\boldsymbol{y_0}\}$,
-  \item $\text{S}[f_{\Phi|\Lambda}(\cdot|\mathcal{O}=o,\Lambda=\lambda)]$, which simulates a Yule tree $\phi$ given a value of $o$ (the origin age) and $\lambda$ (the birth-rate) simulated in (1),
+  \item $\text{S}[f_\Theta(\cdot)]$ (where $\Theta = \{T,\Lambda, R, \boldsymbol{Y_0}\}$), which jointly simulates $\theta=\{\tau,\lambda,r,\boldsymbol{y_0}\}$,
+  \item $\text{S}[f_{\Phi|T,\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$, which simulates a Yule tree $\phi$ given an origin age value $\tau$ and a $\lambda$ (the birth-rate) simulated in (1),
   \item $\text{S}[f_{Y|\Phi,R,\boldsymbol{Y_0}}(\cdot|\Phi=\phi,R=r,\boldsymbol{Y_0}=\boldsymbol{y_0})]$, which simulates an array with $n$ continuous-trait values (one value per species), $\boldsymbol{y}$, given a phylogeny $\phi$ with $n$ species, an evolutionary rate $r$ and ancestral character values $\boldsymbol{y_0}$ (simulated in (1) and (2), respectively).
 \end{enumerate}
 
@@ -239,7 +238,7 @@ Being able to isolate the building blocks of a hierarchical model simulator help
     \hline  
     \rowcolor{gray!10}$\text{LN}_{\Lambda}(-3.25,0.2)$ & Log-normal & $f_{\Lambda | M_\Lambda,\Sigma_\Lambda}(\cdot |M_\Lambda\mathord{=}{-3.25},\Sigma_\Lambda\mathord{=}0.2)$ & $f_{\Lambda | M_\Lambda,\Sigma_\Lambda}(\lambda |M_\Lambda\mathord{=}{-3.25},\Sigma_\Lambda\mathord{=}0.2)$\\
     $\text{LN}_{R}(-3.25,0.2)$ & Log-normal & $f_{R | M_R,\Sigma_R}(\cdot |M_R\mathord{=}{-2.5},\Sigma_R\mathord{=}0.5)$ & $f_{R | M_R,\Sigma_R}(\lambda |M_R\mathord{=}{-2.5},\Sigma_R\mathord{=}0.5)$\\
-    \rowcolor{gray!10}Yule & Pure-birth & $f_{\Theta |\mathcal{O},\Lambda}(\cdot |\mathcal{O}\mathord{=}o,\Lambda\mathord{=}\lambda)$ & $f_{\Theta |\Lambda}(\lambda|\mathcal{O}\mathord{=}o,\Lambda\mathord{=}\lambda)$\\
+    \rowcolor{gray!10}Yule & Pure-birth & $f_{\Theta |\mathcal{O},\Lambda}(\cdot |T\mathord{=}\tau,\Lambda\mathord{=}\lambda)$ & $f_{\Theta |\Lambda}(\lambda|T\mathord{=}\tau,\Lambda\mathord{=}\lambda)$\\
     PhyloBM & Phylogenetic Brownian motion & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\cdot |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$ & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\boldsymbol{y} |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$
   \end{tabular}
   \end{table}
@@ -327,10 +326,10 @@ More rigorously, one can follow the method described in the main text and verify
   \label{eq:yule}
 \end{equation}
 
-\noindent One can then verify if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
-Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|\mathcal{O}=o,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
+\noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
+Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
 In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{fel73}).
-Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also automatically validate $\text{S}[\mathcal{M}]$.
+Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally validate $\text{S}[\mathcal{M}]$ at the same time.
 
 \begin{figure}
   \centering
@@ -406,10 +405,10 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
 
 The more complex the natural phenomenon under study, the more difficult it will be to strike a good balance between model practicality and realism~\citep{levins1966}.
 The popular aphorism rings true: ``all models are wrong but some are useful''~\citep{box79}.
-Very simple models are easier to implement in efficient inference tools, but will commonly make assumptions that are likely to be broken by the data (e.g., \citealp{sullivan97,mendes17,mendes19}). 
-Conversely, complex models will fit the data better (e.g., \citealp{ogilvie22}), but may become unwieldy with increasing levels of realism.
+Very simple models are easier to implement in efficient inference tools, but will commonly make assumptions that are likely to be broken by the data. 
+Conversely, complex models will fit the data better, but may become unwieldy with increasing levels of realism.
 
-A large number of parameters can cause overfitting and weak identifiability, and inference for highly complex models might be prohibitively slow (see e.g., \citealp{lartillot11}).
+A large number of parameters can cause overfitting and weak identifiability, and inference under highly complex models might be prohibitively slow \citep{shapiro2000}.
 % % In order to achieve correct inferences, it is of utmost importance to guarantee that inferential machinery returns quantifiably correct answers.
 % % In practice, however, this is impossible to achieve due to the models under consideration being almost always badly misspecified for the data at hand.
 Deciding on the utility of a model for real-world problems is a daunting task \citep{brown18,shepherd18}, and is a challenge we do not address in the present contribution.
@@ -1143,22 +1142,22 @@ If not, then model characterization efforts will likely serve their purpose bett
 \section*{Concluding remarks}
 
 In order to keep up with the large amounts of data of different kinds accumulating in public databases, researchers in the life sciences must constantly update their computational tool boxes.
-New models are implemented in computational methods every day, but if they are not properly validated, downstream conclusions from using those methods will be void of any significance.
+New models are implemented in computational methods every day, but if they are not properly validated, downstream conclusions from using those methods may be void of any significance.
+
 In the present study, we described and executed two distinct validation protocols that verify a Bayesian model has been correctly implemented.
 Although we looked at examples from evolutionary biology, specifically statistical phylogenetics, these two simulation-based protocols work for any and all Bayesian models.
 
 We further elaborate on the difference between experiments in model validation versus model characterization.
-The former are strictly concerned with theoretical expectations (e.g., about coverage) a model must meet if correctly implemented.
-The latter, in contrast, include procedures more widely examining how model behavior responds to data set and model attributes; here, researchers often make predictions that are not theoretically guaranteed.
-Newly implemented models can only profit from undergoing validation as we described here, but the need for model characterization efforts is contextual.
-Experiments probing model behavior beyond correctness are best designed and justified when empirically motivated.
+Newly implemented models can only profit from validation experiments, which are strictly concerned with theoretical expectations (e.g., about coverage) a model must meet if correctly implemented.
+Model characterization, on the other hand, is about inspecting model behavior as a variety of data set and model attributes interact; here, exact quantitative predictions may not be theoretically guaranteed.
+Such experiments are best designed and justified when empirically motivated.
 
 We hope the guidelines described here can enhance both the release rate and standards of statistical software for biology, by assisting its users, developers and referees in quickly finding common ground when evaluating new modeling work.
 
 
 \subsection*{Funding}
 F.K.M. was supported by Marsden grant 16-UOA-277 and by the National Science Foundation (DEB-2040347).
-R.B. was supported by Marsden grant \textcolor{orange}{[Fill out]}.
+% R.B. was supported by Marsden grant \textcolor{orange}{[Fill out]}.
 L.M.C was partially supported by the Coordenação de Aperfeiçoamento de
 Pessoal de Nível Superior - Brasil (CAPES) - Finance Code 001, and by the School of Applied Mathematics,  Getulio Vargas Foundation.
 A.J.D. was supported by Marsden grant 16-UOA-277.
