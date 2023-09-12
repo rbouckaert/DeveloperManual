@@ -6,7 +6,7 @@ Below we document how to obtain the data and figures for validating simulators (
 
 Required script:
 
-    * [`yule_exp_height.R`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/other/yule_exp_height.R)
+* [`yule_exp_height.R`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/other/yule_exp_height.R)
 
 Executing the above script is done with (from `r_scripts/other/`):
 
@@ -20,7 +20,7 @@ This script will generate figure 3 from the main manuscript.
 
 Required script:
 
-    * [`phylobm_exp_vcv.R`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/other/phylobm_exp_vcv.R)
+* [`phylobm_exp_vcv.R`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/other/phylobm_exp_vcv.R)
 	
 As done above, this script is run by:
 
@@ -30,8 +30,9 @@ Rscript phylobm_exp_vcv.R
 
 This script will generate:
 
-    (i) the panel to the right of figure 2 ([`phylobm_exp_vcv_rightpanel.pdf`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/phylobm_exp_vcv_rightpanel.pdf))
-	(ii) the `.tex` document to make supplementary figure 1 ([`phylobm_exp_vcv_cis.tex`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/phylobm_exp_vcv_cis.tex))
+(i) the panel to the right of figure 2 ([`phylobm_exp_vcv_rightpanel.pdf`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/phylobm_exp_vcv_rightpanel.pdf))
+
+(ii) the `.tex` document to make supplementary figure 1 ([`phylobm_exp_vcv_cis.tex`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/phylobm_exp_vcv_cis.tex))
 	
 Output (i) is assembled into figure 2 using Illustrator ([`phylobm_exp_vcv.pdf`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/phylobm_exp_vcv.pdf)), which we converted into a `.png` ([`phylobm_exp_vcv.png`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/phylobm_exp_vcv.png)).
 
