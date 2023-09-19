@@ -132,7 +132,7 @@ One extreme case is the discipline of evolutionary biology, on which we focus ou
 While it could be said that many decade-old questions and hypotheses in evolutionary biology have aged well and stood up the test of time (e.g., the Red Queen hypothesis, \citealt{vanvalen73,lively87,morran11,gibson15}; the Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
 In particular, evolutionary biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
 
-Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,fel73,hky,hudson90}.
+Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,felsenstein73,hky,hudson90}.
 Within the latter category, probabilistic models have seen a sharp surge in popularity within evolutionary biology, in conjunction with computational tools implementing them.
 
 Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness~\citep{darriba18}.
@@ -257,7 +257,7 @@ Under a Yule process with a species birth rate of $\lambda$, the expected tree h
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
   title=Box 1: Models characterized by well-known parametric distributions, fonttitle=\bfseries]
   \small 
-  One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. ~\ref{fig:pgm}; \citealt{fel73} ).
+  One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. ~\ref{fig:pgm}; \citealt{felsenstein73} ).
 The pdf characterizing this model's sampling distribution is in fact the pdf of the multivariate normal (MVN) probability distribution:
 \begin{equation}
   \begin{split}
@@ -328,7 +328,7 @@ More rigorously, one can follow the method described in the main text and verify
 
 \noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
 Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
-In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{fel73}).
+In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{felsenstein73}).
 Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally validate $\text{S}[\mathcal{M}]$ at the same time.
 
 \begin{figure}
@@ -447,7 +447,7 @@ probabilistic data-generating process (see previous section).
 
 \noindent{\emph{Coverage validation}}
 
-Our discussion on how to ensure a Bayesian model is well-calibrated and thus correct will mostly follow the ideas in \citet{Cook06} and \citet{Talts2018}.
+Our discussion on how to ensure a Bayesian model is well-calibrated and thus correct will mostly follow the ideas in \citet{cook06} and \citet{Talts2018}.
 The basic idea is presented in the flowchart in figure \ref{fig:flowchart} (acquamarine dotted box and what is above it), and consists of three stages: simulation, inference, and coverage calculation.
 Once we have a validated simulator for model $\mathcal{M}$, we start by sampling $n$ parameter sets $\boldsymbol{\theta} = \{\theta_i : 1 \leq i \leq n\}$ from its prior,
 $f_\Theta(\cdot)$, i.e.:
@@ -1103,22 +1103,37 @@ While here we focus on so-called continuous parameters like $R$ and $\Lambda$, i
 % % happening -- is not a trivial task, and careful diagnostics are
 % % necessary on the part of method developers.
 
-\subsection*{Branching processes}
+\subsection*{Tree models}
 
-Branching processes are stochastic processes that can organically capture the most fundamental tenet in evolutionary biology, namely common descent, at multiple time scales.
-Over the last 15 years or so, the simplest examples of this class of processes have been generalized to allow for lineage-affecting events that vary over time, and that are state-dependent -- with state here meaning the attributes of a lineage's genotypic, phenotypic, ecological or geographic character(s).
-Perhaps unsurprisingly, in this window of time branching processes (a.k.a. tree models) became key ingredients in the statistical treatment of evolutionary phenomena such as species diversification and infectious disease spread.
+Tree models are stochastic processes that can organically capture the most fundamental tenet in evolutionary biology, namely common descent, at multiple time scales.
+Over the last few decades, pivotal theoretical work has not only characterized many properties of the more elementary tree models (for examples and an overview, see \citealp{nee06,wakeley09,stadler13b,harmon18}), but also generalized them to be more realistic.
+Popular among empiricists, for example, are tree models that allow for lineage-affecting event rates that vary over time and across taxa, and that are state-dependent (``state'' here meaning the attributes of a lineage's genotypic, phenotypic, ecological or geographic character(s)).
+Such models lend themselves to the study evolutionary phenomena such as species diversification and infectious disease spread.
 
-Although convenient evolutionary abstractions, tree models can be difficult to formalize because of their parameter space, which includes both a combinatorily complicated discrete component (the tree topology) and a continuous components (the branch lengths) \citep{semple03}.
-The analysis of tree space is an active area of research in mathematical biology \citep{gavryushkin16} that sits outside the scope of this article.
-We will nonetheless devote this section to synthesizing and commenting on different procedures used in the past to validate tree models specifically.
+Although convenient evolutionary abstractions, tree models can nonetheless be challenging to formalize depending on their level of realism.
+The parameter space of a tree model is difficult to handle: it includes both a combinatorily complicated discrete component (the tree topology) and a continuous component (the branch lengths) \citep{semple03}.
+The theoretical properties, summarization, and exploration of tree space are all active topics of research in mathematical and computational biology \citep{gavryushkina13,gavryushkin16,brown20}.
 
-FKM's ideas:
+Given the interest in tree models shown by empirical, computational and theoretical biologists, in this section we will cover how tree models have been commonly validated in the past, with an emphasis on tree space.
+Our treatment is not meant to be an exhaustive review, but a short synthesis, and in keeping with the subject of the present work, we will not discuss protocols for the development and validation of Bayesian proposals in tree space.
+This topical subject is multifaceted (e.g., \citealp{douglas21,bouckaert22,douglas22}) and deserves a dedicated contribution we leave for the future.
+
+Of the many tree models implemented in computational tools, only a select few have had analytical solutions derived for their mathematical properties.
+Among the most theoretically understood models are the birth-death process ([add citations]; of which the Yule model, above, is a subcase) and the Kingman's coalescent (of which the popular multispecies coalescent, MSC, is a generalization; [add citations]).
+Typical theoretical properties known for these models include, for
+example, ...
+% Note that unlike the presentation of the above sections, here we will differentiate between tree model simulator and inferential machinery when necessary as we go.
+
+
+
+% FKM's ideas:
 
 \begin{itemize}
-\item PG1/2: Simplest models (Yule, birth-death): theoretical expectations; TODO: plot root age and number of tips sampling from the prior (put in supplement);
-\item PG1/2: Looking at coverage of tree-space parameters, e.g., root height (continuous space) and number of sampled ancestors (discrete space) (see Fig. 3 in \citealp{gavryushkina14});
-\item PG1/2: Looking at theoretical expectations for gene tree composition \citep{rosenberg02} and coverage of tree models like the MSC \citep{ogilvie22}; not a branching process, but one in which tree structures play a role;
+\item PG1/2: Simplest models (Yule, birth-death, coalescent): theoretical expectations; TODO: plot root age sampling from the prior (put in supplement);
+\item PG1/2: Looking at theoretical expectations for serially sampled genealogies under Kingman coalescent, and gene tree composition \citep{rosenberg02}.
+This has been done for simulator \citep{mendes18}, and packages exist for exact calculations \citep{kim19};
+\item PG1/2: Looking at coverage of tree-space parameters, e.g., root height (continuous space) and number of sampled ancestors (discrete space) (see Fig. 3 in \citealp{gavryushkina14}).
+Also coverage of tree models like the MSC \citep{ogilvie22}.
 \item PG3: Balance statistics building on Albert Soewongsono's work; TODO: plot ``set'' $\beta$ statistic (y-axis, violin plots) for Yule model with different tree sizes; plot theoretical ``set'' $\beta$ statistic on the x-axis and $\beta$-MLE estimate on y-axis for 100 sets of 100 BiSSE trees (fixed parameters) -- plot 1:1 line and get $\sim$ 95\% CI bars overlapping that line;
 \item PG4: More complicated models are troublesome.
   Exact likelihood values are computed for sub-cases of a new general model that have theoretical expectations (BDSS) or against an independent implementation \citep{andreoletti22}.
@@ -1149,7 +1164,53 @@ assessing model correctness, based on the coverage and rank
 distribution of parameters values; both can be computed for any and all Bayesian models.
 For the reasons above, carrying out an analysis of coverage and/or of the distribution of parameter-value ranks (with respect to their posterior samples) should on one hand be a requirement, and on another should suffice for introducing a new Bayesian model implementation.
 
-In contrast, there is an infinite number of ways in which a new or published model can have its behavior inspected.
+\vspace{.25cm}
+
+\noindent \emph{My model implementation failed correctness tests, what now?}
+
+Method developers should expect their software to often fail validation, especially at earlier development stages.
+New model implementations visit the loops in Fig. \ref{fig:flowchart} many times -- it is then that the most glaring, and later the more insidious, backend coding mistakes and model misspecification errors are uncovered and fixed.
+Our words are meant as encouragement to method developers: in our experience, the validation procedure is almost always arduous and repetitive, but very effective in revealing issues and later in giving modelers peace of mind when releasing their software.
+
+As we showed above, however, a model inference machinery can still fail a validation test despite being correctly implemented in code.
+This can happen when there is model misspecification as a result of users filtering out simulations that do not resemble the types of data and processes observed in the real world.
+If upon such failure researchers are confident that all coding mistakes have been ironed out, a delicate stage of method develop begins, when further analysis can take place, decisions must be made, and different resolutions are possible.
+
+When the observed coverage is distant from its expectation or if RUV reveals over- or underestimated parameters, for example, a researcher may want to hypothesize about why validation is failing, and test those hypotheses with further analysis of simulated data.
+If validation success is contingent upon simulation conditions that are empirically unrealistic or computationally intractable (e.g., trees with zero or an immense number of extant tips must be included), regularities emerging from further simulation experiments can in the very least illuminate what the causative agent is (see section 3 in the supplement for an example).
+Developers may want to determine if not only their own, but also if existing independent implementations seem to approach correctness as model specification between inference and inference is improved.
+Results replicated across independent methods could suggest an issue with the model as opposed to with the code underlying the implementation being validated.
+
+The type of experimentation described above should be further useful for elucidating model behavior (see below) and uncovering potential biases caused by model misspecification.
+We expect that the different extents to which an RUV procedure, in particular, can be made to fail (and how) will help method developers better characterize and report biases in parameter estimates [cite Sean's pre-print/paper?].
+Failing to obtain appropriate coverage should also be informative, but to a lesser degree.
+First, because coverage validation is a less sensitive validation procedure, and second, because a coverage number does not point to the direction of bias.
+Here, post-processing and plotting MCMC results (e.g., Fig. \ref{fig:yulecalval}) can at least suggest parameter over- and underestimation biases.
+
+Should passing validation procedures appear hopeless, and if the outcome of additional experiments is not enlightening, the method developer may understandably resort to downplaying the importance of the validation effort.
+If ``all models are wrong'' when analyzing real data, and if the necessary conditions for successful validation are unrealistic, then maybe validating a model is not all that important.
+This is an argument that will likely speak to the pragmatic individual.
+But while a tempting thought, we urge researchers to consider how this perspective runs roughshod over one of the most fundamental procedure in empirical analyses: statistical hypothesis testing.
+The objections above may be valid, but it stands to reason that the less evidence there is for one or more models being incorrectly implemented, the more skeptical one should be when drawing conclusions from empirical model comparison.
+[Ultimately, one should still strive for confirming a model is correctly implemented.]
+
+% -- It always fails, and it is not even possible to come close to
+% passing: there is a pathological problem either with the
+% implementation, or the model is being misspecified too dramatically
+% to match empirical scenarios.
+% In the latter case, may be the model itself
+% should be redesigned and is not a good representation of reality.
+% -- All models are wrong anyway, so it's all good. We urge those who
+% think like that to contemplate why carry out model selection or do any
+% type of statistical test in the first place. The will and rigour of
+% validating a model should match the enthusiasm for model comparisons
+% and hypothesis testing.
+
+\vspace{.25cm}
+
+\noindent \emph{Model characterization}
+
+In addition to the model validation we detailed above, there is an infinite number of ways in which a new or published model can have its behavior inspected.
 Researchers may want to know, given a model, how sensitive parameter estimates are to data set size, prior choice, model complexity, violation of model assumptions, to name a few.
 Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang23,luo23}), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang23}).
 We collectively refer to these examinations as ``model characterization'': any analysis of model behavior beyond assessing its correctness.
