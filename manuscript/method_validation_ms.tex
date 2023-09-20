@@ -1166,33 +1166,44 @@ For the reasons above, carrying out an analysis of coverage and/or of the distri
 
 \vspace{.25cm}
 
-\noindent \emph{My model implementation failed correctness tests, what now?}
+\noindent \emph{\textcolor{blue}{My model implementation failed correctness tests, what now?}}
 
-Method developers should expect their software to often fail validation, especially at earlier development stages.
+\textcolor{blue}{Method developers should expect their software to often fail validation, especially at early development stages.
 New model implementations visit the loops in Fig. \ref{fig:flowchart} many times -- it is then that the most glaring, and later the more insidious, backend coding mistakes and model misspecification errors are uncovered and fixed.
-Our words are meant as encouragement to method developers: in our experience, the validation procedure is almost always arduous and repetitive, but very effective in revealing issues and later in giving modelers peace of mind when releasing their software.
+Our words are meant as encouragement: in our experience, the validation procedure is almost always arduous and repetitive, but very effective in revealing issues and later in giving modelers peace of mind when releasing their software.}
 
-As we showed above, however, a model inference machinery can still fail a validation test despite being correctly implemented in code.
-This can happen when there is model misspecification as a result of users filtering out simulations that do not resemble the types of data and processes observed in the real world.
-If upon such failure researchers are confident that all coding mistakes have been ironed out, a delicate stage of method develop begins, when further analysis can take place, decisions must be made, and different resolutions are possible.
+\textcolor{blue}{As we showed above, however, a model inference machinery can still fail a validation test despite being correctly implemented in code.
+This can happen when there is model misspecification as a result of users filtering out simulations that do not generate the types of data sets observed in the real world.
+If upon such failure researchers are confident that all coding mistakes have been ironed out, a delicate stage of method develop begins, when further analysis can take place, decisions must be made, and different resolutions are possible.}
 
-When the observed coverage is distant from its expectation or if RUV reveals over- or underestimated parameters, for example, a researcher may want to hypothesize about why validation is failing, and test those hypotheses with further analysis of simulated data.
-If validation success is contingent upon simulation conditions that are empirically unrealistic or computationally intractable (e.g., trees with zero or an immense number of extant tips must be included), regularities emerging from further simulation experiments can in the very least illuminate what the causative agent is (see section 3 in the supplement for an example).
-Developers may want to determine if not only their own, but also if existing independent implementations seem to approach correctness as model specification between inference and inference is improved.
-Results replicated across independent methods could suggest an issue with the model as opposed to with the code underlying the implementation being validated.
+\textcolor{blue}{When the observed coverage is distant from its expectation or if RUV reveals over- or underestimated parameters, for example, a researcher may want to hypothesize about why validation is failing, and test those hypotheses with further analysis of simulated data.
+If validation success is contingent upon simulation conditions that are empirically unrealistic or computationally intractable (e.g., trees with zero or an immense number of extant tips must be included), regularities emerging from further simulation experiments might illuminate the nature of the model misspecification.
+For example, method developers may want to progressively tweak an aspect of simulation, and then check if their implementation seems to approach correctness (e.g., section 3 in the supplement).}
 
-The type of experimentation described above should be further useful for elucidating model behavior (see below) and uncovering potential biases caused by model misspecification.
-We expect that the different extents to which an RUV procedure, in particular, can be made to fail (and how) will help method developers better characterize and report biases in parameter estimates [cite Sean's pre-print/paper?].
+\textcolor{blue}{The type of experimentation described above should be further useful to those interested in characterizing model behavior (see below), even after it is published.
+We expect that the different extents to which an RUV procedure, in particular, can be made to fail (and how) will help method developers identify biases in parameter estimates [cite Sean's pre-print/paper?].
 Failing to obtain appropriate coverage should also be informative, but to a lesser degree.
 First, because coverage validation is a less sensitive validation procedure, and second, because a coverage number does not point to the direction of bias.
-Here, post-processing and plotting MCMC results (e.g., Fig. \ref{fig:yulecalval}) can at least suggest parameter over- and underestimation biases.
+Here, graphical summaries of post-processed MCMC results (e.g., Fig. \ref{fig:yulecalval}) can help uncover parameter estimate biases.}
 
-Should passing validation procedures appear hopeless, and if the outcome of additional experiments is not enlightening, the method developer may understandably resort to downplaying the importance of the validation effort.
-If ``all models are wrong'' when analyzing real data, and if the necessary conditions for successful validation are unrealistic, then maybe validating a model is not all that important.
-This is an argument that will likely speak to the pragmatic individual.
-But while a tempting thought, we urge researchers to consider how this perspective runs roughshod over one of the most fundamental procedure in empirical analyses: statistical hypothesis testing.
-The objections above may be valid, but it stands to reason that the less evidence there is for one or more models being incorrectly implemented, the more skeptical one should be when drawing conclusions from empirical model comparison.
-[Ultimately, one should still strive for confirming a model is correctly implemented.]
+\textcolor{blue}{Lessons about models can thus be learned by attempting to validate a model implementation even if ultimately it cannot be shown to be correct.
+At this point, method developers will have to choose whether to move forward and release their tool, or to have it undergo further testing until evidence for correctness is produced.
+In the former case, researchers should in the very least be expected to report all attempts made to validate an implementation, why they seemed to fail, and what biases were uncovered, if any.
+Ideally, authors should also provide guidelines for interpreting results obtained with the proposed tool.}
+
+\textcolor{blue}{Should passing validation procedures appear hopeless, the method developer may understandably find themselves downplaying the importance of the validation effort.
+If ``all models are wrong'' and if the necessary conditions for successful validation are unrealistic or hard to meet, then maybe validating a model is not all that important.
+The pragmatic individual with a real data set to analyze will likely find comfort in this line of reasoning.
+But while a tempting thought, we urge researchers to consider how this perspective runs roughshod over statistical hypothesis testing, a ubiquitous analysis in empirical studies.
+Although understanding inference biases may alleviate it, once an implementation cannot be shown to be correct, it becomes a non-trivial exercise, for example, to determine if a parameter estimate is different from another value.
+The task of model comparison, in turn, is even more hampered -- here, more than one (potentially incorrect) implementation must be compared, and biases in model evidence estimation will be particularly hard to characterize.
+Successful model validation is evidently something to strive for and in the absence of which interpreting the results will be challenging at best, and impossible in many cases.}
+
+\textcolor{blue}{When confronted with utter validation failure, method developers may have to ask the hard question of whether their models are reasonable in the first place.
+If simulations must be conducted within a substantially constrained parameter space so as to yield realistic data -- or data whose probabilities can be calculated -- this may be a sign that the model needs to be modified. 
+Independent implementations that also do not pass validation tests provide further evidence that the issue may be the model itself.
+Historically, model design has often gone in the direction of incrementally conditioning the statistical process so as to match empirical observations (e.g., [add citations here]), but re-imagining the model entirely might be the best solution [ideas for citations?].}
+
 
 % -- It always fails, and it is not even possible to come close to
 % passing: there is a pathological problem either with the
