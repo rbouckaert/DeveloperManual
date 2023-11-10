@@ -16,7 +16,7 @@ cd r_scripts/coverage_validation/
 Rscript integrative_model_sims_yule_bm.R yule_bm -3.25,.2,-2.5,.5 -2.0,.2,-2.5,.5 match 3 300
 ```
 
-This script will create the following files inside `validation_files_match_3_to_300_tips`:
+This script will create the following files inside `validation_files_match_3_to_300_tips/`:
 
 * [`true_param_values.RData`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/validation_files_mismatch_3_to_300_tips/true_param_values.RData)
 * [`true_param_values.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/validation_files_mismatch_3_to_300_tips/true_param_values.csv)
@@ -129,6 +129,12 @@ cut -f 10,19,28 validation_files_match_3_to_300_tips/match_3_to_300_tips_yule_bm
 cut -f 10,19,28 validation_files_mismatch_3_to_300_tips/mismatch_3_to_300_tips_yule_bm.tsv
 cut -f 10,19,28 validation_files_match_100_to_200_tips/match_100_to_200_tips_yule_bm.tsv
 ```
+
+which are written into:
+
+* [`match_3_to_300_tips_yule_bm.tsv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/validation_files_match_3_to_300_tips/match_3_to_300_tips_yule_bm.tsv);
+* [`mismatch_3_to_300_tips_yule_bm.tsv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/validation_files_mismatch_3_to_300_tips/mismatch_3_to_300_tips_yule_bm.tsv);
+* [`match_100_to_200_tips_yule_bm.tsv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/validation_files_match_100_to_200_tips/match_100_to_200_tips_yule_bm.tsv);
 
 ## Calculating coverage
 
