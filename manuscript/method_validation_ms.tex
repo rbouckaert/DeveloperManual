@@ -1124,7 +1124,23 @@ Typical theoretical properties known for these models include, for
 example, ...
 % Note that unlike the presentation of the above sections, here we will differentiate between tree model simulator and inferential machinery when necessary as we go.
 
-
+\begin{figure}
+  \centering
+  \includegraphics[width=0.95\linewidth]{../figures/treeHeight_manual.pdf}
+  \caption{
+    Coverage validation and rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}, for each scenario described in the main text (also see Figs. \ref{fig:yulecalval} and \ref{fig:ruv_yule}), with respect to the height of $\phi$ (i.e., the phylogeny's root age).
+    Panels in the top row show the true (i.e., simulated) root age values plotted against their mean posteriors (the dashed line shows $x = y$).
+    Dots and lines (100 per panel) represent true values and their 95\%-HPDs, respectively.
+    Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
+    Panels in the middle row show the RUV histograms of $n=100$ ranks in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
+    Panels in the bottom row show the corresponding RUV ECDF plots in each scenario.
+  }
+  % Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$, for each of the scenarios described in the main text.
+  % \textcolor{red}{\st{In A we show the rank histograms from 100 replicates}}\textcolor{blue}{(a) Top row: histogram of 100 ranks (given $n=100$ replicates)}, for each scenario, obtained after 10\% burnin and thinning \textcolor{blue}{of posterior samples,} down to\textcolor{red}{\st{ get }} 200 \textcolor{red}{\st{draws from the posterior}} \textcolor{blue}{out of \textcolor{orange}{[Fill out]}}.
+  % \textcolor{red}{\st{Panel}} (b) \textcolor{blue}{Bottom row: }\textcolor{red}{\st{shows the corresponding }}ECDF plot, \textcolor{blue}{for each scenario.}\textcolor{red}{\st{which help magnify the problems when they are present (Scenarios 2 and 3).}}
+  % \textcolor{red}{\st{For}}\textcolor{blue}{In} Scenario 1, no anomalies are detected\textcolor{red}{\st{, while for}}\textcolor{blue}{. In s}\textcolor{red}{\st{S}}scenarios 2 and 3, over- and underestimation are present, respectively.
+  \label{fig:treeheight}
+\end{figure}
 
 % FKM's ideas:
 
