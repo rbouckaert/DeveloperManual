@@ -86,9 +86,9 @@ scp validation_files_match_100_to_200_tips.tar.gz [user_name]@[some_cluster]:[so
 
 This step should place `.log` and `.trees` files into:
 
-* `validation_files_match_3_to_300_tips/yule_bm_res`
-* `validation_files_match_3_to_300_tips/yule_bm_res`
-* `validation_files_match_3_to_300_tips/yule_bm_res`
+* `validation_files_match_3_to_300_tips/yule_bm_res/`
+* `validation_files_match_3_to_300_tips/yule_bm_res/`
+* `validation_files_match_3_to_300_tips/yule_bm_res/`
 
 From the server's `r_scripts/coverage_validation/` directory:
 
@@ -174,4 +174,4 @@ This script will go through the three tibbles produced in the previous step (and
 * [`root_age_coverage.tex`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/root_age_coverage.tex);
 
 These two files can be compiled into .pdf figures.
-But before we do that, manually open  [`graphical_model_coverage.tex`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/graphical_model_coverage.tex) and replace "lambda" with "$\lambda", and "True value (r)" with "True value ($r$)".
+But before we do that, manually open  `graphical_model_coverage.tex` and replace "lambda" with "$\lambda", and "True value (r)" with "True value ($r$)".
