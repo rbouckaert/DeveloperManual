@@ -14,7 +14,13 @@ Executing the above script is done with (from `r_scripts/other/`):
 Rscript yule_exp_height.R
 ```
 
-This script will generate figure 3 from the main manuscript.
+This script will generate the `.tex` tikz file to produce the right-hand side panel of figure 3 from the main manuscript (it is made into a two-panel figure, with a table to its left, within the manuscript `.tex` itself):
+
+* [`yule_exp_height.tex`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/yule_exp_height.tex)
+
+This panel can be compiled on its own:
+
+* [`yule_exp_height.pdf`](https://github.com/rbouckaert/DeveloperManual/blob/master/figures/yule_exp_height.pdf)
 
 ## Validating a phylogenetic Brownian motion simulator
 
