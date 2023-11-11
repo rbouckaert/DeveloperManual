@@ -40,7 +40,7 @@ Rscript integrative_model_sims.R yule_bm -3.25,.2,-2.5,.5 -2.0,.2,-2.5,.5 mismat
 This script will create the following files inside `validation_files_mismatch_3_to_300_tips`:
 
 * [`true_param_values.RData`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/validation_files_mismatch_3_to_300_tips/true_param_values.RData)
-* [`true_param_values.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/validation_files_mismatch_3_to_300_tips/true_param_values.csv)
+* [`true_param_values.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/cobverage_validation/validation_files_mismatch_3_to_300_tips/true_param_values.csv)
 
 Then it will create directory `yule_bm_res/` for MCMC results, and place .xml files into `yule_bm_xmls/`.
 
@@ -149,7 +149,7 @@ Rscript coverage_analysis.R validation_files_mismatch_3_to_300_tips/ mismatch_3_
 Rscript coverage_analysis.R validation_files_match_100_to_200_tips/ match_100_to_200_tips_yule_bm.tsv yule_bm 130
 ```
 
-The .R script will place the following files inside `coverage_validation/`
+The .R script will place the following files inside `coverage_validation/`:
 
 ```
 covg_match_3_to_300_tips_yule_bm.RData
@@ -175,3 +175,21 @@ This script will go through the three tibbles produced in the previous step (and
 
 These two files can be compiled into .pdf figures.
 But before we do that, manually open  `graphical_model_coverage.tex` and replace "lambda" with "$\lambda", and "True value (r)" with "True value ($r$)".
+
+## Calculating coverage of Robinson-Foulds statistic
+
+The inference stats on the RF statistic is in file [`SBC_coal_RF_coverage.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_RF_coverage.csv).
+How this file was generated is described [here](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/README.md).
+
+We will run the following script to get the inference stats in the shape we want, and plot the coverage graphs:
+
+```
+cd r_scripts/coverage_validation/
+Rscript coverage_analysis_plot_tree_stat.R
+```
+
+This script will generate the following .tex files:
+
+* [`RF_coverage.tex``](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/RF_coverage.tex);
+
+This file can be compiled into a .pdf figure.
