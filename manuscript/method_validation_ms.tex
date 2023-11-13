@@ -1066,7 +1066,7 @@ Although convenient evolutionary abstractions, tree models can nonetheless be ch
 The parameter space of a tree model is difficult to handle: it includes both a combinatorily complicated discrete component (the tree topology) and a continuous component (the branch lengths) \citep{semple03}.
 The theoretical properties, summarization, and exploration of tree space are all active topics of research in mathematical and computational biology \citep{gavryushkina13,gavryushkin16,brown20}.
 
-Given the interest in tree models shown by empirical, computational and theoretical biologists, in this section we will cover how tree models have been commonly validated in the past, with an emphasis on tree space.
+Given the interest in tree models shown by empirical, computational and theoretical biologists, in this section we will cover how tree models have been and can be validated, with an emphasis on tree space.
 Our treatment is not meant to be an exhaustive review, but a short synthesis, and in keeping with the subject of the present work, we will not discuss protocols for the development and validation of Bayesian proposals in tree space.
 This topical subject is multifaceted (e.g., \citealp{douglas21,bouckaert22,douglas22}) and deserves a dedicated contribution we leave for the future.
 
@@ -1119,18 +1119,18 @@ Also coverage of tree models like the MSC \citep{ogilvie22}.
   \vspace{.25cm}
 
   To get around this difficulty, we propose computing one or more phylogenetic metrics, or functionals, for which total-ordering holds and for which ranks can thus be obtained.
-  One such metric is the well-known Robinson-Foulds distance (RF; \citealp{Robinson1981}), which counts the number of clades implied by one tree but not the other tree.
+  One such metric is the well-known Robinson-Foulds distance between two trees (RF; \citealp{Robinson1981}), which counts the number of clades implied by one tree but not the other.
   In order to compute a relational metric like the RF distance during validation, we must have a reference phylogeny $\phi_0$ to which we can compare our focal generating phylogeny $\phi$ and its posterior MCMC samples.
   The RUV protocol remains the same, with an additional step in which we generate $\phi_0$ (see Algorithm \ref{alg:sbc} in the supplementary material).
-  Fig. 9 shows validation results for the RF metric for five-taxon trees simulated under a simple Kingman's coalescent model assuming a known effective population size.
+  Fig. 9 shows validation results for the RF metric for five-taxon trees simulated under a simple Kingman's coalescent model assuming a known effective population size of 1.0.
 
   \begin{center}
     \includegraphics[width=0.92\linewidth]{../figures/coverage_ruv_coal_RF.pdf}
     \label{fig:rf}
     \captionof{figure}{
-      Coverage validation and rank-uniformity validation (RUV) of a Kingman's coalescent model with respect to the Robinson-Foulds (RF) between the coalescent tree and another (random) tree.
-      The effective population size parameter is assumed known.
-      (a) The true RF distances (i.e., between the simulated coalescent trees and the same random tree; a total of 100 i.i.d. values) plotted against the corresponding mean posterior RF distances (calculated from posterior samples of the coalescent trees and the same random tree).
+      Coverage validation and rank-uniformity validation (RUV) of a Kingman's coalescent model with respect to the Robinson-Foulds (RF; see text in box) between the coalescent tree ($\Phi$) and a reference (random) tree ($\phi_0$).
+      The effective population size parameter is assumed known and fixed to 1.0 during inference.
+      (a) The true RF distances (i.e., between 100 simulated coalescent trees, $\boldsymbol{\phi} = \{\phi_i: 1 \leq i \leq 100\}$, and the same reference tree, $\phi_0$) plotted against the corresponding mean posterior RF distances (calculated from posterior samples of each $\phi_i$ and $\phi_0$).
       The dashed line shows $x = y$.
       Dots and vertical lines represent true RF-distance values and their estimated 95\%-HPDs, respectively.
       Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
@@ -1139,8 +1139,8 @@ Also coverage of tree models like the MSC \citep{ogilvie22}.
     }
   \end{center}
 
-  Fig. 9a shows the coverage of 95\%-HPD intervals of the RF metric, while Fig. 9b-c give its rank distribution and empirical CDF, respectively.
-  The coverage of the RF statistic is very close to 95, and the rank distribution is approximately uniform on (1, $L+1$); together, these panels indicate this model is correctly implemented.
+  Fig. 9a shows the coverage of 95\%-HPD intervals of the RF distance metric, while Fig. 9b-c give its rank distribution and empirical CDF, respectively.
+  The coverage of the RF metric is very close to 95 (see Table 3, with $n=100$), and the rank distribution is approximately uniform on (1, $L+1$); together, these panels indicate this model is correctly implemented.
   In the supplement, we consider other phylogenetic tree metrics that could be used as an alternative or in addition to the RF distance (Supplementary Fig. \textcolor{red}{[@Luiz: put reference to supplementary figure here]}).
 \end{tcolorbox}
 
