@@ -1109,7 +1109,7 @@ Also coverage of tree models like the MSC \citep{ogilvie22}.
 \item PG5: Models that cannot be written as generative models, like node-calibration models; discuss Heled's calibrated-Yule prior is a solution.
 \end{itemize}
 
-\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt, title=Box 1: Validating a phylogenetic model with respect to its phylogenetic tree parameter, fonttitle=\bfseries]
+\begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt, title=Box 2: Validating a phylogenetic model with respect to its phylogenetic tree parameter, fonttitle=\bfseries]
   \small 
 
   Given the centrality of the phylogenetic tree ($\Phi$) in comparative analyses, we must pay close attention to how we investigate this parameter when validating a phylogenetic model.
@@ -1119,7 +1119,7 @@ Also coverage of tree models like the MSC \citep{ogilvie22}.
   \vspace{.25cm}
 
   To get around this difficulty, we propose computing one or more phylogenetic metrics, or functionals, for which total-ordering holds and for which ranks can thus be obtained.
-  One such metric is the well-known Robinson-Foulds distance (RF; \citealp{Robinson1981}), which measures \textcolor{red}{[@Luiz: brief description of RF]} relative to another phylogenetic tree.
+  One such metric is the well-known Robinson-Foulds distance (RF; \citealp{Robinson1981}), which counts the number of clades implied by one tree but not the other tree.
   In order to compute a relational metric like the RF distance during validation, we must have a reference phylogeny $\phi_0$ to which we can compare our focal generating phylogeny $\phi$ and its posterior MCMC samples.
   The RUV protocol remains the same, with an additional step in which we generate $\phi_0$ (see Algorithm \ref{alg:sbc} in the supplementary material).
   Fig. 9 shows validation results for the RF metric for five-taxon trees simulated under a simple Kingman's coalescent model assuming a known effective population size.
