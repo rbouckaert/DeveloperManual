@@ -1,8 +1,8 @@
 library(ape)
 library(distory)
 library(tidyverse)
-source("functionals_sbcPhylo.r")
-source("sbc_configs.r")
+source("functionals_ruvPhylo.r")
+source("ruv_configs.r")
 
 burn_and_thin <- function(dt, b, k) {
   N <- nrow(dt)

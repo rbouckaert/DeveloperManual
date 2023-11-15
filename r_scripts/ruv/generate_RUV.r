@@ -96,7 +96,7 @@ get_statistics <- function(index,
 load(file = "prior_functionals.RData")
 load(file = "posterior.RData")
 
-cat("----- Generating SBC output....------", "\n")
+cat("----- Generating RUV output....------", "\n")
 
 ####
 ## Excluding stuff not tracked in the posterior
@@ -109,4 +109,4 @@ sbc.results <- do.call(rbind,
                        lapply(1:L, get_statistics))
 
 warnings()
-save(sbc.results, file = "SBC_results.RData")
+save(sbc.results, file = "RUV_results.RData")
