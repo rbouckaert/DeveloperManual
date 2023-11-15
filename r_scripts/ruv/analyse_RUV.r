@@ -8,20 +8,20 @@ is_in <- function(x, l, u) {
 library(SBC)
 library(dplyr)
 library(ggplot2)
-source("sbc_configs.r")
+source("ruv_configs.r")
 
-load(file = "SBC_results.RData")
+load(file = "RUV_results.RData")
 
 cat("----- Processing SBC output....------", "\n")
 
-sbc.results$covers <- is_in(x = sbc.results$simulated_value,
-                            l = sbc.results$q5,
-                            u = sbc.results$q95)
+ruv.results$covers <- is_in(x = ruv.results$simulated_value,
+                            l = ruv.results$q5,
+                            u = ruv.results$q95)
 
-sbc.results$hpd_covers <- is_in(
-  x = sbc.results$simulated_value,
-  l = sbc.results$hpd_lwr,
-  u = sbc.results$hpd_upr
+ruv.results$hpd_covers <- is_in(
+  x = ruv.results$simulated_value,
+  l = ruv.results$hpd_lwr,
+  u = ruv.results$hpd_upr
 )
 
 
@@ -68,23 +68,23 @@ custom_label_parsed <- function (variable, value) {
                        parse(text = x)))
 }
 
-ecdf_plot <- SBC::plot_ecdf(sbc.results) +
+ecdf_plot <- SBC::plot_ecdf(ruv.results) +
   facet_wrap( ~ factor(variable,
                        levels = par.levels),
               labeller = custom_label_parsed) +
   theme_bw(base_size = 20)
 
-hist_plot <- SBC::plot_rank_hist(sbc.results) +
+hist_plot <- SBC::plot_rank_hist(ruv.results) +
   facet_wrap( ~ factor(variable,
                        levels = par.levels),
               labeller = custom_label_parsed) +
   theme_bw(base_size = 20)
 
 
-interval_plot <- ggplot(data = sbc.results,
+interval_plot <- ggplot(data = ruv.results,
                         aes(x = simulated_value, y = mean, colour = hpd_covers)) +
   geom_pointrange(
-    data = sbc.results,
+    data = ruv.results,
     mapping = aes(
       x = simulated_value,
       y = mean,
@@ -149,11 +149,11 @@ mean_ci <- function(x, alpha = 0.95) {
 }
 
 coverage_bci <- aggregate(covers ~ variable, mean_ci,
-                          alpha = .95, data = sbc.results)
+                          alpha = .95, data = ruv.results)
 coverage_hpd <- aggregate(hpd_covers ~ variable,
                           mean_ci,
                           alpha = .95,
-                          data = sbc.results)
+                          data = ruv.results)
 
 bci_table <- tibble::as_tibble(as.matrix(coverage_bci))
 names(bci_table) <-
