@@ -294,22 +294,6 @@ These plots can be supplemented with a table showing attained coverage and binom
 A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
 
 \newpage
-\section{Supplementary Figures}
-\label{appendix::sec:supp_figures}
-
-\begin{figure}[!ht]
-   \includegraphics[width=\linewidth]{../figures/sbc_Yule_lambda_manual.pdf}
-  \caption{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. 1 in the main text.
-    Panels in the top row show the histograms of $n=100$ ranks, for parameter $\Lambda$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
-    Panels in the bottom row show the corresponding ECDF plots, for parameter $\Lambda$ in each scenario.
-    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
-    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
-   }
-  \label{supfig:ruv_yule_lambda}
-\end{figure}
-
-\newpage
 \section{Model validation with rejection sampling: a simple example}
 \label{sec:supp_toy}
 
@@ -432,6 +416,24 @@ We may re-write the limit as:
 \end{align*}
 
 \noindent where the last line follows from the fact that the CDF of $\theta_i$ is uniformly distributed on $(0, 1$) (Theorem 1 in \citealp{Cook06}) and almost sure convergence of the ECDF to the true CDF due to the  Glivenko-Cantelli theorem~\cite[page 275]{Billingsley1986}.
+
+\newpage
+\section{Supplementary Figures}
+\label{appendix::sec:supp_figures}
+
+\begin{figure}[!ht]
+   \includegraphics[width=\linewidth]{../figures/sbc_Yule_lambda_manual.pdf}
+  \caption{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. 1 in the main text.
+    Panels in the top row show the histograms of $n=100$ ranks, for parameter $\Lambda$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
+    Panels in the bottom row show the corresponding ECDF plots, for parameter $\Lambda$ in each scenario.
+    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
+    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
+    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
+   }
+  \label{supfig:ruv_yule_lambda}
+\end{figure}
+
+
 \bibliography{refs}
 
 \end{document}
