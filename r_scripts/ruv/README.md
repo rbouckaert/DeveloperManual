@@ -34,3 +34,5 @@ If you need to re-do the computations and want to start afresh, do
 ```
 ./clean.sh
 ```
+
+To produce many of the figures in the paper, please see [this](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/ruv/code_for_figures/README.md) README. 
