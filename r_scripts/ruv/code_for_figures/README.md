@@ -1,6 +1,6 @@
 ## Code to generate rank-uniformity validation (RUV) plots
 
-**Dependencies**: **ggplot2**, **tidyverse**, **SBC**, ***ggplot2**, **gridExtra**, **cowplot**.
+**Dependencies**: **ggplot2**, **tidyverse**, **SBC**, **ggplot2**, **gridExtra**, **cowplot**.
 
 Main scripts:
 
