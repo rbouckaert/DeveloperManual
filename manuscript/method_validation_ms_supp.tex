@@ -45,7 +45,7 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Mendes et al. $\bullet$ August 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
+\fancyhead[C]{Mendes et al. $\bullet$ December 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 
@@ -187,17 +187,8 @@ We summarize some of these distances in supplementary table \ref{suptab:dists}.
   \end{tabular}
 \end{table}
 
-\begin{itemize}
- \item The largest branch length in $\Phi$, $\text{LB}(\Phi)$;
- \item The length of the phylogeny, i.e.,  the sum of branch lengths $\text{LEN}(\Phi)$;
- \item The length of the external branch leading to taxon $s_1$, $\text{T}_1(\Phi)$;
- \item The Robinson-Foulds \citep{Robinson1981} distance between $\Phi$ and $\Phi_0$, \st{$\operatorname{RF}_0(\Phi)$} $\text{RF}_0(\Phi)$;
- \item The Kendall-Coljin \citep{Kendall2016} distance between $\Phi$ and $\Phi_0$, \st{$\operatorname{KC}_0(\Phi;\lambda)$} $\text{KC}_0(\Phi;\lambda)$; 
- \item The Billera-Holmes-Vogtman (BHV) \citep{Billera2001} distance between $\Phi$ and $\Phi_0$, $\text{BHV}_0(\Phi)$;
-\end{itemize}
-
 Once we have chosen a tree distance metric, we can now slightly modify
-our SBC procedure and validate a model with respect to its
+our RUV procedure and validate a model with respect to its
 phylogenetic tree:
    
 \RestyleAlgo{ruled}
@@ -211,13 +202,14 @@ phylogenetic tree:
   \SetKwFunction{Distance}{CalculateDistance}
   \SetKwFunction{MCMC}{MCMC}
   \SetKwFunction{Rank}{GetRank}
-  \caption{Algorithm for carrying out a rank-uniformity validation procedure with respect to the phylogenetic tree parameter $\Phi$.}\label{alg:sbcphylo}
+  \caption{Algorithm for carrying out a rank-uniformity validation procedure with respect to the phylogenetic tree parameter $\Phi$.}
+  \label{alg:sbcphylo}
   $n \gets 100$\; \Comment*[r]{Number of data sets to simulate}
-  $\phi_0 \gets$ \SampleTree{$\theta_\Phi$}\; \Comment*[r]{$\phi_0 \sim f(\Phi|\theta_\Phi)$}
+  $\phi_0 \gets$ \SampleTree{$\theta_\Phi$}\; \Comment*[r]{$\phi_0 \sim f_T(\Phi|\theta_\Phi)$}
   \For{$i \gets 1$ \KwTo $n$} {
     $\boldsymbol{\theta}_i \gets \text{S}[f(\theta)]$\; \Comment*[r]{$\boldsymbol{\theta_i} \sim f(\boldsymbol{\theta})$, with $\boldsymbol{\theta}_i = \{\theta_{i\Phi},\boldsymbol{\theta}_i^r\}$}
-    $\phi_i \gets$ \SampleTree{$\theta_{i\Phi}$}\; \Comment*[r]{$\phi_i \sim f(\phi|\theta_{i\Phi})$}
-    $d_i \gets$ \SampleData{$\phi_i,\boldsymbol{\theta}_i^r$}\; \Comment*[r]{$d_i \sim f(d|\phi_i,\boldsymbol{\theta}_i^r$}
+    $\phi_i \gets$ \SampleTree{$\theta_{i\Phi}$}\; \Comment*[r]{$\phi_i \sim f_{T\mid \Theta}(\phi|\theta_{i\Phi})$}
+    $d_i \gets$ \SampleData{$\phi_i,\boldsymbol{\theta}_i^r$}\; \Comment*[r]{$d_i \sim f_{D\mid \Phi}(d|\phi_i,\boldsymbol{\theta}_i^r$}
     $\boldsymbol{\theta}_i^j \gets$ \MCMC{$f(\theta|d_i)$}\; \Comment*[r]{$\boldsymbol{\theta}_i = \{\boldsymbol{\theta}_i^j: j \in [1, L]\}$, where $L$ is the number of MCMC samples}
     $\bar{\delta}_i \gets$ \Distance{$\phi_0, \phi_i$}\; \Comment*[r]{According to a distance metric of choice}
     $\boldsymbol{\delta}_i^j \gets$ \Distance{$\phi_0, \phi_i^j$}\; \Comment*[r]{$\boldsymbol{\delta}_i = \{\delta_i^j: j \in [1, L]\}$}
@@ -230,14 +222,14 @@ phylogenetic tree:
   \begin{enumerate}
     \setcounter{enumi}{-1}
 
-  \item Generate a reference tree from the prior $\bar{\Phi}_0  \sim \pi_T(\Phi | \boldsymbol \gamma)$; 
+  \item Generate a reference tree from the prior $\bar{\Phi}_0  \sim f_T(\Phi | \boldsymbol \theta_\Phi)$; 
 
     \textbf{for} each iteration in 1:N, \textbf{do}:
     
-  \item Generate $\bar{\Phi} \sim \pi_T(\Phi | \boldsymbol \gamma)$;
+  \item Generate $\bar{\Phi} \sim f_T(\Phi | \boldsymbol \gamma)$;
   \item Compute the distance $\bar{\delta} = d_\sigma(\bar{\Phi},\bar{\Phi}_0)$ according to the metric of choice;
-  \item Generate some (aligment) data $\tilde{y} \sim f(y | \bar{\Phi}, \boldsymbol\alpha)$;
-  \item Draw (approximately) $\boldsymbol \Phi_s = \{\Phi_s^{(1)}, \Phi_s^{(2)}, \ldots, \Phi_s^{(L)}\}$ from the posterior $\pi(\Phi | \tilde{y})$;
+  \item Generate some (aligment) data $\tilde{d} \sim f_{D\mid\Phi}(d | \bar{\Phi}, \boldsymbol\alpha)$;
+  \item Draw\footnote{Sometimes approximately, using MCMC or variational methods.} $\boldsymbol \Phi_s = \{\Phi_s^{(1)}, \Phi_s^{(2)}, \ldots, \Phi_s^{(L)}\}$ from the posterior $f_{\Phi\mid D}(\Phi | \tilde{d})$;
   \item Compute distances $\boldsymbol \delta_s = \{ \delta_1, \delta_2, \ldots, \delta_L \}$  with $\delta_i = d_\sigma(\Phi_s^{(i)}, \bar{\Phi}_0)$;
   \item Compute the rank $r(\boldsymbol\delta_s, \bar{\delta}) = \sum\limits_{i=1}^L \mathbb{I}(\delta_i < \bar{\delta})$.
   \end{enumerate}
@@ -264,7 +256,7 @@ phylogenetic tree:
      functional.
      (b) Rank distribution for each functional.
    }
-   \label{supfig:sbc}
+   \label{supfig:ruv}
 \end{figure}
 
 % \begin{figure}
@@ -278,7 +270,7 @@ phylogenetic tree:
 %   \label{supfig:phylo_calibration}
 % \end{figure}
 
-Supplementary figure \ref{supfig:sbc} summarizes the results for the functionals
+Supplementary figure \ref{supfig:ruv} summarizes the results for the functionals
 listed in table \ref{suptab:dists}.
 As can be seen, the ECDFs lie well inside their confidence ellipses
 and the observed ranks also lie inside their confidence bands.
@@ -290,7 +282,7 @@ tree metrics.
 % generating metrics with probability compatible with what is expected
 % theoretically.
 In this instance, the tests would fail to detect problems with the algorithm.
-These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity (see Table~\ref{tab:coverage}).
+These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity.
 A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
 
 \newpage
