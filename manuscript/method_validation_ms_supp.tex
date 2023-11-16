@@ -45,7 +45,7 @@
 \pagestyle{fancy} % All pages have headers and footers
 \fancyhead{} % Blank out the default header
 \fancyfoot{} % Blank out the default footer
-\fancyhead[C]{Mendes et al. $\bullet$ August 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
+\fancyhead[C]{Mendes et al. $\bullet$ December 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
 
@@ -147,131 +147,117 @@ These results indicate the PhyloBM simulator produces appropriate confidence int
   \end{tabular}
 \end{table}
 
-% \subsection{Validating a phylogenetic model with respect to a phylogenetic tree, $\Phi$}
+\subsection{Validating a phylogenetic model with respect to a phylogenetic tree, $\Phi$}
+\label{sec::app::ruv_topology}
 
-% Here, we expand on the discussion initiated in Box 2 in the main text.
-% We remind the reader that our goal is to validate the inference machinery
-% $\text{I}[\mathcal{M}]$ of a phylogenetic model $\mathcal{M}$, with
-% respect to one of its central parameters, phylogenetic tree $\Phi$.
-% More specifically, we would like to calculate the coverage probability of
-% $\Phi$ and to obtain its rank distribution.
-% Both tasks evaluate if $\mathcal{M}$ is well calibrated and correct.
+Here, we expand on the discussion initiated in Box 2 in the main text.
+We remind the reader that our goal is to validate the inference machinery
+$\text{I}[\mathcal{M}]$ of a phylogenetic model $\mathcal{M}$, with
+respect to one of its central parameters, phylogenetic tree $\Phi$.
+More specifically, we would like to calculate the coverage probability of
+$\Phi$ and to obtain its rank distribution.
+Both tasks evaluate if $\mathcal{M}$ is well-calibrated and correct.
 
-% Because of the nature of tree space, summarizing and comparing phylogenetic
-% trees with univariate measures is not a trivial task.
-% The key to an effective validation effort is to choose a functional
-% that reflects relevant estimators of the quantity of interest, in our case,
-% $\Phi$.
-% Fortunately, it is possible to exploit the metric nature of tree space and compute
-% quantities both from the generating phylogenetic tree $\Phi$ (i.e., the ``true''
-% tree sampled in the simulation stage of the validation process), as well as distances 
-% with respect to a reference phylogeny \st{$\tau_0$} $\Phi_0$.
-% We summarize some of these distances in supplementary table \ref{suptab:dists}.
+Because of the nature of tree space, summarizing and comparing phylogenetic
+trees with univariate measures is not a trivial task.
+The key to an effective validation effort is to choose a functional
+that reflects relevant estimators of the quantity of interest, in our case,
+$\Phi$.
+Fortunately, it is possible to exploit the metric nature of tree space and compute
+quantities both from the generating phylogenetic tree $\Phi$ (i.e., the ``true''
+tree sampled in the simulation stage of the validation process), as well as distances 
+with respect to a reference phylogeny $\Phi_0$.
+We summarize some of these distances in supplementary table \ref{suptab:dists}.
 
-% \begin{table}[h]
-%   \caption{Phylogenetic space metrics (functionals) for investigating model correctness.}
-%   \label{suptab:dists}
-%   \centering
-%   \begin{tabular}{ c|c|c }
-%     \hline
-%     Metric & Notation & Ref. \\
-%     \hline  
-%     The largest branch length in $\Phi$ & $\text{LB}(\Phi)$ & N/A\\
-%     The length of $\Phi$ (the sum of all branch lengths & $\text{LEN}(\Phi)$ & N/A\\
-%     The length of the external branch leading to taxon $s_1$ & $\text{T}_1(\Phi)$ & N/A\\
-%     The Robinson-Foulds distance between $\Phi$ and $\Phi_0$ & $\text{RF}_0(\Phi)$ & \citep{Robinson1981}\\
-%     The Kendall-Coljin distance between $\Phi$ and $\Phi_0$ & $\text{KC}_0(\Phi;\omega)$ & \citep{Kendall2016}\\
-%     The Billera-Holmes-Vogtman distance between $\Phi$ and $\Phi_0$ & $\text{BHV}_0(\Phi)$ & \citep{Billera2001}\\
-%     \hline
-%   \end{tabular}
-% \end{table}
+\begin{table}[h]
+  \caption{Phylogenetic space metrics (functionals) for investigating model correctness.}
+  \label{suptab:dists}
+  \centering
+  \begin{tabular}{ c|c|c }
+    \hline
+    Metric & Notation & Ref. \\
+    \hline  
+    The largest branch length in $\Phi$ & $\text{LB}(\Phi)$ & N/A\\
+    The length of $\Phi$ (the sum of all branch lengths & $\text{LEN}(\Phi)$ & N/A\\
+    The length of the external branch leading to taxon $s_1$ & $\text{T}_1(\Phi)$ & N/A\\
+    The Robinson-Foulds distance between $\Phi$ and $\Phi_0$ & $\text{RF}_0(\Phi)$ & \citep{Robinson1981}\\
+    The Kendall-Coljin distance between $\Phi$ and $\Phi_0$ & $\text{KC}_0(\Phi;\omega)$ & \citep{Kendall2016}\\
+    The Billera-Holmes-Vogtman distance between $\Phi$ and $\Phi_0$ & $\text{BHV}_0(\Phi)$ & \citep{Billera2001}\\
+    \hline
+  \end{tabular}
+\end{table}
 
-% \begin{itemize}
-%  \item The largest branch length in \st{$\tau$} $\Phi$, \st{$M(\tau)$} $\text{LB}(\Phi)$;
-%  \item The length of the phylogeny, i.e.,  the sum of branch lengths \st{$S(\tau)$} $\text{LEN}(\Phi)$;
-%  \item The length of the external branch leading to taxon $s_1$, \st{$T_1(\tau)$} $\text{T}_1(\Phi)$;
-%  \item The Robinson-Foulds \citep{Robinson1981} distance between \st{$\tau$} $\Phi$ and \st{$\tau_0$} $\Phi_0$, \st{$\operatorname{RF}_0(\tau)$} $\text{RF}_0(\Phi)$;
-%  \item The Kendall-Coljin \citep{Kendall2016} distance between \st{$\tau$} $\Phi$ and \st{$\tau_0$} $\Phi_0$, \st{$\operatorname{KC}_0(\tau;\lambda)$} $\text{KC}_0(\Phi;\lambda)$; 
-%  \item The Billera-Holmes-Vogtman (BHV) \citep{Billera2001} distance between \st{$\tau$} $\Phi$ and \st{$\tau_0$, $\operatorname{BHV}_0(\tau)$} $\Phi_0$, $\text{BHV}_0(\Phi)$;
-% \end{itemize}
-
-% Once we have chosen a tree distance metric, we can now slightly modify
-% our SBC procedure and validate a model with respect to its
-% phylogenetic tree:
+Once we have chosen a tree distance metric, we can now slightly modify
+our RUV procedure and validate a model with respect to its
+phylogenetic tree:
    
-% \RestyleAlgo{ruled}
-% \SetKwComment{Comment}{/* }{ */}
+\RestyleAlgo{ruled}
+\SetKwComment{Comment}{/* }{ */}
 
-% \begin{algorithm}[h]
-%   \DontPrintSemicolon
-%   \SetKwFunction{GenRefTree}{GenerateRefTree}
-%   \SetKwFunction{SampleTree}{SampleTree}
-%   \SetKwFunction{SampleData}{SampleData}
-%   \SetKwFunction{Distance}{CalculateDistance}
-%   \SetKwFunction{MCMC}{MCMC}
-%   \SetKwFunction{Rank}{GetRank}
-%   \caption{Algorithm for carrying out a rank-uniformity validation procedure with respect to the phylogenetic tree parameter $\Phi$.}\label{alg:sbcphylo}
-%   $n \gets 100$\; \Comment*[r]{Number of data sets to simulate}
-%   $\phi_0 \gets$ \SampleTree{$\theta_\Phi$}\; \Comment*[r]{$\phi_0 \sim f(\Phi|\theta_\Phi)$}
-%   \For{$i \gets 1$ \KwTo $n$} {
-%     $\boldsymbol{\theta}_i \gets \text{S}[f(\theta)]$\; \Comment*[r]{$\boldsymbol{\theta_i} \sim f(\boldsymbol{\theta})$, with $\boldsymbol{\theta}_i = \{\theta_{i\Phi},\boldsymbol{\theta}_i^r\}$}
-%     $\phi_i \gets$ \SampleTree{$\theta_{i\Phi}$}\; \Comment*[r]{$\phi_i \sim f(\phi|\theta_{i\Phi})$}
-%     $d_i \gets$ \SampleData{$\phi_i,\boldsymbol{\theta}_i^r$}\; \Comment*[r]{$d_i \sim f(d|\phi_i,\boldsymbol{\theta}_i^r$}
-%     $\boldsymbol{\theta}_i^j \gets$ \MCMC{$f(\theta|d_i)$}\; \Comment*[r]{$\boldsymbol{\theta}_i = \{\boldsymbol{\theta}_i^j: j \in [1, L]\}$, where $L$ is the number of MCMC samples}
-%     $\bar{\delta}_i \gets$ \Distance{$\phi_0, \phi_i$}\; \Comment*[r]{According to a distance metric of choice}
-%     $\boldsymbol{\delta}_i^j \gets$ \Distance{$\phi_0, \phi_i^j$}\; \Comment*[r]{$\boldsymbol{\delta}_i = \{\delta_i^j: j \in [1, L]\}$}
-%     $r_i \gets$ \Rank($\bar{\delta}_i, \boldsymbol{\delta}_i^j$)\; \Comment*[r]{$r_i = \sum\limits_{j=1}^L \mathbb{I}(\delta^j_i < \bar{\delta_i})$}
-%   }
-%   \label{alg:sbc}
-% \end{algorithm}
+\begin{algorithm}[h]
+  \DontPrintSemicolon
+  \SetKwFunction{GenRefTree}{GenerateRefTree}
+  \SetKwFunction{SampleTree}{SampleTree}
+  \SetKwFunction{SampleData}{SampleData}
+  \SetKwFunction{Distance}{CalculateDistance}
+  \SetKwFunction{MCMC}{MCMC}
+  \SetKwFunction{Rank}{GetRank}
+  \caption{Algorithm for carrying out a rank-uniformity validation procedure with respect to the phylogenetic tree parameter $\Phi$.}
+  \label{alg:sbcphylo}
+  $n \gets 100$\; \Comment*[r]{Number of data sets to simulate}
+  $\phi_0 \gets$ \SampleTree{$\theta_\Phi$}\; \Comment*[r]{$\phi_0 \sim f_T(\Phi|\theta_\Phi)$}
+  \For{$i \gets 1$ \KwTo $n$} {
+    $\boldsymbol{\theta}_i \gets \text{S}[f(\theta)]$\; \Comment*[r]{$\boldsymbol{\theta_i} \sim f(\boldsymbol{\theta})$, with $\boldsymbol{\theta}_i = \{\theta_{i\Phi},\boldsymbol{\theta}_i^r\}$}
+    $\phi_i \gets$ \SampleTree{$\theta_{i\Phi}$}\; \Comment*[r]{$\phi_i \sim f_{T\mid \Theta}(\phi|\theta_{i\Phi})$}
+    $d_i \gets$ \SampleData{$\phi_i,\boldsymbol{\theta}_i^r$}\; \Comment*[r]{$d_i \sim f_{D\mid \Phi}(d|\phi_i,\boldsymbol{\theta}_i^r$}
+    $\boldsymbol{\theta}_i^j \gets$ \MCMC{$f(\theta|d_i)$}\; \Comment*[r]{$\boldsymbol{\theta}_i = \{\boldsymbol{\theta}_i^j: j \in [1, L]\}$, where $L$ is the number of MCMC samples}
+    $\bar{\delta}_i \gets$ \Distance{$\phi_0, \phi_i$}\; \Comment*[r]{According to a distance metric of choice}
+    $\boldsymbol{\delta}_i^j \gets$ \Distance{$\phi_0, \phi_i^j$}\; \Comment*[r]{$\boldsymbol{\delta}_i = \{\delta_i^j: j \in [1, L]\}$}
+    $r_i \gets$ \Rank($\bar{\delta}_i, \boldsymbol{\delta}_i^j$)\; \Comment*[r]{$r_i = \sum\limits_{j=1}^L \mathbb{I}(\delta^j_i < \bar{\delta_i})$}
+  }
+  \label{alg:sbc}
+\end{algorithm}
 
 
-  % \begin{enumerate}
-  %   \setcounter{enumi}{-1}
+  \begin{enumerate}
+    \setcounter{enumi}{-1}
 
-  % \item Generate a reference tree from the prior $\bar{\tau}_0  \sim \pi_T(\tau | \boldsymbol \gamma)$; 
+  \item Generate a reference tree from the prior $\bar{\Phi}_0  \sim f_T(\Phi | \boldsymbol \theta_\Phi)$; 
 
-  %   \textbf{for} each iteration in 1:N, \textbf{do}:
+    \textbf{for} each iteration in 1:N, \textbf{do}:
     
-  % \item Generate $\bar{\tau} \sim \pi_T(\tau | \boldsymbol \gamma)$;
-  % \item Compute the distance $\bar{\delta} = d_\sigma(\bar{\tau},\bar{\tau}_0)$ according to the metric of choice;
-  % \item Generate some (aligment) data $\tilde{y} \sim f(y | \bar{\tau}, \boldsymbol\alpha)$;
-  % \item Draw (approximately) $\boldsymbol \tau_s = \{\tau_s^{(1)}, \tau_s^{(2)}, \ldots, \tau_s^{(L)}\}$ from the posterior $\pi(\tau | \tilde{y})$;
-  % \item Compute distances $\boldsymbol \delta_s = \{ \delta_1, \delta_2, \ldots, \delta_L \}$  with $\delta_i = d_\sigma(\tau_s^{(i)}, \bar{\tau}_0)$;
-  % \item Compute the rank $r(\boldsymbol\delta_s, \bar{\delta}) = \sum\limits_{i=1}^L \mathbb{I}(\delta_i < \bar{\delta})$.
-  % \end{enumerate}
+  \item Generate $\bar{\Phi} \sim f_T(\Phi | \boldsymbol \gamma)$;
+  \item Compute the distance $\bar{\delta} = d_\sigma(\bar{\Phi},\bar{\Phi}_0)$ according to the metric of choice;
+  \item Generate some (aligment) data $\tilde{d} \sim f_{D\mid\Phi}(d | \bar{\Phi}, \boldsymbol\alpha)$;
+  \item Draw\footnote{Sometimes approximately, using MCMC or variational methods.} $\boldsymbol \Phi_s = \{\Phi_s^{(1)}, \Phi_s^{(2)}, \ldots, \Phi_s^{(L)}\}$ from the posterior $f_{\Phi\mid D}(\Phi | \tilde{d})$;
+  \item Compute distances $\boldsymbol \delta_s = \{ \delta_1, \delta_2, \ldots, \delta_L \}$  with $\delta_i = d_\sigma(\Phi_s^{(i)}, \bar{\Phi}_0)$;
+  \item Compute the rank $r(\boldsymbol\delta_s, \bar{\delta}) = \sum\limits_{i=1}^L \mathbb{I}(\delta_i < \bar{\delta})$.
+  \end{enumerate}
 
-% \begin{figure}
-%   \centering
-%   \vspace{0pt}
-%   \begin{subfigure}[t]{\textwidth}
-%     \caption{}
-%     \centering
-%     \includegraphics[scale=0.5]{../figures/ECDFs_SBC.pdf} 
-%   \end{subfigure}
-%   \vspace{0pt}
-%   \hspace{1cm}
-%   \begin{subfigure}[t]{\textwidth}
-%     \caption{}
-%     \centering
-%     \includegraphics[scale=0.5]{../figures/hists_SBC.pdf}    
-%   \end{subfigure}
-%   \hfill
-%    \caption{Rank-uniformity validation (RUV) of a phylogenetic
-%      model, focusing on the phylogenetic tree parameter.
-%      (a) Empirical cumulative distribution function (ECDF) for each
-%      functional.
-%      (b) Rank distribution for each functional.
-%    % \textcolor{red}{[@Luiz: Need to fix notation in this figure,
-%    %   replacing $\tau$ with $\Phi$; I changed the abbreviation of some
-%    %   of the functionals as well, to avoid collision (see the table
-%    %   above);
-%    %   the x-axis labels in panel(a)
-%    %   are also overlapping each other]; ``rank'' and ``count''
-%    %   should start with uppercase ``Rank'', ``Count''}
-%    }
-%    \label{supfig:sbc}
-% \end{figure}
+\begin{figure}
+  \centering
+  \vspace{0pt}
+  \begin{subfigure}[t]{\textwidth}
+    \caption{}
+    \centering
+    \includegraphics[scale=0.5]{figures/ruv_coalescent_ecdfs.pdf} 
+  \end{subfigure}
+  \vspace{0pt}
+  \hspace{1cm}
+  \begin{subfigure}[t]{\textwidth}
+    \caption{}
+    \centering
+    \includegraphics[scale=0.5]{figures/ruv_coalescent_histograms.pdf}    
+  \end{subfigure}
+  \hfill
+   \caption{Rank-uniformity validation (RUV) of a phylogenetic
+     model, focusing on the phylogenetic tree parameter.
+     (a) Empirical cumulative distribution function (ECDF) for each
+     functional.
+     (b) Rank distribution for each functional.
+   }
+   \label{supfig:ruv}
+\end{figure}
 
 % \begin{figure}
 %  \includegraphics[width=\textwidth]{../figures/coverage.pdf}
@@ -284,36 +270,20 @@ These results indicate the PhyloBM simulator produces appropriate confidence int
 %   \label{supfig:phylo_calibration}
 % \end{figure}
 
-% Supplementary figure \ref{supfig:sbc} summarizes the results for the functionals
-% listed in table \ref{suptab:dists}.
-% As can be seen, the ECDFs lie well inside their confidence ellipses
-% and the observed ranks also lie inside their confidence bands.
+Supplementary figure \ref{supfig:ruv} summarizes the results for the functionals
+listed in table \ref{suptab:dists}.
+As can be seen, the ECDFs lie well inside their confidence ellipses
+and the observed ranks also lie inside their confidence bands.
 
-% Finally, we can also investigate if our model is well-calibrated
-% by examining the coverage probability of 95\%-HPDs over the chosen
-% tree metrics.
+Finally, we can also investigate if our model is well-calibrated
+by examining the coverage probability of 95\%-HPDs over the chosen
+tree metrics.
 % Supplementary figure \ref{supfig:phylo_calibration} shows that the HPDs do cover the
 % generating metrics with probability compatible with what is expected
 % theoretically.
-% In this instance, the tests would fail to detect problems with the algorithm.
-% These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity (see Table~\ref{tab:coverage}).
-% A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
-
-\newpage
-\section{Supplementary Figures}
-\label{appendix::sec:supp_figures}
-
-\begin{figure}[!ht]
-   \includegraphics[width=\linewidth]{../figures/sbc_Yule_lambda_manual.pdf}
-  \caption{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. 1 in the main text.
-    Panels in the top row show the histograms of $n=100$ ranks, for parameter $\Lambda$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
-    Panels in the bottom row show the corresponding ECDF plots, for parameter $\Lambda$ in each scenario.
-    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
-    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
-   }
-  \label{supfig:ruv_yule_lambda}
-\end{figure}
+In this instance, the tests would fail to detect problems with the algorithm.
+These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity.
+A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
 
 \newpage
 \section{Model validation with rejection sampling: a simple example}
@@ -438,6 +408,24 @@ We may re-write the limit as:
 \end{align*}
 
 \noindent where the last line follows from the fact that the CDF of $\theta_i$ is uniformly distributed on $(0, 1$) (Theorem 1 in \citealp{Cook06}) and almost sure convergence of the ECDF to the true CDF due to the  Glivenko-Cantelli theorem~\cite[page 275]{Billingsley1986}.
+
+\newpage
+\section{Supplementary Figures}
+\label{appendix::sec:supp_figures}
+
+\begin{figure}[!ht]
+   \includegraphics[width=\linewidth]{../figures/sbc_Yule_lambda_manual.pdf}
+  \caption{Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. 1 in the main text.
+    Panels in the top row show the histograms of $n=100$ ranks, for parameter $\Lambda$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
+    Panels in the bottom row show the corresponding ECDF plots, for parameter $\Lambda$ in each scenario.
+    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
+    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
+    (c) In ``Scenario 3'', the model was correctly specified, but rejection sampling was more intense (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
+   }
+  \label{supfig:ruv_yule_lambda}
+\end{figure}
+
+
 \bibliography{refs}
 
 \end{document}
