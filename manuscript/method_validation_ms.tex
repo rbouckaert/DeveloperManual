@@ -316,7 +316,7 @@ Together, variance-covariance matrix $r\boldsymbol{T}$ and $\boldsymbol{y_0} = [
 
 Figure 1 shows the distributions of trait values and their variances and covariances for one sample of one thousand independent realizations of phylogenetic BM processes. 
 One can see that the sample's average trait value and the variances and covariances approach their expectations. 
-More rigorously, one can follow the method described in the main text and verify that those expectations fall within their 95\% confidence intervals 95\% of the time, as calculated from a large number of samples (Supplementary Fig. \ref{supfig:bmsimcis} and Supplementary Table \ref{suptab:bmsimcis}).
+More rigorously, one can follow the method described in the main text and verify that those expectations fall within their 95\%-confidence intervals 95\% of the time, as calculated from a large number of samples (Supplementary Fig. \ref{supfig:bmsimcis} and Supplementary Table \ref{suptab:bmsimcis}).
 
 \end{tcolorbox}
 % % End: BM BOX
@@ -339,7 +339,7 @@ Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally 
     \centering
     \begin{tabular}{ cc }
     \hline
-    Birth rate ($\lambda$) & E[$t_{\text{root}}$] $\in$ 95\% CI (\%)\\
+    Birth rate ($\lambda$) & E[$t_{\text{root}}$] $\in$ 95\%-CI (\%)\\
     \hline  
     \rowcolor{gray!10}0.5 & 94\\
     0.6 & 91\\
@@ -360,12 +360,12 @@ Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally 
   %LM TODO: think about uncertainty intervals for coverage.
   \caption{Validation of Yule tree simulator.
     (a) Number of simulated data sets (out of 100) for which the
-    expected tree height ($t_{\text{root}}$) was inside the 95\% CI
+    expected tree height ($t_{\text{root}}$) was inside the 95\%-confidence interval
     about its sample average -- if the simulator is correct, we expect
     this number to be between 90 and 99 about 95\% of the time.
     Each data set consisted of 50 twenty-taxon simulated Yule trees.
     (b) The area shaded in light blue represents the
-    95\% confidence interval about the average tree height, obtained
+    95\%-confidence interval about the average tree height, obtained
     from the 5,000 Yule trees simulated in (a). Simulations were
     carried out with the \texttt{TreeSim} R package \citep{stadler11}.}
   \label{fig:yulemean}
@@ -524,7 +524,7 @@ it can be shown that
 % $\operatorname{Pr}\left(\theta_0 \in I_\alpha(Y) \right) = \alpha$
 $\operatorname{Pr}\left(\theta_i \in I_\alpha(d) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs have nominal coverage under the true generative model (a proof is provided in the supplementary material).
 More formally, the coverage of $n$ intervals obtained as above will be distributed as binomial random variable with $n$ trials and success probability $\alpha$.
-When $n=100$ and $\alpha = 0.95$, the 95\% central interquantile interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage2}).
+When $n=100$ and $\alpha = 0.95$, the 95\%-central interquantile interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage2}).
 If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces coverage lying within the expected bounds, we say the model has passed the coverage validation, and is well-calibrated and correct.
 
 % % \begin{table}
@@ -665,7 +665,7 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
     (c) Parameter estimates are underdispersed relative to their true values.
     (d) Parameter estimates are consistently overestimated relative to their true values.
     In the left-hand side column, the prior and replicate-averaged posterior (also known as the data-averaged posterior) distributions over some parameter $\theta$ are shown in light blue and dark blue, respectively.
-    In the middle graphs, light-blue bands represent the 95\% confidence interval about the expected rank count, and horizontal black lines mark the rank count mean.
+    In the middle graphs, light-blue bands represent the 95\%-confidence interval about the expected rank count, and horizontal black lines mark the rank count mean.
     Light-blue ellipses in the rightmost graphs represent confidence intervals about the empirical cumulative distribution function (ECDF).
   }
   % In panel (a) the replicate-averaged posterior (RAP), i.e., the
@@ -678,7 +678,7 @@ In the particular case shown in figure \ref{fig:ruv_conceptual}c, the parameter 
 
 We conducted RUV on the three scenarios described in the previous section, which make use of the model depicted in Figure 1.
 In the interest of brevity, we only show the histograms and ECDFs for $R$, and leave the remaining plots for $\Lambda$ to the supplement (but see Box 1 below).
-As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\% confidence intervals (Fig. \ref{fig:ruv_yule}a).
+As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\%-confidence intervals (Fig. \ref{fig:ruv_yule}a).
 
 Under scenario 2, again as expected, our method failed RUV (Fig.~\ref{fig:ruv_yule}b).
 In particular, we observes great overestimation of the Brownian motion rate ($R$).

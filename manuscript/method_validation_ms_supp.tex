@@ -104,26 +104,26 @@
 
 \section{Validating a phylogenetic Brownian motion simulator}
 
-In this section we focus on validating a simulator for the phylogenetic Brownian motion model (``PhyloBM''; \citealp{fel73}).
+In this section we focus on validating a simulator for the phylogenetic Brownian motion model (``PhyloBM''; \citealp{felsenstein73}).
 As explained in the main text, our goal is to verify that the expected value of certain summary statistics (given a specific combination of parameter values) falls within its $\alpha$-confidence intervals approximately $\alpha$\% of the time.
 We will build confidence intervals about statistics calculated from several PhyloBM samples of size 10,000, and then ask if the ``population'' value of  a statistic -- given by the parameters of the multivariate normal sampling distribution -- is contained within its confidence interval frequently enough.
 
 For summary statistics, we pay attention to the trait value's (i) species mean, (ii) species variance, (iii) among-species covariance, and (iv) among-species correlation coefficient.
 Supplementary figure \ref{supfig:bmsimcis} shows one hundred confidence intervals for each of these statistics, under multivariate normal $\text{MVN}(\boldsymbol{y_0},r\boldsymbol{T})$, where $\boldsymbol{y_0}=\{0,0,0\}$, $r=0.1$ and $\boldsymbol{T}$ is given by the tree in Fig. 2 in the main text.
-Supplementary table \ref{suptab:bmsimcis} summarizes how often each statistic fell within its 95\% confidence interval.
+Supplementary table \ref{suptab:bmsimcis} summarizes how often each statistic fell within its 95\%-confidence interval.
 These results indicate the PhyloBM simulator produces appropriate confidence intervals and behaves as expected.
 
 \begin{figure}
   \centering
   \includestandalone[width=14cm]{../figures/phylobm_exp_vcv_cis}
-  \caption{One hundred 95\% confidence intervals (blue and red lines) built for summary statistics of interest.
-    Red lines represent intervals that do not contain the value expected under the MVN sampling distribution characterizing the PhyloBM model.
-    Parameter values are described in the text.}
+  \caption{One hundred 95\%-confidence intervals (blue and red lines) built for four different summary statistics, when validating a phylogenetic Brownian motion model simulator.
+    Red lines represent intervals that do not contain the value expected under the MVN sampling distribution defined by a bifurcating three-taxon phylogenetic tree.
+    Summary statistics include each leaf's character-value mean (top row) and variance (second row from the top), as well as pairwise (leaf) character-value co-variances (third row from the top) and correlations (bottom row).}
   \label{supfig:bmsimcis}
 \end{figure}
 
 \begin{table}[h]
-  \caption{The number of times $k$ that a summary statistic was contained within its corresponding 95\% confidence interval.
+  \caption{The number of times $k$ that a summary statistic was contained within its corresponding 95\%-confidence interval.
     Each statistic was calculated from 100 datasets of size 10,000 simulated under the PhyloBM model described in the text and in Box 1 in the main text.}
   \label{suptab:bmsimcis}
   \centering
@@ -202,7 +202,7 @@ Once ranks are computed, RUV proceeds as usual.
   \SetKwFunction{Rank}{GetRank}
   \SetKwFunction{Pass}{IsRankDistributionUniform}
   \caption{Algorithm for carrying out a rank-uniformity validation procedure with respect to the phylogenetic tree parameter $\Phi$.
-    Parameters $\boldsymbol{\theta}$ include both the tree parameter, $\theta_\Phi$, and non-tree (scalar) parameters, $\theta_{\text{s}}$.
+    Parameters $\boldsymbol{\theta}$ include both the tree parameter, $\theta_\Phi$, and non-tree (scalar) parameters, $\boldsymbol{\theta}_{\text{s}}$.
     Data $\boldsymbol{d}$ represents the output of an evolutionary process taking place along the phylogenetic tree (e.g., a continuous-time Markov chain modeling DNA substitutions).}
   \label{alg:sbcphylo}
   $n \gets 100$\; \Comment*[r]{Number of data sets to simulate}
@@ -278,7 +278,8 @@ Once ranks are computed, RUV proceeds as usual.
 %   \label{supfig:phylo_calibration}
 % \end{figure}
 
-Supplementary figure \ref{supfig:ruv} summarizes the results for the metrics listed in supplementary table \ref{suptab:dists}.
+Supplementary figure \ref{supfig:ruv} summarizes the results for the metrics listed in supplementary table \ref{suptab:dists}, for a simple Kingman's coalescent model.
+The model consists of a single five-taxon phylogenetic tree parameter, $\Phi$, assuming a known effective population size of 1.0.
 As can be seen, the ranks for the different metrics are (approximately) uniformly distributed, lying inside their confidence bands (Supplementary Fig. \ref{supfig:ruv}a), and their corresponding ECDFs also lie well inside their confidence ellipses (Supplementary Fig. \ref{supfig:ruv}b).
 Finally, we also verify that our model implementation is well-calibrated with respect to the phylogenetic tree parameter, as shown by appropriate 95\%-HPD-coverage statistics over the different tree metrics.
 % Supplementary figure \ref{supfig:phylo_calibration} shows that the HPDs do cover the
@@ -339,7 +340,7 @@ This is an important insight about validation protocols: their sensitivity is co
   We show the rank histograms in three misspecification scenarios ($t$
   is 0.0, 1.0 or 1.5) and three data regimes ($K$ is 5, 10 or 50).
   Results are based on $n=1000$ replicates of $L= 200$ i.i.d. draws each.
-  Horizontal black lines shows the expected count for each rank (the same for all ranks due to uniformity), and the light-blue bands represent the 95\% confidence interval for the counts.
+  Horizontal black lines shows the expected count for each rank (the same for all ranks due to uniformity), and the light-blue bands represent the 95\%-confidence interval for the counts.
     }
   \label{supfig:ruv_normal_toy}
 \end{figure}
@@ -413,7 +414,7 @@ We may re-write the limit as:
 \noindent where the last line follows from the fact that the CDF of $\theta_i$ is uniformly distributed on $(0, 1$) (Theorem 1 in \citealp{Cook06}) and almost sure convergence of the ECDF to the true CDF due to the  Glivenko-Cantelli theorem~\cite[page 275]{Billingsley1986}.
 
 \newpage
-\section{Supplementary Figures}
+\section{Other supplementary figures}
 \label{appendix::sec:supp_figures}
 
 \begin{figure}[!ht]
@@ -428,6 +429,7 @@ We may re-write the limit as:
   \label{supfig:ruv_yule_lambda}
 \end{figure}
 
+\clearpage
 
 \bibliography{refs}
 
