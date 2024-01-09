@@ -587,7 +587,7 @@ Another argument against empirical frequencies is that it is double dipping: usi
 
 ## Low coverage
 
-The occasional 91 is acceptable (the 95% HPD = 90 to 98 probability the implementation is correct) but coverage below 90 almost surely indicate an issue with the model or operator implementation. Also, coverage of 99 or 100 should be looked at with suspicion -- it may indicate overly wide uncertainty intervals.
+The occasional 91 is acceptable (the 95% HPD = 91 to 99 probability the implementation is correct) but coverage below 90 almost surely indicate an issue with the model or operator implementation. Also, coverage of 100 should be looked at with suspicion -- it may indicate overly wide uncertainty intervals.
 
 If correct, distributed binomial with p=0.95, N=100:
 
