@@ -132,7 +132,7 @@ One extreme case is the discipline of evolutionary biology, on which we focus ou
 While it could be said that many decade-old questions and hypotheses in evolutionary biology have aged well and stood up the test of time (e.g., the Red Queen hypothesis, \citealt{vanvalen73,lively87,morran11,gibson15}; the Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
 In particular, evolutionary biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
 
-Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,felsenstein73,hky,hudson90}.
+Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,f73,hky,hudson90}.
 Within the latter category, probabilistic models have seen a sharp surge in popularity within evolutionary biology, in conjunction with computational tools implementing them.
 
 Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness~\citep{darriba18}.
@@ -257,7 +257,7 @@ Under a Yule process with a species birth rate of $\lambda$, the expected tree h
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
   title=Box 1: Models characterized by well-known parametric distributions, fonttitle=\bfseries]
   \small 
-  One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. ~\ref{fig:pgm}; \citealt{felsenstein73} ).
+  One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. ~\ref{fig:pgm}; \citealt{f73}).
 The pdf characterizing this model's sampling distribution is in fact the pdf of the multivariate normal (MVN) probability distribution:
 \begin{equation}
   \begin{split}
@@ -328,7 +328,7 @@ More rigorously, one can follow the method described in the main text and verify
 
 \noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
 Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
-In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{felsenstein73}).
+In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{f73}).
 Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally validate $\text{S}[\mathcal{M}]$ at the same time.
 
 \begin{figure}
@@ -1057,23 +1057,36 @@ While here we focus on so-called continuous parameters like $R$ and $\Lambda$, i
 
 \subsection*{Tree models}
 
-Tree models are stochastic processes that can capture the most fundamental tenet in evolutionary biology, namely common descent, at multiple time scales.
+\textcolor{blue}{Tree models are stochastic processes that can capture the most fundamental tenet in evolutionary biology, namely common descent, at multiple time scales.
 Over the last few decades, pivotal theoretical work has not only characterized many properties of the more elementary tree models (for examples and an overview, see \citealp{nee06,wakeley09,stadler13b,harmon18}), but also generalized them to be more realistic.
-Popular among empiricists, for example, are tree models that allow for lineage-affecting event rates that vary over time and across taxa, and that are state-dependent (``state'' here meaning the attributes of a lineage's genotypic, phenotypic, ecological or geographic character(s)).
-Such models lend themselves to the study evolutionary phenomena such as species diversification and infectious disease spread.
+Popular among empiricists, for example, are tree models that allow for lineage-affecting event rates that vary over time and across taxa, and that are state-dependent (``state'' here meaning the attributes of a lineage's genotypic, phenotypic, ecological or biogeographic character(s)).
+Such models lend themselves to the study evolutionary phenomena such as species diversification and infectious disease spread.}
 
-Although convenient evolutionary abstractions, tree models can nonetheless be challenging to formalize depending on their level of realism.
+\textcolor{blue}{Although convenient evolutionary abstractions, tree models can nonetheless be challenging to formalize depending on their level of realism.
 The parameter space of a tree model is difficult to handle: it includes both a combinatorily complicated discrete component (the tree topology) and a continuous component (the branch lengths) \citep{semple03}.
-The theoretical properties, summarization, and exploration of tree space are all active topics of research in mathematical and computational biology \citep{gavryushkina13,gavryushkin16,brown20}.
+The theoretical properties, summarization, and exploration of tree space are all active topics of research in mathematical and computational biology \citep{gavryushkina13,gavryushkin16,brown20}.}
 
-Given the interest in tree models shown by empirical, computational and theoretical biologists, in this section we will cover how tree models have been and can be validated, with an emphasis on tree space.
+\textcolor{blue}{Given the interest in tree models shown by empirical, computational and theoretical biologists, in this section we will cover how tree models have been and can be validated, with an emphasis on tree space.
+We also propose a new manner by which tree models can undergo RUV and be assessed with respect to coverage.
 Our treatment is not meant to be an exhaustive review, but a short synthesis, and in keeping with the subject of the present work, we will not discuss protocols for the development and validation of Bayesian proposals in tree space.
-This topical subject is multifaceted (e.g., \citealp{douglas21,bouckaert22,douglas22}) and deserves a dedicated contribution we leave for the future.
+This topical subject is multifaceted (e.g., \citealp{douglas21,bouckaert22,douglas22}) and deserves a dedicated contribution we leave for the future.}
 
-Of the many tree models implemented in computational tools, only a select few have had analytical solutions derived for their mathematical properties.
-Among the most theoretically understood models are the birth-death process ([add citations]; of which the Yule model, above, is a subcase) and the Kingman's coalescent (of which the popular multispecies coalescent, MSC, is a generalization; [add citations]).
-Typical theoretical properties known for these models include, for
-example, ...
+\textcolor{blue}{One way tree model implementations can be validated is by comparing statistical summaries of its samples (drawn through direct simulation or MCMC without data) against theoretical ``target'' values (e.g., Fig. \ref{fig:yulemean}).
+This type of validation can be compelling and is often easy to carry out, but closed-form expressions tend to be only available for simpler models like the birth-death process, the Kingman's coalescent, and a few of their special cases and generalizations.
+Such expressions remain useful, nonetheless, as long as more complex models can be constrained to forms for which the relevant theory exists.
+Typical theoretical targets include the first moments of distributions on tree characteristics such as internal node ages, internal and terminal branch lengths, the sum of branch lengths, the number of tips, and the frequency of different tree topologies \citep{tj83,rosenberg02,aldous05,nee06,gernhard06,gernhard08,wakeley09,mooers12}.}
+
+\textcolor{blue}{As tree models increase in complexity (e.g., \citealp{maddison07,goldberg12,fitzjohn10,scire22}), so does the tree space they define and as a consequence model validation on theoretical grounds alone becomes difficult.
+When nodes can be serially sampled or direct ancestors of other nodes, for example, even enumerating all the possible trees under a model is a non-trivial exercise \citep{gavryushkina13}. 
+The number of terminals in a tree can also complicate the theoretical characterization of tree models; unless the number of terminals is small \citep{beast2book}, algorithms have to be employed to generate expectations from theoretical principles \citep{kim19}.}
+
+\textcolor{blue}{When theoretical predictions useful for validation cannot be made, an often-employed method involves the comparison of independent model implementations, with one or both being simulators or inference engines.
+Tree samples from a direct simulator can be compared to samples drawn with MCMC without data (e.g., \citealp{zhang23}), or to samples generated by a different direct simulator \citep{andreoletti22}.
+On extreme cases, however, even that strategy appears impossible.
+For example, if it is unclear how to even simulate under a tree model -- such as when node-age prior distributions are added to a birth-death process (models used in ``node-dating'', \citealp{ho09}; but see \citealp{heled12}) -- there seems to be no discernible path for validation in tree space.}
+
+We propose coverage validation and RUV for tree quantities... first mention root ages, number of direct ancestors, gene tree root ages.
+
 % Note that unlike the presentation of the above sections, here we will differentiate between tree model simulator and inferential machinery when necessary as we go.
 
 \begin{figure}
@@ -1094,20 +1107,14 @@ example, ...
   \label{fig:treeheight}
 \end{figure}
 
-% FKM's ideas:
-
-\begin{itemize}
-\item PG1/2: Simplest models (Yule, birth-death, coalescent): theoretical expectations; TODO: plot root age sampling from the prior (put in supplement);
-\item PG1/2: Looking at theoretical expectations for serially sampled genealogies under Kingman coalescent, and gene tree composition \citep{rosenberg02}.
-This has been done for simulator \citep{mendes18}, and packages exist for exact calculations \citep{kim19};
-\item PG1/2: Looking at coverage of tree-space parameters, e.g., root height (continuous space) and number of sampled ancestors (discrete space) (see Fig. 3 in \citealp{gavryushkina14}).
-Also coverage of tree models like the MSC \citep{ogilvie22}.
-\item PG3: Balance statistics building on Albert Soewongsono's work; TODO: plot ``set'' $\beta$ statistic (y-axis, violin plots) for Yule model with different tree sizes; plot theoretical ``set'' $\beta$ statistic on the x-axis and $\beta$-MLE estimate on y-axis for 100 sets of 100 BiSSE trees (fixed parameters) -- plot 1:1 line and get $\sim$ 95\% CI bars overlapping that line;
-\item PG4: More complicated models are troublesome.
-  Exact likelihood values are computed for sub-cases of a new general model that have theoretical expectations (BDSS) or against an independent implementation \citep{andreoletti22}.
-  Comparing sampling distributions between direct simulator (inverse CDF) and sampling from the prior (BDSS implementation in \citealp{zhang23});
-\item PG5: Models that cannot be written as generative models, like node-calibration models; discuss Heled's calibrated-Yule prior is a solution.
-\end{itemize}
+% \begin{itemize}
+% \item PG1/2: Looking at coverage of tree-space parameters, e.g., root height (continuous space) and number of sampled ancestors (discrete space) (see Fig. 3 in \citealp{gavryushkina14}).
+% Also coverage of tree models like the MSC \citep{ogilvie22}.
+% % \item PG3: Balance statistics building on Albert Soewongsono's work; TODO: plot ``set'' $\beta$ statistic (y-axis, violin plots) for Yule model with different tree sizes; plot theoretical ``set'' $\beta$ statistic on the x-axis and $\beta$-MLE estimate on y-axis for 100 sets of 100 BiSSE trees (fixed parameters) -- plot 1:1 line and get $\sim$ 95\% CI bars overlapping that line;
+% \item PG4: More complicated models are troublesome.
+%   Exact likelihood values are computed for sub-cases of a new general model that have theoretical expectations (BDSS) or against an independent implementation \citep{andreoletti22}.
+%   Comparing sampling distributions between direct simulator (inverse CDF) and sampling from the prior (BDSS implementation in \citealp{zhang23});
+% \end{itemize}
 
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt, title=Box 2: Validating a phylogenetic model with respect to its phylogenetic tree parameter, fonttitle=\bfseries]
   \small 
@@ -1119,7 +1126,7 @@ Also coverage of tree models like the MSC \citep{ogilvie22}.
   \vspace{.25cm}
 
   To get around this difficulty, we propose computing one or more phylogenetic metrics, or functionals, for which total-ordering holds and for which ranks can thus be obtained.
-  One such metric is the well-known Robinson-Foulds distance between two trees (RF; \citealp{Robinson1981}), which counts the number of clades implied by one tree but not the other.
+  One such metric is the well-known Robinson-Foulds distance between two trees (RF; \citealp{rf81}), which counts the number of clades implied by one tree but not the other.
   In order to compute a relational metric like the RF distance during validation, we must have a reference phylogeny $\phi_0$ to which we can compare our focal generating phylogeny $\phi$ and its posterior MCMC samples.
   The RUV protocol remains the same, with an additional step in which we generate $\phi_0$ (see Algorithm \ref{alg:sbc} in the supplementary material).
   Fig. 9 shows validation results for the RF metric for five-taxon trees simulated under a simple Kingman's coalescent model assuming a known effective population size of 1.0.
@@ -1196,7 +1203,7 @@ Ideally, authors should also provide guidelines for interpreting results obtaine
 \textcolor{blue}{Should passing validation procedures appear hopeless, the method developer may understandably find themselves downplaying the importance of the validation effort.
 If ``all models are wrong'' and if the necessary conditions for successful validation are unrealistic or hard to meet, then maybe validating a model is not all that important.
 Those with real data sets to analyze will likely find pragmatic comfort in this line of reasoning.
-But while a tempting thought, we urge researchers to consider how this perspective runs roughshod over statistical hypothesis testing, a ubiquitous analysis in empirical studies.
+But while a tempting thought, we urge researchers to consider how this perspective runs roughshod over statistical hypothesis testing, a ubiquitous practice in empirical studies.
 Although understanding inference biases may alleviate it, once an implementation cannot be shown to be correct, it becomes a non-trivial exercise, for example, to determine if a parameter estimate is different from another value.
 The task of model comparison, in turn, is even more hampered -- here, more than one (potentially incorrect) implementation must be compared, and biases in model evidence estimation will be particularly hard to characterize.
 Successful model validation is evidently something to strive for and in the absence of which interpreting the results will be challenging at best, and impossible in many cases.}
