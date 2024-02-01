@@ -215,7 +215,7 @@ Once ranks are computed, RUV proceeds as usual.
     $d_i \gets$ \SampleData{$\phi_i,\boldsymbol{\theta}_{\text{s},i}$}\; \Comment*[r]{$d_i \sim f_{D\mid \Phi,\boldsymbol{\Theta}_\text{s}}(\cdot|\Phi=\phi_i,\boldsymbol{\Theta}_{\text{s}}=\boldsymbol{\theta}_{\text{s},i})$}
     $\boldsymbol{\theta}'_i \gets$ \MCMC{$f_{D|\boldsymbol{\Theta}}(d_i|\boldsymbol{\Theta}=\boldsymbol{\theta}_i)f_{\boldsymbol{\Theta}}(\boldsymbol{\theta}_i)$}\; \Comment*[r]{$\boldsymbol{\theta}'_i = \{\boldsymbol{\theta}_i^j: 1 \leq j \leq L\}$, where $L$ is the number of MCMC samples}
     $\bar{\delta}_i \gets$ \Distance{$\phi_0, \phi_i$}\; \Comment*[r]{According to a distance metric of choice}
-    $\boldsymbol{\delta}_i^j \gets$ \Distance{$\phi_0, \phi_i^j$}\; \Comment*[r]{$\boldsymbol{\delta}_i = \{\delta_i^j: j \in [1, L]\}$}
+    $\boldsymbol{\delta}_i^j \gets$ \Distance{$\phi_0, \phi_i^j$}\; \Comment*[r]{$\boldsymbol{\delta}_i = \{\delta_i^j: 1 \leq j \leq L\}$}
     $r_i \gets$ \Rank($\bar{\delta}_i, \boldsymbol{\delta}_i^j$)\; \Comment*[r]{$r_i = \sum\limits_{j=1}^L \mathbb{I}(\delta^j_i < \bar{\delta_i})$}
   }
   \If{\Pass{$\boldsymbol{r}$}}{
