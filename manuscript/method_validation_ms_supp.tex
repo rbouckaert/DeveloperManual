@@ -172,7 +172,7 @@ We summarize some of these distances in supplementary table \ref{suptab:dists}.
     \multicolumn{1}{c|}{Metric} & Notation & Ref. \\
     \hline  
     \rowcolor{gray!10}The largest branch length in $\phi$ & $\text{LB}(\phi)$ & N/A\\
-    The length of $\phi$ (the sum of all branch lengths & $\text{LEN}(\phi)$ & N/A\\
+    The length of $\phi$ (the sum of all branch lengths) & $\text{LEN}(\phi)$ & N/A\\
     \rowcolor{gray!10}The length of the external branch leading to taxon $s_1$ & $\text{T}_1(\phi)$ & N/A\\
     The Robinson-Foulds distance between $\phi$ and $\phi_0$ & $\text{RF}_0(\phi)$ & \citep{Robinson1981}\\
     \rowcolor{gray!10}The Kendall-Coljin distance between $\phi$ and $\phi_0$ & $\text{KC}_0(\phi;\omega)$ & \citep{Kendall2016}\\
@@ -184,7 +184,7 @@ We summarize some of these distances in supplementary table \ref{suptab:dists}.
 In the case of tree-space distance metrics, we must slightly modify our RUV procedure (Algorithm 1).
 The key difference is the sampling of a reference phylogenetic tree, $\phi_0$, prior to the simulation of the $n$ i.i.d. $\Phi$ samples, $\boldsymbol{\phi}=\{\phi_i: 1 \leq i \leq n\}$.
 Given a reference tree $\phi_0$, each sampled $\phi_i$ and all of its $L$ posterior MCMC samples are then compared to $\phi_0$ with respect to a chosen distance metric.
-It is the evaluated distance metric that will underly the ranking of $\phi_i$ relative to its posterior MCMC samples.
+It is the evaluated distance metric that will underlie the ranking of $\phi_i$ relative to its posterior MCMC samples.
 Once ranks are computed, RUV proceeds as usual.
    
 \RestyleAlgo{ruled}

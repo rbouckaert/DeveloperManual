@@ -1086,12 +1086,12 @@ On extreme cases, however, even that strategy appears unattainable.
 For example, if it is unclear how to even directly simulate under a tree model -- such as when node-age prior distributions are added to a birth-death process (models used in ``node-dating'', \citealp{ho09}; but see \citealp{heled12}) -- there seems to be no discernible path for validation in tree space.}
 
 \textcolor{blue}{The procedures of coverage validation and RUV can also be used to examine parameters in tree space.
-So fast authors have mainly focused on the coverage of quantities such as species tree and gene root ages, sum of branch lengths, and number of direct ancestors (e.g., \citealp{gavryushkina14,ogilvie22,zhang23}).
+So far authors have mainly focused on the coverage of quantities such as species tree and gene root ages, sum of branch lengths, and number of direct ancestors (e.g., \citealp{gavryushkina14,ogilvie22,zhang23}).
 Fig. \ref{fig:treeheight}, for example, shows the coverage of the root age for the three scenarios we explored in the previous sections.
-Similarly to what was observed for tree-unrelated parameters, the root age had the expected coverage in scenarios 1 and 3, and RUV again diagnosed the inference model as misspecified for scenario 3.}
+Similarly to what was observed for tree-unrelated parameters, the root age had the expected coverage in scenarios 1 and 3, and RUV again aligned with the diagnosis of model misspecification for scenario 3.}
 
 \textcolor{blue}{To the best of our knowledge, the RUV procedure has not been applied to validate phylogenetic models vis-a-vis tree space.
-This is likely because so far, due to the complexity of tree space, no canonical total-ordering structure (a requirement for ranking) has been proposed for trees.
+This is likely because, due to the complexity of tree space, no canonical total-ordering structure (a requirement for ranking) has been proposed for trees.
 In what follows we fill this gap by introducing one possible solution for ranking trees as a pre-requisite for RUV.}
 
 \textcolor{blue}{Briefly, we propose that each of the trees in a set of MCMC samples, as well as the corresponding ``true'' tree, be first compared to an external, ``reference'' tree (see Algorithm \ref{alg:sbc} in the supplementary material).
