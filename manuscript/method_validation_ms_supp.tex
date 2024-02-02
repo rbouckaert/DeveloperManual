@@ -147,11 +147,90 @@ These results indicate the PhyloBM simulator produces appropriate confidence int
   \end{tabular}
 \end{table}
 
+\newpage
+\section{Model validation with rejection sampling: a simple example}
+\label{sec:supp_toy}
+
+In this section, we experiment with a simple hierarchical Gaussian (toy) model to further examine the effect of rejection sampling in coverage validation and
+rank-uniformity validation (RUV).
+This experiment is motivated by results described in the main text, namely, the model in scenario 3 (Fig. 1, with extreme rejection sampling) passing coverage validation but not RUV.
+
+Let us devise the following data-generating process for obtaining different levels of model misspecification:
+
+\begin{align*}
+ \mu & \sim \operatorname{Normal}\left(0, 1\right)T[t, ],\\
+  y_1, \ldots, y_K & \overset{\text{iid}}{\sim} \operatorname{Normal}\left(\mu, 1\right),
+\end{align*}
+where $K$ is the sample size, and notation $T[, t]$ indicates the distribution is truncated \textbf{below} at $t \in \mathbb{R}$, i.e.,
+\begin{equation*}
+    \pi_{t}(\mu) = \frac{\phi(\mu)}{1 - \Phi(t)} \mathbb{I}(\mu > t).
+\end{equation*}
+and $\phi$ and $\Phi$ are the pdf and CDF of a standard normal, respectively.
+Here, $\mu$ and $y_1, \ldots, y_K$ correspond to $\theta_i$ and $d_i$ in Fig. 4 (main text), respectively.
+
+Inference is then done under the misspecified model
+\begin{align*}
+ \mu & \sim \operatorname{Normal}\left(0, 1\right),\\
+  y_1, \ldots, y_K & \overset{\text{i.i.d.}}{\sim} \operatorname{Normal}\left(\mu, 1\right).
+\end{align*}
+It is well-known that:
+\begin{equation}
+\label{eq:toy_normal_posterior}
+    \mu \mid y_1, \ldots, y_K \sim \operatorname{Normal}\left( \frac{\sum_{k = 1}^K y_k}{K + 1},  \frac{1}{K + 1} \right),
+\end{equation}
+i.e., the posterior is known in closed-form so MCMC is not required and one can sample directly and independently from it.
+One can thus control how extreme the model misspecification will be during inference by increasing $t$.
+Here we explore $t =  \{0, 1, 1.5\}$ and $K = \{5, 10 , 50\}$ in order to show how the method behaves in various misspecification scenarios.
+We ran $n=1000$ replications of the experiment, draw $200$ i.i.d. samples directly from the posterior in (\ref{eq:toy_normal_posterior}).
+
+The resulting rank histograms (Supplementary Fig.~\ref{supfig:ruv_normal_toy}) show how the posterior consistently underestimates the true mean, as indicated by a pattern of ranks bunching up towards the right-hand side of the histogram.
+The pattern is clearer in situations where the evidence in the data is weaker (e.g., when $K$ is small), and the effect of the prior on the posterior is stronger.
+Moreover, the misspecification becomes more apparent the larger $t$ is, that is, the more extreme the misspecification becomes.
+
+It is worth noting a couple of things.
+First, unlike what we observed and reported for the model in the main text, coverage validation does suggest an incorrectly specified model for certain combinations of $t$ and $K$ (Supplementary Table 2).
+Second, when the truncation is less extreme ($t = 0$) and there is a substantial amount of data ($K = 50$), RUV fails to detect any problems.
+This is an important insight about validation protocols: their sensitivity is context-dependent, and responds to the combination of model and data regime.
+
+\begin{figure}[!ht]
+   \includegraphics[width=\linewidth]{../figures/sbc_normal_manual.pdf}
+  \caption{Rank-uniformity validation (RUV) of the hierarchical Gaussian toy model.
+  We show the rank histograms in three misspecification scenarios ($t$
+  is 0.0, 1.0 or 1.5) and three data regimes ($K$ is 5, 10 or 50).
+  Results are based on $n=1000$ replicates of $L= 200$ i.i.d. draws each.
+  Horizontal black lines shows the expected count for each rank (the same for all ranks due to uniformity), and the light-blue bands represent the 95\%-confidence interval for the counts.
+    }
+  \label{supfig:ruv_normal_toy}
+\end{figure}
+
+\begin{table}[!h]
+\caption{Coverage results for the 95\%-HPD under the hierarchical Gaussian toy model.
+For each combination of truncation ($t$) and data set size ($K$), we show the estimated coverage over $n=1000$ replicates, and whether the coverage procedure passes.
+A pass is determined according to table 2 in the main text.
+}
+\centering
+\begin{tabular}{cccc}
+  \hline
+  Truncation ($t$) & Number of observations ($K$) & Estimated coverage & Pass \\
+  \hline
+  \rowcolor{gray!10} 0   & 5                      & 0.93               & No     \\
+  \rowcolor{gray!10} 1   & 5                      & 0.92               & No     \\
+  \rowcolor{gray!10} 1.5 & 5                      & 0.90               & No     \\
+                     0   & 10                     & 0.95               & Yes    \\
+                     1   & 10                     & 0.91               & No     \\
+                     1.5 & 10                     & 0.91               & No     \\
+  \rowcolor{gray!10} 0   & 50                     & 0.96               & Yes    \\
+  \rowcolor{gray!10} 1   & 50                     & 0.93               & No     \\
+  \rowcolor{gray!10} 1.5 & 50                     & 0.93               & No     \\
+  \hline
+\end{tabular}
+\end{table}
+
+\newpage
 \section{Validating a phylogenetic model with respect to a phylogenetic tree parameter, $\Phi$}
 \label{sec::app::ruv_topology}
 
-Here, we expand on the discussion initiated in Box 2 in the main text.
-We remind the reader that our goal is to evaluate if an inferential implementation of model $\mathcal{M}$, $\text{I}[\mathcal{M}]$, is well-calibrated and correct.
+Our goal is to evaluate if an inferential implementation of model $\mathcal{M}$, $\text{I}[\mathcal{M}]$, is well-calibrated and correct.
 In this section, we will focus on one critical parameter of $\mathcal{M}$: the phylogenetic tree $\Phi$.
 We will pay special attention to $\Phi$ while carrying out coverage validation and the RUV procedure.
 In practice, this amounts to computing the coverage of $\Phi$ and the rank distribution of this parameter in comparison to its posterior samples.
@@ -244,6 +323,13 @@ Once ranks are computed, RUV proceeds as usual.
 
 \begin{figure}
   \centering
+  \includegraphics[width=\linewidth]{../figures/tree_stats_coverage_manual.pdf}
+   \caption{Coverage validation of a phylogenetic model, focusing on the phylogenetic tree parameter (see Supplementary Table \ref{suptab:dists} for a description of the different distance metrics).}
+   \label{supfig:treecov}
+ \end{figure}
+ 
+\begin{figure}
+  \centering
   \includegraphics[width=\linewidth]{../figures/ruv_coalescent_manual.pdf}
   % \vspace{0pt}
   % \begin{subfigure}[t]{\textwidth}
@@ -259,8 +345,7 @@ Once ranks are computed, RUV proceeds as usual.
   %   \includegraphics[scale=0.5]{../figures/ruv_coalescent_histograms.pdf}    
   % \end{subfigure}
   % \hfill
-   \caption{Rank-uniformity validation (RUV) of a phylogenetic
-     model, focusing on the phylogenetic tree parameter.
+   \caption{Rank-uniformity validation (RUV) of a phylogenetic model, focusing on the phylogenetic tree parameter (see Supplementary Table \ref{suptab:dists} for a description of the different distance metrics).
      (a) Rank distribution for each metric.
      (b) Empirical cumulative distribution function (ECDF) for each metric.
    }
@@ -278,95 +363,17 @@ Once ranks are computed, RUV proceeds as usual.
 %   \label{supfig:phylo_calibration}
 % \end{figure}
 
-Supplementary figure \ref{supfig:ruv} summarizes the results for the metrics listed in supplementary table \ref{suptab:dists}, for a simple Kingman's coalescent model.
+Supplementary figures \ref{supfig:treecov} and \ref{supfig:ruv} summarize the coverage and RUV results, respectively, for the metrics listed in supplementary table \ref{suptab:dists}, when the model is the simple Kingman's coalescent.
 The model consists of a single five-taxon phylogenetic tree parameter, $\Phi$, assuming a known effective population size of 1.0.
-As can be seen, the ranks for the different metrics are (approximately) uniformly distributed, lying inside their confidence bands (Supplementary Fig. \ref{supfig:ruv}a), and their corresponding ECDFs also lie well inside their confidence ellipses (Supplementary Fig. \ref{supfig:ruv}b).
-Finally, we also verify that our model implementation is well-calibrated with respect to the phylogenetic tree parameter, as shown by appropriate 95\%-HPD-coverage statistics over the different tree metrics.
+
+We can first verify that our model implementation is well-calibrated with respect to the phylogenetic tree parameter, as shown by appropriate 95\%-HPD-coverage statistics over the different tree metrics (Supplementary Fig. \ref{supfig:treecov}).
+The evidence for implementation correctness is enhanced by observing that the ranks for the different metrics are (approximately) uniformly distributed, lying inside their confidence bands (Supplementary Fig. \ref{supfig:ruv}a), and their corresponding ECDFs also lie well inside their confidence ellipses (Supplementary Fig. \ref{supfig:ruv}b).
 % Supplementary figure \ref{supfig:phylo_calibration} shows that the HPDs do cover the
 % generating metrics with probability compatible with what is expected
 % theoretically.
 % In this instance, the tests would fail to detect problems with the algorithm.
 % These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity.
 % A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
-
-\newpage
-\section{Model validation with rejection sampling: a simple example}
-\label{sec:supp_toy}
-
-In this section, we experiment with a simple hierarchical Gaussian (toy) model to further examine the effect of rejection sampling in coverage validation and
-rank-uniformity validation (RUV).
-This experiment is motivated by results described in the main text, namely, the model in scenario 3 (Fig. 1, with extreme rejection sampling) passing coverage validation but not RUV.
-
-Let us devise the following data-generating process for obtaining different levels of model misspecification:
-
-\begin{align*}
- \mu & \sim \operatorname{Normal}\left(0, 1\right)T[t, ],\\
-  y_1, \ldots, y_K & \overset{\text{iid}}{\sim} \operatorname{Normal}\left(\mu, 1\right),
-\end{align*}
-where $K$ is the sample size, and notation $T[, t]$ indicates the distribution is truncated \textbf{below} at $t \in \mathbb{R}$, i.e.,
-\begin{equation*}
-    \pi_{t}(\mu) = \frac{\phi(\mu)}{1 - \Phi(t)} \mathbb{I}(\mu > t).
-\end{equation*}
-and $\phi$ and $\Phi$ are the pdf and CDF of a standard normal, respectively.
-Here, $\mu$ and $y_1, \ldots, y_K$ correspond to $\theta_i$ and $d_i$ in Fig. 4 (main text), respectively.
-
-Inference is then done under the misspecified model
-\begin{align*}
- \mu & \sim \operatorname{Normal}\left(0, 1\right),\\
-  y_1, \ldots, y_K & \overset{\text{i.i.d.}}{\sim} \operatorname{Normal}\left(\mu, 1\right).
-\end{align*}
-It is well-known that:
-\begin{equation}
-\label{eq:toy_normal_posterior}
-    \mu \mid y_1, \ldots, y_K \sim \operatorname{Normal}\left( \frac{\sum_{k = 1}^K y_k}{K + 1},  \frac{1}{K + 1} \right),
-\end{equation}
-i.e., the posterior is known in closed-form so MCMC is not required and one can sample directly and independently from it.
-One can thus control how extreme the model misspecification will be during inference by increasing $t$.
-Here we explore $t =  \{0, 1, 1.5\}$ and $K = \{5, 10 , 50\}$ in order to show how the method behaves in various misspecification scenarios.
-We ran $n=1000$ replications of the experiment, draw $200$ i.i.d. samples directly from the posterior in (\ref{eq:toy_normal_posterior}).
-
-The resulting rank histograms (Supplementary Fig.~\ref{supfig:ruv_normal_toy}) show how the posterior consistently underestimates the true mean, as indicated by a pattern of ranks bunching up towards the right-hand side of the histogram.
-The pattern is clearer in situations where the evidence in the data is weaker (e.g., when $K$ is small), and the effect of the prior on the posterior is stronger.
-Moreover, the misspecification becomes more apparent the larger $t$ is, that is, the more extreme the misspecification becomes.
-
-It is worth noting a couple of things.
-First, unlike what we observed and reported for the model in the main text, coverage validation does suggest an incorrectly specified model for certain combinations of $t$ and $K$ (Supplementary Table 2).
-Second, when the truncation is less extreme ($t = 0$) and there is a substantial amount of data ($K = 50$), RUV fails to detect any problems.
-This is an important insight about validation protocols: their sensitivity is context-dependent, and responds to the combination of model and data regime.
-
-\begin{figure}[!ht]
-   \includegraphics[width=\linewidth]{../figures/sbc_normal_manual.pdf}
-  \caption{Rank-uniformity validation (RUV) of the hierarchical Gaussian toy model.
-  We show the rank histograms in three misspecification scenarios ($t$
-  is 0.0, 1.0 or 1.5) and three data regimes ($K$ is 5, 10 or 50).
-  Results are based on $n=1000$ replicates of $L= 200$ i.i.d. draws each.
-  Horizontal black lines shows the expected count for each rank (the same for all ranks due to uniformity), and the light-blue bands represent the 95\%-confidence interval for the counts.
-    }
-  \label{supfig:ruv_normal_toy}
-\end{figure}
-
-\begin{table}[!h]
-\caption{Coverage results for the 95\%-HPD under the hierarchical Gaussian toy model.
-For each combination of truncation ($t$) and data set size ($K$), we show the estimated coverage over $n=1000$ replicates, and whether the coverage procedure passes.
-A pass is determined according to table 2 in the main text.
-}
-\centering
-\begin{tabular}{cccc}
-  \hline
-  Truncation ($t$) & Number of observations ($K$) & Estimated coverage & Pass \\
-  \hline
-  \rowcolor{gray!10} 0   & 5                      & 0.93               & No     \\
-  \rowcolor{gray!10} 1   & 5                      & 0.92               & No     \\
-  \rowcolor{gray!10} 1.5 & 5                      & 0.90               & No     \\
-                     0   & 10                     & 0.95               & Yes    \\
-                     1   & 10                     & 0.91               & No     \\
-                     1.5 & 10                     & 0.91               & No     \\
-  \rowcolor{gray!10} 0   & 50                     & 0.96               & Yes    \\
-  \rowcolor{gray!10} 1   & 50                     & 0.93               & No     \\
-  \rowcolor{gray!10} 1.5 & 50                     & 0.93               & No     \\
-  \hline
-\end{tabular}
-\end{table}
 
 \newpage
 \section{Proof for coverage validation}
