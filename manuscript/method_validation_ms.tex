@@ -1180,9 +1180,7 @@ Code and a tutorial are available on \href{https://github.com/rbouckaert/Develop
 In the previous sections, we described and executed two procedures for validating Bayesian models, namely, coverage validation and rank-uniformity validation (RUV).
 Once both simulation and inference can be conducted under a model $\mathcal{M}$, executing these procedures amounts to following relatively straightforward protocols (Fig. \ref{fig:flowchart}).
 Importantly, following these protocols should validate any Bayesian model, regardless of the nature of its parameter space and its component sampling distributions.
-This is because such protocols provide clear, objective rules for
-assessing model correctness, based on the coverage and rank
-distribution of parameters values; both can be computed for any and all Bayesian models.
+This is because such protocols provide clear, objective rules for assessing model correctness, based on the coverage and rank distribution of parameters values; both can be computed for any and all Bayesian models.
 For the reasons above, carrying out an analysis of coverage and/or of the distribution of parameter-value ranks (with respect to their posterior samples) should on one hand be a requirement, and on another should suffice for introducing a new Bayesian model implementation.
 
 \vspace{.25cm}
@@ -1199,7 +1197,7 @@ In such cases, a potentially delicate stage of method development begins, when d
 If validation success is marginal or contingent upon a substantially constrained parameter space, or if a Bayesian method has good coverage but fails the demanding RUV (as shown here and elsewhere; \citealp{mchugh22}), further simulation experiments might illuminate the nature of the model misspecification and suggest ways to modify the model.
 For example, developers may want to tweak an aspect of simulation, and then repeat RUV in search for regularities in parameter over- or underestimation (e.g., section 3 in the supplement).
 When releasing a method despite validation failure, researchers should in the very least be expected to report all attempts made to validate an implementation, why they seemed to fail, and what biases were uncovered, if any.
-Ideally, guidelines should be provided for interpreting results obtained with a tool in the presence of known biases.
+Ideally, guidelines should be provided for interpreting results obtained with a tool known to be biased.
 
 When confronted with utter validation failure, we urge method developers to resist the temptation of downplaying the importance of the validation effort, and instead ask the hard question of whether their models are reasonable in the first place.
 If large numbers of simulations must be rejected so as to obtain realistic data -- or data whose probabilities can be calculated -- this could be a sign that the model needs to be modified. 
