@@ -1237,6 +1237,31 @@ Historically, model design has often gone in the direction of incrementally cond
 % validating a model should match the enthusiasm for model comparisons
 % and hypothesis testing.
 
+{\color{green}
+
+Method developers should expect their software to often fail validation, especially at early development stages, requiring to traverse the loop illustrated in Fig. \ref{fig:flowchart} many times. 
+The validation procedure is usually arduous and repetitive but effective in revealing issues and giving modelers peace of mind when releasing their software. 
+However, even if a model inference machinery is correctly implemented in code, it can still fail a validation test due to model misspecification. 
+Model misspecification occurs when the model is in error and does not account for everything it should. 
+It can result from left-out variables, irrelevant variables, or functional form misspecification.
+
+RUV through graphical summary of post-processed MCMC results (e.g., Fig. \ref{fig:yulecalval}) reveals over- or underestimated parameters, suggesting the reasons for the failure of a simulation study \citep{mchugh22}. 
+One can progressively tweak aspects of the simulation to approach correctness. 
+
+If validation tests pass only within a substantially constrained parameter space, it may indicate that the model needs modification. 
+Independent implementation of simulators that also fail validation tests provide further evidence of potential issues with model assumptions.
+
+In cases of utter validation failure, method developers may have to question the reasonableness of their models. 
+However, it is important to remember that model validation is still valuable, as it helps in understanding inference biases and enables statistical hypothesis testing. 
+Without successful validation, interpreting the results becomes challenging, if not impossible.
+Historically, model design has often gone in the direction of incrementally conditioning the statistical process so as to match empirical observations (e.g., \citealp{Gelman1995,Gelman2020}), but re-imagining the model entirely might be the best solution.
+
+In summary, method developers should expect software validation to be a challenging and iterative process. Validation failure can indicate model misspecification, and further analysis and experimentation are necessary to uncover biases and improve the model.
+Successful model validation is essential for accurate interpretation of results, and even in cases of failure, the process provides valuable insights into the model's behavior and potential modifications needed.
+}
+
+
+
 \vspace{.25cm}
 
 \noindent \emph{Model characterization}
