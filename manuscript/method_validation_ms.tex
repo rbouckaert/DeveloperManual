@@ -1187,43 +1187,25 @@ For the reasons above, carrying out an analysis of coverage and/or of the distri
 
 \vspace{.25cm}
 
-\noindent \emph{\textcolor{blue}{My model implementation failed correctness tests, what now?}}
+\noindent \emph{\textcolor{purple}{My model implementation failed correctness tests, what now?}}
 
-\textcolor{blue}{Method developers should expect their software to often fail validation, especially at early development stages.
-New model implementations visit the loops in Fig. \ref{fig:flowchart} many times -- it is then that the most glaring, and later the more insidious, backend coding mistakes and model misspecification errors are uncovered and fixed.
-Our words are meant as encouragement: in our experience, the validation procedure is almost always arduous and repetitive, but very effective in revealing issues and later in giving modelers peace of mind when releasing their software.}
+{
+\color{purple}
+Method developers should expect their software to often fail validation, especially at early development stages, causing the loops in Fig. \ref{fig:flowchart} to be visited many times.
+The validation procedure is almost always arduous and repetitive, but very effective in revealing issues and in giving modelers peace of mind when releasing their software.
+A correctly implemented inference machinery can nonetheless still fail a validation test if there is some unforeseen form of model misspecification (e.g., rejection sampling).
+In such cases, a potentially delicate stage of method development begins, when decisions must be made between further testing or software release.
 
-\textcolor{blue}{As we showed above, however, a model inference machinery can still fail a validation test despite being correctly implemented in code.
-This can happen when there is model misspecification as a result of users filtering out simulations that do not generate the types of data sets observed in the real world.
-If upon such failure researchers are confident that all coding mistakes have been ironed out, a delicate stage of method develop begins, when further analysis can take place, decisions must be made, and different resolutions are possible.}
+If validation success is marginal or contingent upon a substantially constrained parameter space, or if a Bayesian method has good coverage but fails the demanding RUV (as shown here and elsewhere; \citealp{mchugh22}), further simulation experiments might illuminate the nature of the model misspecification and suggest ways to modify the model.
+For example, developers may want to tweak an aspect of simulation, and then repeat RUV in search for regularities in parameter over- or underestimation (e.g., section 3 in the supplement).
+When releasing a method despite validation failure, researchers should in the very least be expected to report all attempts made to validate an implementation, why they seemed to fail, and what biases were uncovered, if any.
+Ideally, guidelines should be provided for interpreting results obtained with a tool in the presence of known biases.
 
-\textcolor{blue}{When the observed coverage is distant from its expectation or if RUV reveals over- or underestimated parameters, for example, a researcher may want to hypothesize about why validation is failing, and test those hypotheses with further analysis of simulated data.
-If validation success is contingent upon simulation conditions that are empirically unrealistic or computationally intractable (e.g., trees with zero or an immense number of extant tips must be included), regularities emerging from further simulation experiments might illuminate the nature of the model misspecification.
-For example, method developers may want to progressively tweak an aspect of simulation, and then check if their implementation seems to approach correctness (e.g., section 3 in the supplement).}
-
-\textcolor{blue}{The type of experimentation described above should be further useful to those interested in characterizing model behavior (see below), even after it is published.
-We expect that the different extents to which an RUV procedure, in particular, can be made to fail (and how) will help method developers identify biases in parameter estimates \citep{mchugh22}.
-Failing to obtain appropriate coverage should also be informative, but to a lesser degree.
-First, because coverage validation is a less sensitive validation procedure, and second, because a coverage number does not point to the direction of bias.
-Here, graphical summaries of post-processed MCMC results (e.g., Fig. \ref{fig:yulecalval}) can help uncover parameter estimate biases.}
-
-\textcolor{blue}{Lessons about models can thus be learned by attempting to validate a model implementation even if ultimately it cannot be shown to be correct.
-At this point, method developers will have to choose whether to move forward and release their tool, or to have it undergo further testing until evidence for correctness is produced.
-In the former case, researchers should in the very least be expected to report all attempts made to validate an implementation, why they seemed to fail, and what biases were uncovered, if any.
-Ideally, authors should also provide guidelines for interpreting results obtained with the proposed tool.}
-
-\textcolor{blue}{Should passing validation procedures appear hopeless, the method developer may understandably find themselves downplaying the importance of the validation effort.
-If ``all models are wrong'' and if the necessary conditions for successful validation are unrealistic or hard to meet, then maybe validating a model is not all that important.
-Those with real data sets to analyze will likely find pragmatic comfort in this line of reasoning.
-But while a tempting thought, we urge researchers to consider how this perspective runs roughshod over statistical hypothesis testing, a ubiquitous practice in empirical studies.
-Although understanding inference biases may alleviate it, once an implementation cannot be shown to be correct, it becomes a non-trivial exercise, for example, to determine if a parameter estimate is different from another value.
-The task of model comparison, in turn, is even more hampered -- here, more than one (potentially incorrect) implementation must be compared, and biases in model evidence estimation will be particularly hard to characterize.
-Successful model validation is evidently something to strive for and in the absence of which interpreting the results will be challenging at best, and impossible in many cases.}
-
-\textcolor{blue}{When confronted with utter validation failure, method developers may have to ask the hard question of whether their models are reasonable in the first place.
-If simulations must be conducted within a substantially constrained parameter space so as to yield realistic data -- or data whose probabilities can be calculated -- this could be a sign that the model needs to be modified. 
+When confronted with utter validation failure, we urge method developers to resist the temptation of downplaying the importance of the validation effort, and instead ask the hard question of whether their models are reasonable in the first place.
+If large numbers of simulations must be rejected so as to obtain realistic data -- or data whose probabilities can be calculated -- this could be a sign that the model needs to be modified. 
 Independent implementations that also do not pass validation tests provide further evidence that the issue is potentially in the model assumptions themselves.
-Historically, model design has often gone in the direction of incrementally conditioning the statistical process so as to match empirical observations (e.g., \citealp{Gelman1995,Gelman2020}), but re-imagining the model entirely might be the best solution [ideas for citations?].}
+Historically, model design has often gone in the direction of incrementally conditioning the statistical process so as to match empirical observations (e.g., \citealp{Gelman1995,Gelman2020}), but re-imagining the model entirely might be the best solution.
+}
 
 % -- It always fails, and it is not even possible to come close to
 % passing: there is a pathological problem either with the
