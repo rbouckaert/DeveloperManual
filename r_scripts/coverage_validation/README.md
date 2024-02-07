@@ -188,8 +188,29 @@ cd r_scripts/coverage_validation/
 Rscript coverage_analysis_plot_tree_stat.R
 ```
 
-This script will generate the following .tex files:
+This script will generate the following .tex files
 
 * [`RF_coverage.tex``](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/RF_coverage.tex);
 
 This file can be compiled into a .pdf figure.
+
+## Calculating coverage of other tree distances
+
+The .csv files for the other tree distance metrics are in:
+
+* [`SBC_coal_max_branch_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_max_branch_dist.csv);
+* [`SBC_coal_tree_length_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_tree_length_dist.csv);
+* [`SBC_coal_range_branch_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_range_branch_dist.csv);
+* [`SBC_coal_KC_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_KC_dist.csv);
+* [`SBC_coal_BHV_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_BHV_dist.csv);
+
+We will run the following script to get the inference stats in the shape we want, and plot the coverage graphs:
+
+```
+cd r_scripts/coverage_validation/
+Rscript coverage_analysis_plot_other_tree_stats.R
+```
+
+The script will generate the following .tex file:
+
+* [`tree_stats_coverage.tex`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/tree_stats_coverage.tex);
