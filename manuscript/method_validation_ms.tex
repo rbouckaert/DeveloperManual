@@ -1140,6 +1140,8 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
   To get around this difficulty, we propose computing one or more phylogenetic metrics, or functionals, for which total-ordering holds and for which ranks can thus be obtained.
   One such metric is the well-known Robinson-Foulds distance between two trees (RF; \citealp{rf81}), which counts the number of clades implied by one tree but not the other.
   In order to compute a relational metric like the RF distance during validation, we must have a reference phylogeny $\phi_0$ to which we can compare our focal generating phylogeny $\phi$ and its posterior MCMC samples.
+  \textcolor{brown}{
+  For large $n$, however, one can expect the distance between $\phi_0$ and the posterior trees to be large \cite{steel1988}.}
   The RUV protocol remains the same, with an additional step in which we generate $\phi_0$ (see Algorithm \ref{alg:sbc} in the supplementary material).
   Fig. 9 shows validation results for the RF metric for five-taxon trees simulated under a simple Kingman's coalescent model assuming a known effective population size of 1.0.
 
