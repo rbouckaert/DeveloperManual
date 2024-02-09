@@ -238,16 +238,16 @@ Being able to isolate the building blocks of a hierarchical model simulator help
     \hline  
     \rowcolor{gray!10}$\text{LN}_{\Lambda}(-3.25,0.2)$ & Log-normal & $f_{\Lambda | M_\Lambda,\Sigma_\Lambda}(\cdot |M_\Lambda\mathord{=}{-3.25},\Sigma_\Lambda\mathord{=}0.2)$ & $f_{\Lambda | M_\Lambda,\Sigma_\Lambda}(\lambda |M_\Lambda\mathord{=}{-3.25},\Sigma_\Lambda\mathord{=}0.2)$\\
     $\text{LN}_{R}(-3.25,0.2)$ & Log-normal & $f_{R | M_R,\Sigma_R}(\cdot |M_R\mathord{=}{-2.5},\Sigma_R\mathord{=}0.5)$ & $f_{R | M_R,\Sigma_R}(\lambda |M_R\mathord{=}{-2.5},\Sigma_R\mathord{=}0.5)$\\
-    \rowcolor{gray!10}Yule & Pure-birth & $f_{\Theta |\mathcal{O},\Lambda}(\cdot |T\mathord{=}\tau,\Lambda\mathord{=}\lambda)$ & $f_{\Theta |\Lambda}(\lambda|T\mathord{=}\tau,\Lambda\mathord{=}\lambda)$\\
+    \rowcolor{gray!10}Yule & Pure-birth & $f_{\Theta |T,\Lambda}(\cdot |T\mathord{=}\tau,\Lambda\mathord{=}\lambda)$ & $f_{\Theta |\Lambda}(\lambda|T\mathord{=}\tau,\Lambda\mathord{=}\lambda)$\\
     PhyloBM & Phylogenetic Brownian motion & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\cdot |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$ & $f_{\boldsymbol{Y} |\Theta,R,Y_0}(\boldsymbol{y} |\Theta\mathord{=}\theta,R\mathord{=}r,Y_0\mathord{=}y_0)$
   \end{tabular}
   \end{table}
 \end{center}
 
 One way to validate a probabilistic model simulator is by using it to produce (sample) a large number of data sets given a set of parameters.
-These parameters can be seen as characterizing a ``population'' of the entities being modeled.
+These parameters can be seen as characterizing an ensemble of the entities being modeled.
 For each data set, one can then construct $\alpha \times 100 \%$-confidence intervals (where $\alpha \in (0,1)$ gives the confidence level) for certain summary statistics (e.g., mean, variance, covariance).
-If the simulator is behaving as expected, one should be able to verify that the (population or ``true'') summary statistic is contained approximately $\alpha$\% of the time within their $\alpha \times 100\%$-confidence intervals.
+If the simulator is behaving as expected, one should be able to verify that the (ensemble's or ``true'') summary statistic is contained approximately $\alpha$\% of the time within their $\alpha \times 100\%$-confidence intervals.
 An example is the Yule model (also known as the pure-birth model; \citealt{yule24}), a continuous-time Markov process that has been classically employed in phylogenetics to model the number of species in a clade \citep{yule24,aldous01}.
 Under a Yule process with a species birth rate of $\lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
 \vspace{.5cm}
@@ -393,7 +393,7 @@ Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent
     \rowcolor{gray!10}TreeSim & Birth-death models & R & \citealp{stadler11}\\
     mvMORPH & Continuous trait evolution models & R & \citealp{clavel15}\\
     \rowcolor{gray!10}diversitree & Several birth-death models & R & \citealp{fitzjohn12}\\
-    MASTER & Several birth-death models & BEAST 2 & \citealp{vaughan13}\\
+    ReMASTER & Several birth-death models & BEAST 2 & \citealp{vaughan24}\\
     \rowcolor{gray!10}LPhy & Several evolutionary models & Standalone & \citealp{drummond23}\\ 
     \hline
   \end{tabular}
