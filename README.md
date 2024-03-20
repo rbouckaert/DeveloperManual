@@ -823,6 +823,38 @@ Graphs show true value on x-axis and estimates on y-axis. Black line shows where
 
 
 
+### Clade coverage
+
+To test whether clade probabilities obtained from the posterior tree distribution are correct, we can create a bar chart showing how often a clade prediction matches the true clade taken from the input trees.
+
+A bar graph is constructed by counting how many inferred probabilities fit in a bin, then calculating how many of the true values are in a certain bin.
+Each bar represents a 10% sized interval, where the first bar represents predictions in the range 0 to 10%, the second bar ranges from 10% to 20%, etc.
+The number below the range represents the number of predictions that fit in that range for each of the 100 posterior distributions.
+For example, there are 3099 predictions in the range 90-100\% (last column) in the graph below.
+The size of the bar is the percentage of times the true prediction is in the bin with the associated prediction.
+
+* If the inferred clade probabilities are correct, the bars should cross the x=y line.
+* If they are too high, the bars will be below the x=y line.
+* If they are too low, the bars will be above the x=y line.
+
+![Correct clade probability estimation](figures/clades100mcmc.png)
+
+![Over confident clade probability estimation](figures/clades100over.png)
+
+
+To create a bar graph, use the `CladeCoverageCalculator` tool. It has the following options:
+
+- truth (TreeFile): trace file with true infection information (required)
+- prefix (File): log file name without the number and '.log' missing. It is assumed there are as many log files as there are entries in the truth file (required)
+- out (OutFile): output file, or stdout if not specified (optional, default: [[none]])
+- burnin (Integer): percentage of trees to used as burn-in (and will be ignored) (optional, default: 10)
+- png (OutFile): name of file to write bar-chart plot (optional, default: [[none]])
+- bins (Integer): number of bins=bars to use for the chart (optional, default: 10)
+- skip (Integer): number of trees in truth to skip (optional, default: 1)
+
+
+
+
 
 ## Simulation Based Calibration
 
