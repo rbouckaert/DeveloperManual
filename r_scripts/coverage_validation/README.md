@@ -214,3 +214,11 @@ Rscript coverage_analysis_plot_other_tree_stats.R
 The script will generate the following .tex file:
 
 * [`tree_stats_coverage.tex`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/tree_stats_coverage.tex);
+
+## Calculating coverage of tree topology
+
+This step was executed by Remco. Frequencies are hardcoded into the .R script:
+
+* [`topology_coverage_analysis.R`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/topology_coverage_analysis.R)
+
+Executing the script will produce the .tex corresponding to the last figure in the supplement.
