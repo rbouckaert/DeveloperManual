@@ -1067,7 +1067,7 @@ The parameter space of a tree model is difficult to handle: it includes both a c
 The theoretical properties, summarization, and exploration of tree space are all active topics of research in mathematical and computational biology \citep{gavryushkina13,gavryushkin16,brown20}.
 
 Given the interest in tree models shown by empirical, computational and theoretical biologists, in this section we will cover how tree models have been and can be validated, with an emphasis on tree space.
-We also propose \textcolor{blue}{two new ways in} which tree models can undergo RUV and be assessed with respect to coverage.
+We also propose \textcolor{magenta}{two new ways in} which tree models can undergo RUV and be assessed with respect to coverage, \textcolor{magenta}{respectively}.
 Our treatment is not meant to be an exhaustive review, but a short synthesis, and in keeping with the subject of the present work, we will not discuss protocols for the development and validation of Bayesian proposals in tree space.
 This topical subject is multifaceted (e.g., \citealp{douglas21,bouckaert22,douglas22}) and deserves a dedicated contribution we leave for the future.
 
@@ -1092,10 +1092,10 @@ Similarly to what was observed for tree-unrelated parameters, the root age had t
 
 To the best of our knowledge, the RUV procedure has not been applied to validate phylogenetic models vis-a-vis tree space.
 This is likely because, due to the complexity of tree space, no canonical total-ordering structure (a requirement for ranking) has been proposed for trees.
-\textcolor{blue}{Similarly, there seems to be no method described for evaluating the coverage of a tree's topology.}
-In what follows we fill this gap by introducing \textcolor{blue}{two novel approaches: (i) a} possible solution for ranking trees as a pre-requisite for RUV\textcolor{blue}{, and (ii) a way in which the topology of a tree can have its coverage assessed.}
+\textcolor{magenta}{Similarly, there seems to be no method described for evaluating the coverage of a tree's topology.}
+In what follows we \textcolor{magenta}{address} this gap by introducing \textcolor{magenta}{two novel approaches: (i) a} solution for ranking trees as a part of a  RUV analysis \textcolor{magenta}{, and (ii) a way in which the topology of a tree can have its coverage assessed.}
 
-\textcolor{blue}{As for the first method,} we propose that each of the trees in a set of MCMC samples, as well as the corresponding ``true'' tree, be first compared to an external, ``reference'' tree (see Algorithm \ref{alg:sbc} in the supplementary material).
+\textcolor{magenta}{For first method,} we propose that each of the trees in a set of MCMC samples, as well as the corresponding ``true'' tree, be first compared to an external, ``reference'' tree (see Algorithm \ref{alg:sbc} in the supplementary material).
 For example, a tree sample can be compared to the reference tree with respect to the length of their longest branch, to their topology, to their asymmetry, etc.;
 what matters here is that this comparison quantitatively measures the distance between the reference and the other tree.
 Then, once one knows how distant each true tree and its posterior samples are from the reference tree, they can be ranked relative to one another based on their associated distance measure.
@@ -1168,11 +1168,12 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
 % In a Bayesian context, tree models often play the role of prior sampling distributions for phylogenetic (tree) random variables, and for this reason are commonly referred to as tree ``priors''.
 % (In Fig. \ref{fig:pgm}, for example, a Yule tree model is being used as a tree prior for $\phi$.)
 
-\textcolor{blue}{The second validation strategy we introduce allows one to evaluate the coverage of a phylogenetic tree's topology.
-  Importantly, this validation method requires that the tree model only generates trees of the same size, which limits its wide application to all existing tree models.
-The procedure verifies that, across all $n$ independently simulated trees, true clades are sampled in proportion to their fraction among all clades sampled as frequently.
- Put differently, one expects that true clades comprise 10\% of all clades with posterior support of 0.1, 20\% of all clades with posterior support of 0.2, and so on (Supplementary Fig. X).
- We further describe a statistical test for verifying the adherence of a tree model implementation to the aforementioned expectations (for the sake of brevity, we leave details to the supplementary material).
+\textcolor{magenta}{
+The second validation strategy we introduce allows one to evaluate the coverage of a phylogenetic tree's topology \textit{via} clade frequencies.
+ The procedure verifies that, across all $n$ independently simulated trees, true clades (i.e. clades present in the simulated trees) are sampled in proportion to their fraction among all clades sampled as frequently.
+ Put differently, one expects that true clades comprise 10\% of all clades with posterior support of 0.1, 20\% of all clades with posterior support of 0.2, and so on (Supplementary Fig. 6).
+We give further pointers about statistical tests for verifying the adherence of a tree model implementation to the aforementioned expectations in the supplementary material. 
+Importantly, this validation method requires that the tree model only generates trees of the same size, which limits its wide application to all existing tree models. 
 }
 
 \subsection*{Software}
