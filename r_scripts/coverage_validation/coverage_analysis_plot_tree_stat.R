@@ -41,7 +41,7 @@ get.plot <- function(p, a.df1, a.df2, y.max, y.min, covg) {
 ## Reading stat summaries ##
 ############################
 
-stat.tb <- as_tibble(read.table("SBC_coal_RF_coverage.csv", sep=",", head=TRUE))
+stat.tb <- as_tibble(read.table("coal_RF_dist.csv", sep=",", head=TRUE))
 stat.tb["sim"] <- 1:100
 names(stat.tb)[1:4] <- c("RF", "RF.mean", "RF.95.HPDlo", "RF.95.HPDup")
 

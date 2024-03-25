@@ -43,11 +43,11 @@ get.plot <- function(p, a.df1, a.df2, y.max, y.min, covg) {
 ## Reading stat summaries ##
 ############################
 
-max.full.tb <- as_tibble(read.table("SBC_coal_max_branch_dist.csv", sep=",", head=TRUE))
-tree.len.full.tb <- as_tibble(read.table("SBC_coal_tree_length_dist.csv", sep=",", head=TRUE))
-range.len.full.tb <- as_tibble(read.table("SBC_coal_range_branch_dist.csv", sep=",", head=TRUE))
-kc.full.tb <- as_tibble(read.table("SBC_coal_KC_dist.csv", sep=",", head=TRUE))
-bhv.full.tb <- as_tibble(read.table("SBC_coal_BHV_dist.csv", sep=",", head=TRUE))
+max.full.tb <- as_tibble(read.table("coal_max_branch_dist.csv", sep=",", head=TRUE))
+tree.len.full.tb <- as_tibble(read.table("coal_tree_length_dist.csv", sep=",", head=TRUE))
+range.len.full.tb <- as_tibble(read.table("coal_range_branch_dist.csv", sep=",", head=TRUE))
+kc.full.tb <- as_tibble(read.table("coal_KC_dist.csv", sep=",", head=TRUE))
+bhv.full.tb <- as_tibble(read.table("coal_BHV_dist.csv", sep=",", head=TRUE))
 
 max.tb <- max.full.tb %>% select(simulated_value, mean, q5, q95)
 max.tb["sim"] <- 1:100 # just need sim column for one of them because we cbind them later

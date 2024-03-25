@@ -178,7 +178,7 @@ But before we do that, manually open  `graphical_model_coverage.tex` and replace
 
 ## Calculating coverage of Robinson-Foulds statistic
 
-The inference stats on the RF statistic is in file [`SBC_coal_RF_coverage.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_RF_coverage.csv).
+The inference stats on the RF statistic is in file [`coal_RF_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/coal_RF_dist.csv).
 How this file was generated is described [here](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/sbc/README.md).
 
 We will run the following script to get the inference stats in the shape we want, and plot the coverage graphs:
@@ -198,11 +198,11 @@ This file can be compiled into a .pdf figure.
 
 The .csv files for the other tree distance metrics are in:
 
-* [`SBC_coal_max_branch_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_max_branch_dist.csv);
-* [`SBC_coal_tree_length_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_tree_length_dist.csv);
-* [`SBC_coal_range_branch_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_range_branch_dist.csv);
-* [`SBC_coal_KC_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_KC_dist.csv);
-* [`SBC_coal_BHV_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/SBC_coal_BHV_dist.csv);
+* [`coal_max_branch_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/coal_max_branch_dist.csv);
+* [`coal_tree_length_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/coal_tree_length_dist.csv);
+* [`coal_range_branch_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/coal_range_branch_dist.csv);
+* [`coal_KC_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/coal_KC_dist.csv);
+* [`coal_BHV_dist.csv`](https://github.com/rbouckaert/DeveloperManual/blob/master/r_scripts/coverage_validation/coal_BHV_dist.csv);
 
 We will run the following script to get the inference stats in the shape we want, and plot the coverage graphs:
 

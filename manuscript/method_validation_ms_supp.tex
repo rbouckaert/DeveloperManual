@@ -377,8 +377,9 @@ The evidence for implementation correctness is enhanced by observing that the ra
 % These plots can be supplemented with a table showing attained coverage and binomial confidence intervals for this quantity.
 % A further advantage of graphically investigating coverage is that one can identify consistent areas for which estimation fails -- e.g. high/low simulated values of a given variable.
 
-In the main text, we also mentioned the possibility of assessing the coverage of a phylogenetic tree's topology by looking at statistics of its clades.
-For example, to formally assess the correctess of the clade frequency diagnostic (Supplementary Fig.~\ref{supfig:clade_covg}) one might do one of two things.
+In the main text, we also mentioned the possibility of assessing the coverage of a phylogenetic tree's topology; specifically, by looking at the frequency of its clades as a function of their posterior support.
+An outcome of this procedure can be seen in supplementary figure \ref{supfig:clade_covg}, for a simple 50-sample Kingman coalescent model.
+We propose that the clade frequency diagnostic is further evaluated in two ways.
 First, one can check that the resulting empirical cumulative distribution function (ECDF) fits that of an appropriately scaled uniform distribution using a Kolmogorov-Smirnov test~\citep{Birnbaum1951}.
 Second, one can fit a regression model to the attained frequencies against the bin midpoints, and test the null hypothesis that the intercept is zero and the slope is one, rejecting it at the usual confidence levels.
 

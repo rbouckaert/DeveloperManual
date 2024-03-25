@@ -72,6 +72,11 @@
 %\pretitle{\begin{center}\Huge\bfseries} % Article title formatting
 %\posttitle{\end{center}} % Article title closing formatting
 
+\pagestyle{fancy}
+\fancyhead[R]{}
+\fancyhead[L]{}
+\chead{BAYESIAN EVOLUTIONARY MODEL VALIDATION}
+
 \title{How to validate a Bayesian evolutionary model} % Article title
 %LM: strictly speaking, we're 'validating' the inference machinery.
 %% LM: Validating a model involves epistemic considerations that are, as far as I understand, outside the scope of this paper.
@@ -99,7 +104,7 @@
   understood as validation varies widely among methodological contributions.
   This may be a consequence of the still embryonic stage of the literature on statistical software validation for computational biology.
   Our manuscript aims to advance this literature.
-  Here, we describe and illustrate good practices for assessing the correctness of a model implementation, with an emphasis on Bayesian methods.
+  Here, we describe, illustrate and introduce new good practices for assessing the correctness of a model implementation, with an emphasis on Bayesian methods.
   We also introduce a suite of functionalities for automating validation protocols.
   It is our hope that the guidelines presented here help sharpen the focus of discussions on (as well as elevate) expected standards of statistical software for biology.
 \end{abstract}
@@ -1067,7 +1072,7 @@ The parameter space of a tree model is difficult to handle: it includes both a c
 The theoretical properties, summarization, and exploration of tree space are all active topics of research in mathematical and computational biology \citep{gavryushkina13,gavryushkin16,brown20}.
 
 Given the interest in tree models shown by empirical, computational and theoretical biologists, in this section we will cover how tree models have been and can be validated, with an emphasis on tree space.
-We also propose \textcolor{magenta}{two new ways in} which tree models can undergo RUV and be assessed with respect to coverage, \textcolor{magenta}{respectively}.
+We also propose two new ways in which tree models can undergo RUV and be assessed with respect to coverage, respectively.
 Our treatment is not meant to be an exhaustive review, but a short synthesis, and in keeping with the subject of the present work, we will not discuss protocols for the development and validation of Bayesian proposals in tree space.
 This topical subject is multifaceted (e.g., \citealp{douglas21,bouckaert22,douglas22}) and deserves a dedicated contribution we leave for the future.
 
