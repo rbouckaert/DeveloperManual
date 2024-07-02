@@ -202,7 +202,8 @@ Both $\text{S}[\mathcal{M}]$ and $\text{I}[\mathcal{M}]$ must be inspected in or
 \subsection*{Validating the simulator, $\text{S}[\mathcal{M}]$}
 \label{verify-correctness-of-simulator-implementation}
 
-When a new probabilistic model $\mathcal{M}$ is introduced an its inferential engine, $\text{I}[\mathcal{M}]$ -- what users employ in empirical analyses -- is implemented for the first time, validating $\text{I}[\mathcal{M}]$ requires that a simulator for $\mathcal{M}$, $\text{S}[\mathcal{M}]$, be devised and itself validated.
+When a new probabilistic model $\mathcal{M}$ is introduced \textcolor{blue}{for the first time, a simulator for $\mathcal{M}$ ($\text{S}[\mathcal{M}]$) must be devised and itself validated.
+The inferential engine ($\text{I}[\mathcal{M}]$) -- }\textcolor{red}{\st{an its inferential engine ($\text{I}[\mathcal{M}]$) -- }}what users employ in empirical analyses -- \textcolor{blue}{cannot be validated without a valid simulator.}\textcolor{red}{\st{is implemented for the first time, validating $\text{I}[\mathcal{M}]$ requires that a simulator for $\mathcal{M}$, $\text{S}[\mathcal{M}]$, be devised and itself validated.}}
 A simulator conventionally requires a parameter value as input (i.e., a value for $\boldsymbol{\theta}$, $\boldsymbol{\theta}$, where $\boldsymbol{\theta}$ might represent the values of more than one parameter), or a prior distribution on those values, $f_{\boldsymbol{\theta}}(\cdot)$. 
 Note that we use ``$\cdot$'' when referring specifically to the generative function, rather than the value it takes given input.
 The simulator then outputs a sample of random variable(s), which for hierarchical models will include not only an instantiation $d$ of data $\text{D}$, but also the parameters in $\boldsymbol{\theta}$.
@@ -276,7 +277,7 @@ Under a Yule process with a species birth rate of $\lambda$, the expected tree h
 % \end{equation}
 
 % \noindent where $\boldsymbol{y}$ corresponds to the observed values of a trait scored for $n$ species, $\boldsymbol{y_0}$ is the trait value at the root of the tree, $r$ is the instantaneous rate of change (i.e., the evolutionary rate, and sometimes represented by $\sigma^2$), and $r\boldsymbol{T}$ is the variance-covariance matrix.
-% $\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree $\phi$'s topology and branch lengths; see Fig. 1 below).
+% $\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree $\phi$'s topology and branch lengths; see Fig. 1).
 
 % \vspace{.25cm}
 % The probability density function in equation \eqref{eq:bm} describes the distribution that would result from an infinite number of BM ``experiments'' (each experiment being non-mean-reverting, and representing an independent evolutionary trajectory).
@@ -383,7 +384,7 @@ We note that we have so far used $\text{S}[\mathcal{M}]$ to represent a \emph{di
 This is contrast with other simulation strategies, such as conducting MCMC under model $\mathcal{M}$ with no data (i.e., ``sampling from the prior''), given specific parameter values ($\theta$).
 This latter approach may be the only option if $\text{S}[\mathcal{M}]$ has not been yet implemented, and it is predicated upon the existence of correct implementations of both an inferential engine $\text{I}[\mathcal{M}]'$ and of proposal functions.
 We distinguish $\text{I}[\mathcal{M}]'$ from $\text{I}[\mathcal{M}]$ because simulations are being carried out precisely to validate $\text{I}[\mathcal{M}]$.
-Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent implementation of $\text{I}[\mathcal{M}]$ -- they can introduce circularity to the validation task.
+Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent and validated implementation of $\text{I}[\mathcal{M}]$ -- they can introduce circularity to the validation task.
 
 \begin{center}
   \begin{table}[h]
@@ -534,9 +535,9 @@ Now taking a set of parameter values $\theta_i$ sampled from $f_\Theta(\cdot)$
 % \end{align*}
 it can be shown that
 % $\operatorname{Pr}\left(\theta_0 \in I_\alpha(Y) \right) = \alpha$
-$\operatorname{Pr}\left(\theta_i \in I_\alpha(d) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs have nominal coverage under the true generative model (a proof is provided in the supplementary material).
+$\operatorname{Pr}\left(\theta_i \in I_\alpha(d) \right) = \alpha$, i.e., that $100\times\alpha$\% HPDs have nominal coverage under the true generative model (a proof \textcolor{blue}{for any $\alpha$} is provided in the supplementary material).
 More formally, the coverage of $n$ intervals obtained as above will be distributed as binomial random variable with $n$ trials and success probability $\alpha$.
-When $n=100$ and $\alpha = 0.95$, the 95\%-central interquantile interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage2}).
+When $n=100$ and $\alpha = 0.95$, the 95\%-central interquantile interval for the number of simulations containing the correct data-generating parameter is between $90$ and $99$ (Table \ref{tab:coverage2} \textcolor{blue}{shows the interquantile intervals for other $\alpha$ values.}).
 If we ascertain that $\text{I}[\mathcal{M}]$ of a Bayesian model produces coverage lying within the expected bounds, we say the model has passed the coverage validation, and is well-calibrated and correct.
 
 % % \begin{table}
@@ -579,7 +580,13 @@ Credibility level $\%$ ($100 \times \alpha$) & $n$ (replicates) & Lower quantile
                        & 500            & 465   & 484   \\
   \rowcolor{gray!10}   & 100            & 97    & 100   \\
   \rowcolor{gray!10}99 & 200            & 195   & 200   \\
-  \rowcolor{gray!10}   & 500            & 490   & 499   \\ \hline%\cmidrule(l){1-4} 
+  \rowcolor{gray!10}   & 500            & 490   & 499   \\
+                       & 100            & X     & Y     \\
+                 75    & 200            & X     & Y     \\
+                       & 500            & X     & Y     \\             
+  \rowcolor{gray!10}   & 100            & X     & Y     \\
+  \rowcolor{gray!10}50 & 200            & X     & Y     \\   
+  \rowcolor{gray!10}   & 500            & X     & Y     \\ \hline%\cmidrule(l){1-4} 
 \end{tabular}
 \end{center}
 \caption{% Under a correctly implemented model, the number of true simulated values that fall within their corresponding $100 \times \alpha$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
