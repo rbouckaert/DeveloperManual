@@ -24,6 +24,7 @@
 \usepackage{titlesec} % Allows customization of titles
 \usepackage{titling} % Customizing the title section
 \usepackage[hidelinks]{hyperref} % For hyperlinks in the PDF
+\usepackage{lineno} % for line numbering
 
 \usepackage{tikz}
 \usepackage{bm}
@@ -82,10 +83,10 @@
 %% LM: Validating a model involves epistemic considerations that are, as far as I understand, outside the scope of this paper.
 \author{\textsc{F\'{a}bio K. Mendes$^{1\dagger*}$}, \textsc{Remco Bouckaert$^{2\dagger}$},\\
 \textsc{Luiz M. Carvalho$^{3\dagger}$}, \textsc{Alexei J. Drummond$^{4}$} \\
-\small $^1$Department of Biology, Washington University in St. Louis\\
-\small $^2$School of Computer Science, The University of Auckland\\
-\small $^3$Escola de Matem\'{a}tica Aplicada, Fundaç\~{a}o Getulio Vargas\\
-\small $^4$School of Biological Sciences, The University of Auckland\\
+\small $^1$Department of Biology, Washington University in St. Louis, United States\\
+\small $^2$School of Computer Science, The University of Auckland, New Zealand\\
+\small $^3$Escola de Matem\'{a}tica Aplicada, Fundaç\~{a}o Getulio Vargas, Brazil\\
+\small $^4$School of Biological Sciences, The University of Auckland, New Zealand\\
 \small
 \href{mailto:f.mendes@auckland.ac.nz}{$^*$Corresponding author: f.mendes@wustl.edu}\\
 {\small $^\dagger$Authors contributed equally to this work}
@@ -115,6 +116,8 @@
 
 \doublespacing
 
+\linenumbers
+
 \begin{document}
 
 % Print the title
@@ -137,7 +140,7 @@ One extreme case is the discipline of evolutionary biology, on which we focus ou
 While it could be said that many decade-old questions and hypotheses in evolutionary biology have aged well and stood up the test of time (e.g., the Red Queen hypothesis, \citealt{vanvalen73,lively87,morran11,gibson15}; the Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
 In particular, evolutionary biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
 
-Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,f73,hky,hudson90}.
+Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,fel73,hky,hudson90}.
 Within the latter category, probabilistic models have seen a sharp surge in popularity within evolutionary biology, in conjunction with computational tools implementing them.
 
 Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness~\citep{darriba18}.
@@ -262,7 +265,7 @@ Under a Yule process with a species birth rate of $\lambda$, the expected tree h
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
   title=Box 1: Models characterized by well-known parametric distributions, fonttitle=\bfseries]
   \small 
-  One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. ~\ref{fig:pgm}; \citealt{f73}).
+  One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. ~\ref{fig:pgm}; \citealt{fel73}).
 The pdf characterizing this model's sampling distribution is in fact the pdf of the multivariate normal (MVN) probability distribution:
 \begin{equation}
   \begin{split}
@@ -333,7 +336,7 @@ More rigorously, one can follow the method described in the main text and verify
 
 \noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
 Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
-In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{f73}).
+In Box 1, we illustrate this procedure for the (parametric) sampling distribution underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{fel73}).
 Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally validate $\text{S}[\mathcal{M}]$ at the same time.
 
 \begin{figure}
@@ -1144,7 +1147,7 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
   \vspace{.25cm}
 
   To get around this difficulty, we propose computing one or more phylogenetic metrics, or functionals, for which total-ordering holds and for which ranks can thus be obtained.
-  One such metric is the well-known Robinson-Foulds distance between two trees (RF; \citealp{rf81}), which counts the number of clades implied by one tree but not the other.
+  One such metric is the well-known Robinson-Foulds distance between two trees (RF; \citealp{foulds81}), which counts the number of clades implied by one tree but not the other.
   In order to compute a relational metric like the RF distance during validation, we must have a reference phylogeny $\phi_0$ to which we can compare our focal generating phylogeny $\phi$ and its posterior MCMC samples.
   The RUV protocol remains the same, with an additional step in which we generate $\phi_0$ (see Algorithm \ref{alg:sbc} in the supplementary material).
   Fig. 9 shows validation results for the RF metric for five-taxon trees simulated under a simple Kingman's coalescent model assuming a known effective population size of 1.0.
@@ -1286,6 +1289,10 @@ Model characterization, on the other hand, is about inspecting model behavior as
 Such experiments are best designed and justified when empirically motivated.
 
 We hope the guidelines described here can enhance both the release rate and standards of statistical software for biology, by assisting its users, developers and referees in quickly finding common ground when evaluating new modeling work.
+
+\subsection*{Supplementary material}
+
+Data available from the Dryad Digital Repository: doi:10.5061/dryad.xksn02vpk (\url{https://datadryad.org/stash/share/Vy7fwzuD7IOo7sj_3cwTiZol-BBw-SvGcvZRHpNUDvc}).
 
 \subsection*{Acknowledgements}
 
