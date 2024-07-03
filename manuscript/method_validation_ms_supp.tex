@@ -104,9 +104,38 @@
 \newpage
 % \section{Additional validation examples and guidelines}
 
+\section{Examples of software for evolutionary model simulation}
+
+\begin{center}
+  \begin{table}[h]
+  \caption{A non-exhaustive list of simulation software used for various models in evolutionary biology.}
+  \label{suptab:sim}
+  \centering
+  \begin{tabular}{ p{0.7in} p{1.5in} p{1in} p{1.3in} }
+    \hline
+    Software package & Model type & Platform & Reference \\
+    \hline  
+    \rowcolor{gray!10}Seq-Gen & Molecular sequence evolution models & Standalone & \citealp{rambaut97} \\
+    ms & Coalescent model & Standalone & \citealp{hudson02}\\
+    \rowcolor{gray!10}msprime & Coalescent model & Python & \citealp{kelleher16}\\
+    SLiM & Population genetic models & Standalone & \citealp{haller19}\\    
+    \rowcolor{gray!10}mvMORPH & Continuous trait evolution models & R & \citealp{clavel15}\\
+    TreeSim & Birth-death models & R & \citealp{stadler11}\\
+    \rowcolor{gray!10}diversitree & Several birth-death models & R & \citealp{fitzjohn12}\\
+    castor & Several birth-death models & R & \citealp{castor}\\
+    \rowcolor{gray!10}PhyloJunction & Several birth-death models & Python & \citealp{mendes24}\\
+    ReMASTER & Several birth-death models & BEAST 2 & \citealp{vaughan24}\\
+    \rowcolor{gray!10}RPANDA & Several evolutionary models & R & \citealp{rpanda}\\
+    LPhy & Several evolutionary models & Standalone & \citealp{drummond23}\\
+    \rowcolor{gray!10}RevBayes & Several evolutionary models & RevBayes & \citealp{revbayes}\\
+    \hline
+  \end{tabular}
+  \end{table}
+\end{center}
+
 \section{Validating a phylogenetic Brownian motion simulator}
 
-One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. 1 of the main text; \citealt{fel73}).
+One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. 1 of the main text; \citealt{f73}).
 The pdf characterizing this model's sampling distribution is in fact the pdf of the multivariate normal (MVN) probability distribution:
 
 \begin{equation}
@@ -298,7 +327,7 @@ We summarize some of these distances in supplementary table \ref{suptab:dists}.
     The length of $\phi$ (the sum of all branch lengths) & $\text{LEN}(\phi)$ & N/A\\
     % \rowcolor{gray!10}The length of the external branch leading to taxon $s_1$ & $\text{T}_1(\phi)$ & N/A\\
     \rowcolor{gray!10}The difference between the largest and smallest branch length of $\phi$ & $\text{R}(\phi)$ & N/A\\
-    The Robinson-Foulds distance between $\phi$ and $\phi_0$ & $\text{RF}_0(\phi)$ & \citep{rf81}\\
+    The Robinson-Foulds distance between $\phi$ and $\phi_0$ & $\text{RF}_0(\phi)$ & \citep{foulds81}\\
     \rowcolor{gray!10}The Kendall-Coljin distance between $\phi$ and $\phi_0$ & $\text{KC}_0(\phi;\omega)$ & \citep{Kendall2016}\\
     The Billera-Holmes-Vogtman distance between $\phi$ and $\phi_0$ & $\text{BHV}_0(\phi)$ & \citep{Billera2001}\\
     \hline

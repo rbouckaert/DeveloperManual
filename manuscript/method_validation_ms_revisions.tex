@@ -130,21 +130,19 @@
 \section*{Introduction}
 The last two decades have seen the biological sciences undergo a major revolution.
 Critical technological innovations such as the advent of massive parallel sequencing and the accompanying improvements in computational power and storage have flooded biology with unprecedented amounts of data ripe for analysis.
-Not only has intraspecific data from multiple individuals allowed progress in fields like medicine and epidemiology
-\citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.,][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{pease2016,kawahara19,upham19}.
-% martin13,brawand14,jarvis14,novikova16
-% However, as the old adage goes, with great power comes great responsibility: never has the data available to the average biologist been so abundant, but also never has one been so aware of both its complexity and the necessary care needed to analyze it. 
+Not only has intraspecific data from multiple individuals allowed progress in fields like medicine and epidemiology \citep[e.g.,][]{1000g,humanmicrobiome,neafsey15}, population genetics \citep[e.g.,][]{lynch07,lack16,demanuel16} and disease ecology \citep[e.g.,][]{rosenblum13,bates18}, but now a large number of species across the tree of life have had their genomes sequenced, furthering our understanding of species relationships and diversification \citep[e.g.,][]{pease2016,kawahara19,upham19}.
 Almost on par with \textcolor{red}{\st{with}} data accumulation is the rate at which new computational tools are being proposed, as evidenced by journals entirely dedicated to method advances, methodological sections in biological journals, and computational biology degrees being offered by institutions around the world.
 
 One extreme case is the discipline of evolutionary biology, on which we focus our attention.
-While it could be said that many decade-old questions and hypotheses in evolutionary biology have aged well and stood up the test of time (e.g., the Red Queen hypothesis, \citealt{vanvalen73,lively87,morran11,gibson15}; the Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}), data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
+While it could be said that many decade-old questions and hypotheses in evolutionary biology have aged well and stood up the test of time (e.g., the Red Queen hypothesis, \citealt{vanvalen73,lively87,morran11,gibson15}; the Bateson-Dobzhansky-Muller model, \citealt{dob36,muller40,hopkins12,roda17}),
+data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
 In particular, evolutionary biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
 
-Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,fel73,hky,hudson90}.
+Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,f73,hky,hudson90}.
 Within the latter category, probabilistic models have seen a sharp surge in popularity within evolutionary biology, in conjunction with computational tools implementing them.
 
-Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness~\citep{darriba18}.
-This is unsurprising given the challenges in funding software research~\citep{siepel19}, and the multidisciplinary nature of method development.
+Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness \citep{darriba18}.
+This is unsurprising given the challenges in funding software research \citep{siepel19}, and the multidisciplinary nature of method development.
 Much of the relevant information regarding good coding and statistical practices is out of reach of the average computational biologist, as it is spread across a variety of specialized sources, often obfuscated by its technical and theoretical presentation.
 The bioinformatics community is thus in dire need of synthetic and accessible resources that provide guidance for code improvement and validation.
 
@@ -168,12 +166,10 @@ The central component of a probabilistic model, $\text{Pr}(D=d|\boldsymbol{\Thet
 This probability mass function (pmf; or its continuous counterpart, the probability density function, pdf, $f_D(d|\boldsymbol{\Theta}=\boldsymbol{\theta})$) is sometimes referred to as the likelihood function.
 Just for this section, we will abuse and simplify \textcolor{blue}{the} notation \textcolor{blue}{for the image of $f_D$}, and drop variable subscripts, e.g., we will write $f_D(d|\boldsymbol{\Theta}=\boldsymbol{\theta})$ as $f(d|\boldsymbol{\theta})$.
 As illustrated in the next sections, probabilistic models can be hierarchical, in which case there may be several likelihood functions.
-% % (Fig. \ref{fig:graphmodel}).
 In a frequentist statistical framework, $f(d|\boldsymbol{\theta})$ is the sole component of an inferential procedure, and is maximized across parameter space during parameter estimation and model comparison.
 
 In the present study we focus on Bayesian inference, where a probabilistic model $\mathcal{M}$ defines a posterior  probability distribution for its parameters, $f(\boldsymbol{\theta}|d) = \frac{f(d|\boldsymbol{\theta})f(\boldsymbol{\theta})}{f(d)}$.
 Here, our prior inferences or beliefs about the natural world -- represented by the prior distribution $f(\boldsymbol{\theta})$ -- are confronted with and updated by the data through the likelihood function.
-% $f(d) = \int_\boldsymbol{\theta} f(d|\boldsymbol{\theta})f(\boldsymbol{\theta})d\boldsymbol{\theta}$, the probability of the data, is also known as the marginal likelihood or the model evidence.
 Crucially, a Bayesian model includes a prior, $f(\boldsymbol{\theta})$: when models are compared, for example, $f(\boldsymbol{\theta})$ needs to be taken into account when computing the model evidence $f(d)$.
 
 Models routinely used in evolutionary biology are often characterized by continuous parameters, and are normally complex enough to preclude analytical solutions for the posterior density $f(\boldsymbol{\theta}|d)$, mainly due to the intractability of the integral appearing in the denominator -- i.e., the marginal likelihood.
@@ -185,12 +181,12 @@ If the proposal distribution generated by this mechanism is irreducible, positiv
 
 We will spend time considering MCMC in particular, as it is the commonly chosen technique for obtaining samples from $f(\boldsymbol{\theta}|d)$ under an implementation of model $\mathcal{M}$.
 A thorough validation effort thus entails verifying the correctness of (i) the model (i.e., $f(d|\boldsymbol{\theta})f(\boldsymbol{\theta})$), and (ii) the components involved in the MCMC transition mechanism.
-We note that the latter are not part of the model, however, and it is  possible to sample $f(\boldsymbol{\theta}|d)$ with other techniques such as importance sampling, Laplace approximations~\citep{inla}, or even by converting the sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
+We note that the latter are not part of the model, however, and it is  possible to sample $f(\boldsymbol{\theta}|d)$ with other techniques such as importance sampling, Laplace approximations \citep{inla}, or even by converting the sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
 
 Finally, we stress that we are interested in practices for verifying model correctness \textcolor{blue}{-- and by ``correctness'', we mean the correctness of a model implementation}.
 There are other tests and diagnostics employed to ensure that a particular MCMC analysis is converging as expected.
 Ascertaining whether one or more independent Markov chains have converged to a given posterior distribution is not a correctness test, as that distribution might be very different from the target distribution. 
-We refer the reader interested in these and related topics to \cite{rwty}, \cite{fabreti2022},  \cite{magee2023} and references therein.
+We refer the reader interested in these and related topics to \cite{rwty}, \cite{fabreti2022}, \cite{magee2023} and references therein.
 
 \section*{Validating a Bayesian model}
 
@@ -260,89 +256,20 @@ An example is the Yule model (also known as the pure-birth model; \citealt{yule2
 Under a Yule process with a species birth rate of $\lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
 \vspace{.5cm}
 
-
-% Start: BM BOX
-% \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt,
-%   title=Box 1: Models characterized by well-known parametric distributions, fonttitle=\bfseries]
-%   \small 
-%   One commonly used model in macroevolution for the study of continuous traits is the phylogenetic Brownian motion model (``PhyloBM'' in Fig. ~\ref{fig:pgm}; \citealt{fel73}).
-% The pdf characterizing this model's sampling distribution is in fact the pdf of the multivariate normal (MVN) probability distribution:
-% \begin{equation}
-%   \begin{split}
-%     \text{log }f(\boldsymbol{y} \mid \boldsymbol{y_0}, r, \boldsymbol{T}) = -\frac{1}{2} \Big[ n\text{log}(2\pi) + \text{log}|r \boldsymbol{T}| \Big] & \\
-%     -\frac{1}{2} \Big[ (\mathbf{y} - \boldsymbol{y_0})^T (r \boldsymbol{T})^{-1} (\mathbf{y} - \boldsymbol{y_0}) \Big],
-%   \label{eq:bm}
-%   \end{split}
-% \end{equation}
-
-% \noindent where $\boldsymbol{y}$ corresponds to the observed values of a trait scored for $n$ species, $\boldsymbol{y_0}$ is the trait value at the root of the tree, $r$ is the instantaneous rate of change (i.e., the evolutionary rate, and sometimes represented by $\sigma^2$), and $r\boldsymbol{T}$ is the variance-covariance matrix.
-% $\boldsymbol{T}$ is a matrix whose elements are deterministically defined by tree $\phi$'s topology and branch lengths; see Fig. 1).
-
-% \vspace{.25cm}
-% The probability density function in equation \eqref{eq:bm} describes the distribution that would result from an infinite number of BM ``experiments'' (each experiment being non-mean-reverting, and representing an independent evolutionary trajectory).
-% Under this model, $\theta = \{\boldsymbol{y_0}, r, \boldsymbol{T}\}$ and $d = \{\boldsymbol{y}\}$ (but note that sometimes researchers treat $\phi$ and consequently $\boldsymbol{T}$ as data).
-
-% \begin{center}
-% \includegraphics[width=11cm]{../figures/phylobm_exp_vcv.pdf}
-% \label{fig:bmsim}
-% \captionof{figure}{
-%   A sample of 1000 draws from a MVN distribution, each
-%   representing the evolutionary trajectory of one continuous trait along
-%   the species tree on the left. The root trait value, $\boldsymbol{y_0}$, and the
-%   evolutionary rate of the process, $r$, were set to 0.0 and 0.1, respectively.
-%   The panel on the right shows histograms of 1000 trait values sampled
-%   from the MVN for each species, as well as their covariation.}
-% \end{center}
-
-% % \vspace{.25cm}
-% \emph{Validating a phylogenetic BM simulator}
-
-% The MVN is a well-characterized parametric distribution.
-% When used as the sampling distribution of the phylogenetic BM process, it explicitly defines the expected trait value for each species ($\boldsymbol{y_0}$), as well as their trait value variances and covariances.
-% The latter comes from the variance-covariance matrix; for the tree shown in Figure 2 and with $r = 0.1$, this matrix
-% is:
-% % % For example, given $\boldsymbol{y_0} = [0.0, 0.0, 0.0]$, $r = 0.1$, and $\boldsymbol{T}$
-% % % derived from the tree shown in Figure \ref{fig:bmsim}
-% % % Because the MVN is a known parametric distribution, it is trivial to verify the correctness of a
-% % % phylogenetic BM model simulator, $\text{S}[f(\mathbf{y}|\boldsymbol{y_0},r,\boldsymbol{T})]$.
-% % % Figure 1 shows the result of 200 simulations under the MVN
-% % % with $\boldsymbol{y_0} = [0.0, 0.0, 0.0]$, $r = 0.1$, along the tree shown on
-% % % the left, which determines the variance-covariance matrix:
-% \begin{equation}
-%   r\boldsymbol{T} = 0.1
-%   \begin{bmatrix}
-%     6 & 5 & 0\\
-%     5 & 6 & 0\\
-%     0 & 0 & 6
-%   \end{bmatrix}
-%   \label{eq:mat}
-% \end{equation}
-
-% Together, variance-covariance matrix $r\boldsymbol{T}$ and $\boldsymbol{y_0} = [0.0, 0.0, 0.0]$ characterize a population of phylogenetically related species trait values whose means are 0.0, variances are 6.0, and co-variances are 5.0 (between species ``A'' and ``B'') and 0.0 (between species ``C''and either ``A'' or ``B'').
-
-% \vspace{.25cm}
-
-% Figure 1 shows the distributions of trait values and their variances and covariances for one sample of one thousand independent realizations of phylogenetic BM processes. 
-% One can see that the sample's average trait value and the variances and covariances approach their expectations. 
-% More rigorously, one can follow the method described in the main text and verify that those expectations fall within their 95\%-confidence intervals 95\% of the time, as calculated from a large number of samples (Supplementary Fig. \ref{supfig:bmsimcis} and Supplementary Table \ref{suptab:bmsimcis}).
-
-% \end{tcolorbox}
-% % End: BM BOX
-
 \begin{equation}
   \text{E}[t_{\text{root}}] = \sum_{i=2}^{n}\frac{1}{i\lambda}.
   \label{eq:yule}
 \end{equation}
 
-\noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree height (from each sampled data set).
+\noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree root age (from each sampled data set).
 Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
-\textcolor{blue}{Interested readers will find another example of this validation procedure in the supplement, where}\textcolor{red}{\st{we illustrate this procedure for}} the (parametric) sampling distribution \textcolor{blue}{is that} underlying the phylogenetic Brownian motion model (``PhyloBM''; \citealp{fel73}).
+\textcolor{blue}{Interested readers will find another example of this validation procedure in the supplement, where}\textcolor{red}{\st{we illustrate this procedure for}} \textcolor{blue}{the density function characterizing the model (a phylogenetic Brownian motion model, ``PhyloBM'' \citealp{f73}) is that of a parametric distribution, namely the multivariate normal.}
 Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally validate $\text{S}[\mathcal{M}]$ at the same time.
 
 \begin{figure}
   \centering
   \vspace{0pt}
-  \begin{subfigure}[t]{0.5\textwidth}
+  \begin{subfigure}[t]{0.4\textwidth}
     \caption{}
     \centering
     \begin{tabular}{ cc }
@@ -362,63 +289,28 @@ Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally 
   \begin{subfigure}[t]{0.4\textwidth}
     \caption{}
     \centering
-    \includestandalone[width=7cm]{../figures/yule_exp_height}    
+    \includestandalone[width=7cm]{../figures/yule_exp_height}
   \end{subfigure}
-  \hfill
-  %LM TODO: think about uncertainty intervals for coverage.
-  \caption{Validation of Yule tree simulator.
-    (a) Number of simulated data sets (out of 100) for which the
-    expected tree height ($t_{\text{root}}$) was inside the 95\%-confidence interval
-    about its sample average -- if the simulator is correct, we expect
-    this number to be between 90 and 99 about 95\% of the time.
-    Each data set consisted of 50 twenty-taxon simulated Yule trees.
-    (b) The area shaded in light blue represents the
-    95\%-confidence interval about the average tree height, obtained
-    from the 5,000 Yule trees simulated in (a). Simulations were
-    carried out with the \texttt{TreeSim} R package \citep{stadler11}.}
+  \caption{\textcolor{blue}{Validation results for Yule model simulator. (a) How often the expected Yule-tree root age fell within its 95\%-confidence intervals, for different birth rates (see main text for more details). (b) Graphical representation of table in (a).}}
   \label{fig:yulemean}
 \end{figure}
 
-We note that we have so far used $\text{S}[\mathcal{M}]$ to represent a \emph{direct} simulator under model $\mathcal{M}$ (Table~\ref{tab:sim}), meaning each and every sample generated by $\text{S}[\mathcal{M}]$ is independent.
+We note that we have so far used $\text{S}[\mathcal{M}]$ to represent a \emph{direct} simulator under model $\mathcal{M}$, meaning each and every sample generated by $\text{S}[\mathcal{M}]$ is independent.
+\textcolor{blue}{(Researchers wishing to carry out direct simulation will find many examples of capable software in Supplementary Table 1.)}
 This is contrast with other simulation strategies, such as conducting MCMC under model $\mathcal{M}$ with no data (i.e., ``sampling from the prior''), given specific parameter values ($\theta$).
 This latter approach may be the only option if $\text{S}[\mathcal{M}]$ has not been yet implemented, and it is predicated upon the existence of correct implementations of both an inferential engine $\text{I}[\mathcal{M}]'$ and of proposal functions.
 We distinguish $\text{I}[\mathcal{M}]'$ from $\text{I}[\mathcal{M}]$ because simulations are being carried out precisely to validate $\text{I}[\mathcal{M}]$.
 Unless MCMC simulations are done with $\text{I}[\mathcal{M}]'$ -- an independent and validated implementation of $\text{I}[\mathcal{M}]$ -- they can introduce circularity to the validation task.
 
-\begin{center}
-  \begin{table}[h]
-  \caption{A non-exhaustive list of direct simulation software used for various models in evolutionary biology.}
-  \label{tab:sim}
-  \centering
-  \begin{tabular}{ p{0.7in} p{1.5in} p{1in} p{1.3in} }
-    \hline
-    Software package & Model type & Platform & Reference \\
-    \hline  
-    \rowcolor{gray!10}Seq-Gen & Molecular sequence evolution models & Standalone & \citealp{rambaut97} \\
-    ms & Coalescent model & Standalone & \citealp{hudson02}\\
-    \rowcolor{gray!10}msprime & Coalescent model & Python & \citealp{kelleher16}\\
-    SLiM & Population genetic models & Standalone & \citealp{haller19}\\    
-    \rowcolor{gray!10}TreeSim & Birth-death models & R & \citealp{stadler11}\\
-    mvMORPH & Continuous trait evolution models & R & \citealp{clavel15}\\
-    \rowcolor{gray!10}diversitree & Several birth-death models & R & \citealp{fitzjohn12}\\
-    ReMASTER & Several birth-death models & BEAST 2 & \citealp{vaughan24}\\
-    \rowcolor{gray!10}LPhy & Several evolutionary models & Standalone & \citealp{drummond23}\\ 
-    \hline
-  \end{tabular}
-  \end{table}
-\end{center}
-
 \subsection*{Validating the inferential engine, $\text{I}[\mathcal{M}]$}
 \label{sec:sbc}
 
-The more complex the natural phenomenon under study, the more difficult it will be to strike a good balance between model practicality and realism~\citep{levins1966}.
-The popular aphorism rings true: ``all models are wrong but some are useful''~\citep{box79}.
+The more complex the natural phenomenon under study, the more difficult it will be to strike a good balance between model practicality and realism \citep{levins1966}.
+The popular aphorism rings true: ``all models are wrong but some are useful'' \citep{box79}.
 Very simple models are easier to implement in efficient inference tools, but will commonly make assumptions that are likely to be broken by the data. 
 Conversely, complex models will fit the data better, but may become unwieldy with increasing levels of realism.
 
 A large number of parameters can cause overfitting and weak identifiability, and inference under highly complex models might be prohibitively slow \citep{shapiro2000}.
-% % In order to achieve correct inferences, it is of utmost importance to guarantee that inferential machinery returns quantifiably correct answers.
-% % In practice, however, this is impossible to achieve due to the models under consideration being almost always badly misspecified for the data at hand.
 Deciding on the utility of a model for real-world problems is a daunting task \citep{brown18,shepherd18}, and is a challenge we do not address in the present contribution.
 Such model appraisals (what we call ``model characterization'' below) are normally carried out after a model is published, often in multiple  contribution bouts, and are critical for a model's longevity.
 Analyses of model fit against data are normally accompanied by discussions on assumption validity, and more rarely by benchmarking and scrutinization of model behavior and implementation (e.g., \citealp{maddison07,stadler10,rabosky13,rabosky15,moore16}).
@@ -455,7 +347,8 @@ probabilistic data-generating process (see previous section).
 
 \noindent{\emph{Coverage validation}}
 
-Our discussion on how to ensure a Bayesian model is well-calibrated and thus correct will mostly follow the ideas in \citet{cook06} and \citet{Talts2018}.
+Our discussion on how to ensure a Bayesian model is well-calibrated and thus correct will mostly follow the ideas in \citet{cook06}
+and \citet{Talts2018}.
 The basic idea is presented in the flowchart in figure \ref{fig:flowchart} (acquamarine dotted box and what is above it), and consists of three stages: simulation, inference, and coverage calculation.
 \textcolor{blue}{Before we delve into more details, the coverage of a parameter is simply how often the (true or simulated) parameter value falls within an estimated Bayesian highest posterior density (HPD) interval.
 What constitutes ``acceptable'' coverage, however, depends on the researcher's desired credibility level, $\alpha$.
@@ -588,11 +481,8 @@ Credibility level $\%$ ($100 \times \alpha$) & $n$ (replicates) & Lower quantile
   \rowcolor{gray!10}   & 500            & X     & Y     \\ \hline%\cmidrule(l){1-4} 
 \end{tabular}
 \end{center}
-\caption{% Under a correctly implemented model, the number of true simulated values that fall within their corresponding $100 \times \alpha$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
-  The 95\% central interquantile intervals for the number of HPD intervals covering the true parameter value (obtained during coverage validation), under different credibility levels and numbers of replicates.
-  Assuming model correctness, the number of true simulated values that fall within their corresponding $100 \times \alpha$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.
-  % For the experiments described in figure~\ref{fig:yulecalval}, for instance, one would expect between $90$ and $99$ simulated values to fall within their HPDs.
-  }
+\caption{The 95\% central interquantile intervals for the number of HPD intervals covering the true parameter value (obtained during coverage validation), under different credibility levels and numbers of replicates.
+  Assuming model correctness, the number of true simulated values that fall within their corresponding $100 \times \alpha$\%-HPDs (coverage) is binomially distributed with $n$ trials and probability of success $\alpha$.}
 \label{tab:coverage2}
 \end{table}
 
@@ -604,17 +494,17 @@ Credibility level $\%$ ($100 \times \alpha$) & $n$ (replicates) & Lower quantile
     Panels show the true (i.e., simulated) parameter values plotted against their mean posteriors (the dashed line shows $x = y$).
     Dots and lines (100 per panel) represent true values and their 95\%-HPDs, respectively.
     Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
-    (a) In ``Scenario 1'', the model was correctly specified, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).
-    (b) In ``Scenario 2'', the model was incorrectly specified in inference (see main text), and we used the same data sets simulated in ``Scenario 1''.
-    (c) In ``Scenario 3'' the model was specified just as in ``Scenario 1'', with the difference that rejection sampling was substantially greater (we rejected a large number of trees, approximately 90\%, keeping those having between 100 to 200 tips).
-  }
+    (a) In ``Scenario 1'', the \textcolor{blue}{model used in inference} was \textcolor{red}{\st{correctly}}\textcolor{blue}{the least miss}specified \textcolor{blue}{(low levels of misspecification were introduced by rejection sampling, when one in ten trees were rejected).}\textcolor{red}{\st{, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).} 
+    (b) In ``Scenario 2'', the \textcolor{blue}{model used in inference was misspecified beyond the effect of rejection sampling (which was the only source of misspecification in ``Scenario 1'' and ``Scenario 3''); here, }\textcolor{red}{\st{model was incorrectly specified in inference (see main text), and}} we used the same data sets simulated in ``Scenario 1''.
+    (c) In ``Scenario 3'' the model was \textcolor{blue}{miss}specified \textcolor{blue}{as a result of rejection sampling}\textcolor{red}{\st{just}} as in ``Scenario 1'', with the difference that \textcolor{blue}{a greater proportion of trees were} reject\textcolor{red}{\st{ion}}\textcolor{blue}{ed}\textcolor{red}{\st{ sampling was substantially greater}} (\textcolor{red}{\st{we rejected a large number of trees, }}approximately 90\% \textcolor{blue}{of trees were rejected, with only those}\textcolor{red}{\st{, keeping those }}having between 100 to 200 tips \textcolor{blue}{being kept}).
+  }}
   \label{fig:yulecalval}
 \end{figure}
 
 At this point, we will take a moment to remark that the usefulness of model coverage analysis in Bayesian inference is only manifest when $\theta_i$ is sampled from $f_\Theta(\cdot)$.
 Method developers may be tempted, for example, to calculate coverage for specific parameter values -- perhaps chosen across a grid over parameter space -- using a different prior during inference.
 In such cases, we emphasize that obtaining a coverage lower than 95\% (for 95\% HPDs) does not necessarily mean that a model is incorrectly implemented; conversely, obtaining exactly 95\% coverage does not imply model correctness.
-Coverage values only have bearing on model correctness if, and only if, random variables are sampled from the same prior distribution used in inference. 
+Coverage values \textcolor{red}{\st{only}} have bearing on model correctness if, and only if, random variables are sampled from the same prior distribution used in inference. 
 
 We provide examples of coverage validation attempts in Figure \ref{fig:yulecalval}, which shows coverage graphical summaries for data simulated under the model represented in Figure \ref{fig:pgm}.
 This model is deliberately simple for the sake of brevity and clarity in the discussion below.
@@ -699,7 +589,7 @@ In the interest of brevity, we only show the histograms and ECDFs for $R$, and l
 As expected, under scenario 1 our model implementation passes the RUV -- as indicated by histogram bars and ECDF values falling within their 95\%-confidence intervals (Fig. \ref{fig:ruv_yule}a).
 
 Under scenario 2, again as expected, our method failed RUV (Fig.~\ref{fig:ruv_yule}b).
-In particular, we observes great overestimation of the Brownian motion rate ($R$).
+In particular, we observe\textcolor{red}{\st{s}}\textcolor{blue}{d a} great overestimation of the Brownian motion rate ($R$).
 In a real world-analysis, these results would point to one or more faulty implementations (e.g., one or more model components, MCMC machinery, the simulator, etc).
 We remind the reader that in our experiment, scenario 2 was purposefully set up so that the (prior) models used in simulation and inference differed; our implementations are actually correct, but were induced to fail the RUV procedure.
 
@@ -720,14 +610,9 @@ While here we focus on so-called continuous parameters like $R$ and $\Lambda$, i
     Rank-uniformity validation (RUV) of the Bayesian hierarchical model in Fig. \ref{fig:pgm}.
     Panels in the top row show the histograms of $n=100$ ranks, for parameter $R$ in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
     Panels in the bottom row show the corresponding ECDF plots, for parameter $R$ in each scenario.
-    (a) In ``Scenario 1'', the model was correctly specified and we can see that the ranks are compatible with a uniform distribution (within the blue band). 
-    (b) In ``Scenario 2'', the inference machinery was misspecified and a clear pattern of overestimation shows up in the ranks, meaning the ranks for the data-generating values are usually smaller than expected under correctness.
-    (c) In ``Scenario 3'' we can see a pattern of underestimation, evidenced by ranks bunching up to the right.
-  }
-  % Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$, for each of the scenarios described in the main text.
-  % \textcolor{red}{\st{In A we show the rank histograms from 100 replicates}}\textcolor{blue}{(a) Top row: histogram of 100 ranks (given $n=100$ replicates)}, for each scenario, obtained after 10\% burnin and thinning \textcolor{blue}{of posterior samples,} down to\textcolor{red}{\st{ get }} 200 \textcolor{red}{\st{draws from the posterior}} \textcolor{blue}{out of \textcolor{orange}{[Fill out]}}.
-  % \textcolor{red}{\st{Panel}} (b) \textcolor{blue}{Bottom row: }\textcolor{red}{\st{shows the corresponding }}ECDF plot, \textcolor{blue}{for each scenario.}\textcolor{red}{\st{which help magnify the problems when they are present (Scenarios 2 and 3).}}
-  % \textcolor{red}{\st{For}}\textcolor{blue}{In} Scenario 1, no anomalies are detected\textcolor{red}{\st{, while for}}\textcolor{blue}{. In s}\textcolor{red}{\st{S}}scenarios 2 and 3, over- and underestimation are present, respectively.
+    (a) In ``Scenario 1'', the inference model was \textcolor{blue}{the least miss}\textcolor{red}{\st{ correctly }}specified \textcolor{blue}{(low levels of misspecification were introduced by rejection sampling)} and we can see that the ranks are compatible with a uniform distribution (within the blue band). 
+    (b) In ``Scenario 2'', the inference machinery was misspecified \textcolor{blue}{beyond the effect of rejection sampling (which was the only source of misspecification in ``Scenario 1'' and ``Scenario 3''); here, we used the same data sets simulated in ``Scenario 1''. A} clear pattern of overestimation shows up in the ranks, meaning the ranks for the data-generating values are usually smaller than expected under correctness.
+    (c) In ``Scenario 3'' we can see a pattern of underestimation, evidenced by ranks bunching up to the right. \textcolor{blue}{Rejection sampling was more extreme in this scenario (i.e., a more misspecified model in inference) than in that shown in (a).}}
   \label{fig:ruv_yule}
 \end{figure}
 
@@ -1223,42 +1108,6 @@ If large numbers of simulations must be rejected so as to obtain realistic data 
 Independent implementations that also do not pass validation tests provide further evidence that the issue is potentially in the model assumptions themselves.
 Historically, model design has often gone in the direction of incrementally conditioning the statistical process so as to match empirical observations (e.g., \citealp{Gelman1996,Gelman2020}), but re-imagining the model entirely might be the best solution.
 
-% -- It always fails, and it is not even possible to come close to
-% passing: there is a pathological problem either with the
-% implementation, or the model is being misspecified too dramatically
-% to match empirical scenarios.
-% In the latter case, may be the model itself
-% should be redesigned and is not a good representation of reality.
-% -- All models are wrong anyway, so it's all good. We urge those who
-% think like that to contemplate why carry out model selection or do any
-% type of statistical test in the first place. The will and rigour of
-% validating a model should match the enthusiasm for model comparisons
-% and hypothesis testing.
-
-% {\color{green}
-
-% Method developers should expect their software to often fail validation, especially at early development stages, requiring to traverse the loop illustrated in Fig. \ref{fig:flowchart} many times. 
-% The validation procedure is usually arduous and repetitive but effective in revealing issues and giving modelers peace of mind when releasing their software. 
-% However, even if a model inference machinery is correctly implemented in code, it can still fail a validation test due to model misspecification. 
-% Model misspecification occurs when the model is in error and does not account for everything it should. 
-% It can result from left-out variables, irrelevant variables, or functional form misspecification.
-
-% RUV through graphical summary of post-processed MCMC results (e.g., Fig. \ref{fig:yulecalval}) reveals over- or underestimated parameters, suggesting the reasons for the failure of a simulation study \citep{mchugh22}. 
-% One can progressively tweak aspects of the simulation to approach correctness. 
-
-% If validation tests pass only within a substantially constrained parameter space, it may indicate that the model needs modification. 
-% Independent implementation of simulators that also fail validation tests provide further evidence of potential issues with model assumptions.
-
-% In cases of utter validation failure, method developers may have to question the reasonableness of their models. 
-% However, it is important to remember that model validation is still valuable, as it helps in understanding inference biases and enables statistical hypothesis testing. 
-% Without successful validation, interpreting the results becomes challenging, if not impossible.
-% Historically, model design has often gone in the direction of incrementally conditioning the statistical process so as to match empirical observations (e.g., \citealp{Gelman1996,Gelman2020}), but re-imagining the model entirely might be the best solution.
-
-% In summary, method developers should expect software validation to be a challenging and iterative process. Validation failure can indicate model misspecification, and further analysis and experimentation are necessary to uncover biases and improve the model.
-% Successful model validation is essential for accurate interpretation of results, and even in cases of failure, the process provides valuable insights into the model's behavior and potential modifications needed.
-% }
-
-
 \vspace{.25cm}
 
 \noindent \emph{Model characterization}
@@ -1280,7 +1129,6 @@ In most cases, it may thus make more sense to first verify model correctness by 
 
 We conclude this section by proposing that scientists contributing or reviewing a new model ask the following question: Is the contribution at hand carrying out an empirical analysis that will specifically profit from scrutinizing model behavior?
 If not, then model characterization efforts will likely serve their purpose better elsewhere, and profit from being shouldered by the scientific community at large.
-
 
 \section*{Concluding remarks}
 
@@ -1316,14 +1164,6 @@ A.J.D. was supported by Marsden grant 16-UOA-277.
 % %	REFERENCE LIST
 % % ----------------------------------------------------------------------------------------
 
-% % \section*{References}
-% % \clearpage
-
 \bibliography{refs}
-
-% % ----------------------------------------------------------------------------------------
-
-% % \newpage
-% % \appendix
 
 \end{document}
