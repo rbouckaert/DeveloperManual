@@ -1095,7 +1095,7 @@ If a model meets the three aforementioned requirements, it can shown to be corre
 
 Method developers should expect their software to often fail validation, especially at early development stages, causing the loops in Fig. \ref{fig:flowchart} to be visited many times.
 The validation procedure is almost always arduous and repetitive, but very effective in revealing issues and in giving modelers peace of mind when releasing their software.
-A correctly implemented inference machinery can nonetheless still fail a validation test if there is some unforeseen form of model misspecification (e.g., truncation, see scenarios in Figure~\ref{fig:yulecalval}).
+A correctly implemented inference machinery can nonetheless still fail a validation test if there is some unforeseen form of model misspecification (e.g., truncation, see \textcolor{red}{\st{s}}\textcolor{blue}{``S}cenarios 1\textcolor{blue}'' and \textcolor{blue}{``Scenarios 3''} in Figure~\ref{fig:yulecalval}).
 In such cases, a potentially delicate stage of method development begins, when decisions must be made between further testing or software release.
 
 If validation success is marginal or contingent upon a substantially constrained parameter space, or if a Bayesian method has good coverage but fails the demanding RUV (as shown here and elsewhere; \citealp{mchugh22}), further simulation experiments might illuminate the nature of the model misspecification and suggest ways to modify the model.
@@ -1104,9 +1104,10 @@ When releasing a method despite validation failure, researchers should in the ve
 Ideally, guidelines should be provided for interpreting results obtained with a tool known to be biased.
 
 When confronted with utter validation failure, we urge method developers to resist the temptation of downplaying the importance of the validation effort, and instead ask the hard question of whether their models are reasonable in the first place.
-If large numbers of simulations must be rejected so as to obtain realistic data -- or data whose probabilities can be calculated -- this could be a sign that the model needs to be modified. 
-Independent implementations that also do not pass validation tests provide further evidence that the issue is potentially in the model assumptions themselves.
-Historically, model design has often gone in the direction of incrementally conditioning the statistical process so as to match empirical observations (e.g., \citealp{Gelman1996,Gelman2020}), but re-imagining the model entirely might be the best solution.
+\textcolor{blue}{On occasion, researchers may fail to validate a new model with obvious shortcomings (e.g., }\citealp{ree08}\textcolor{blue}{; see also }\citealp{ree09,goldberg11,matzke22}\textcolor{blue}{) -- or perhaps it is not even clear how to validate the model (e.g., phylogenetic models employing node-age priors; \citealp{ho09}) -- yet that new model may still improve on the total absence of statistical methods, and ultimately teach us something novel about the natural world.}
+\textcolor{blue}{However, i}\textcolor{red}{\st{I}}f large numbers of simulations must be rejected so as to obtain realistic data\textcolor{red}{\st{ -- }}\textcolor{blue}{(or data whose probabilities can be calculated), }\textcolor{red}{\st{ -- }}this could be a sign that the model needs to be modified. 
+Independent implementations that \textcolor{red}{\st{also }}do not pass validation tests provide further evidence that the issue is potentially in the model assumptions themselves.
+\textcolor{blue}{Although h}\textcolor{red}{\st{H}}istorically\textcolor{red}{\st{,}} model design has often gone in the direction of incrementally\textcolor{red}{\st{ conditioning the statistical process so as to match empirical observations}}\textcolor{blue}{generalizing existing models (e.g., nested molecular substitution models; }\citealp{fel04}), \textcolor{red}{\st{but }}re-imagining the model entirely \textcolor{red}{\st{might}}\textcolor{blue}{can sometimes} be the best solution.
 
 \vspace{.25cm}
 
