@@ -161,26 +161,26 @@ This is done through probability distributions describing both the observed
 empirical data -- seen as the result of one or more random instantiations of the modeled process -- as well the model parameters, which abstract relevant, but usually unknown aspects of the phenomenon at hand.
 In the domain of evolutionary biology specifically, the historical, stochastic, and highly dimensional nature of evolutionary processes makes the utility of probabilistic models self-evident. 
 
-The central component of a probabilistic model, $\text{Pr}(D=d|\boldsymbol{\Theta}=\boldsymbol{\theta})$, allows us to describe the probability distribution over the data \textcolor{red}{\st{($D$)}}\textcolor{blue}{$D$ (which takes value $d$)} given the model parameters \textcolor{red}{\st{($\Theta$)}}\textcolor{blue}{$\boldsymbol{\Theta}$ (which take values $\boldsymbol{\theta}$)}.
-This probability mass function (pmf; or its continuous counterpart, the probability density function, pdf, $f_D(d|\boldsymbol{\Theta}=\boldsymbol{\theta})$) is sometimes referred to as the likelihood function.
-Just for this section, we will abuse and simplify \textcolor{blue}{the} notation \textcolor{blue}{for the image of $f_D$}, and drop variable subscripts, e.g., we will write $f_D(d|\boldsymbol{\Theta}=\boldsymbol{\theta})$ as $f(d|\boldsymbol{\theta})$.
+The central component of a probabilistic model, $\text{Pr}(D=d|\Theta=\theta)$, allows us to describe the probability distribution over the data \textcolor{red}{\st{($D$)}}\textcolor{blue}{$D$ (which takes value $d$)} given the model parameters ($\Theta$) (which take values $\theta$).
+This probability mass function (pmf; or its continuous counterpart, the probability density function, pdf, $f_D(d|\Theta=\theta)$) is sometimes referred to as the likelihood function.
+Just for this section, we will abuse and simplify \textcolor{blue}{the} notation \textcolor{blue}{for the image of $f_D$}, and drop variable subscripts, e.g., we will write $f_D(d|\Theta=\theta)$ as $f(d|\theta)$.
 As illustrated in the next sections, probabilistic models can be hierarchical, in which case there may be several likelihood functions.
 In a frequentist statistical framework, $f(d|\boldsymbol{\theta})$ is the sole component of an inferential procedure, and is maximized across parameter space during parameter estimation and model comparison.
 
-In the present study we focus on Bayesian inference, where a probabilistic model $\mathcal{M}$ defines a posterior  probability distribution for its parameters, $f(\boldsymbol{\theta}|d) = \frac{f(d|\boldsymbol{\theta})f(\boldsymbol{\theta})}{f(d)}$.
-Here, our prior inferences or beliefs about the natural world -- represented by the prior distribution $f(\boldsymbol{\theta})$ -- are confronted with and updated by the data through the likelihood function.
-Crucially, a Bayesian model includes a prior, $f(\boldsymbol{\theta})$: when models are compared, for example, $f(\boldsymbol{\theta})$ needs to be taken into account when computing the model evidence $f(d)$.
+In the present study we focus on Bayesian inference, where a probabilistic model $\mathcal{M}$ defines a posterior  probability distribution for its parameters, $f(\theta|d) = \frac{f(d|\theta)f(\theta)}{f(d)}$.
+Here, our prior inferences or beliefs about the natural world -- represented by the prior distribution $f(\theta)$ -- are confronted with and updated by the data through the likelihood function.
+Crucially, a Bayesian model includes a prior, $f(\theta)$: when models are compared, for example, $f(\theta)$ needs to be taken into account when computing the model evidence $f(d)$.
 
-Models routinely used in evolutionary biology are often characterized by continuous parameters, and are normally complex enough to preclude analytical solutions for the posterior density $f(\boldsymbol{\theta}|d)$, mainly due to the intractability of the integral appearing in the denominator -- i.e., the marginal likelihood.
-In those cases, one can make use of the fact that $f(d)$ is a constant with respect to the parameters that can be ignored (i.e., $f(\boldsymbol{\theta}|d) \propto f(\boldsymbol{\theta}|d)f(\boldsymbol{\theta})$), and use techniques like Markov chain Monte Carlo (MCMC) to sample \textcolor{blue}{(and hopefully converge on)} the posterior distribution.
+Models routinely used in evolutionary biology are often characterized by continuous parameters, and are normally complex enough to preclude analytical solutions for the posterior density $f(\theta|d)$, mainly due to the intractability of the integral appearing in the denominator -- i.e., the marginal likelihood.
+In those cases, one can make use of the fact that $f(d)$ is a constant with respect to the parameters that can be ignored (i.e., $f(\theta|d) \propto f(\theta|d)f(\theta)$), and use techniques like Markov chain Monte Carlo (MCMC) to sample \textcolor{blue}{(and hopefully converge on)} the posterior distribution.
 This is because MCMC is usually implemented in the form of the Metropolis-Hastings \citep{metropolis53,mh} algorithm, which only requires the posterior to be evaluated up to a constant.
 
 In practice, the Metropolis-Hastings algorithm samples the posterior distribution (also referred to as the ``target'' distribution) by means of a transition mechanism \textcolor{blue}{(i.e., a set of proposal functions)}. 
-If the proposal distribution generated by this mechanism \textcolor{blue}{produces a Markov chain that }is \textcolor{blue}{(i) }irreducible \textcolor{blue}{(any ``state'', or combination of parameter values, can be eventually reached from any other state)}, \textcolor{blue}{(ii) positive recurrent (there is an expected finite time for a state to be returned to)}, and \textcolor{blue}{(iii) }aperiodic \textcolor{blue}{(every state has a period of 1, a requirement for most initial distributions to converge on the posterior distribution)}, and the chain is long enough, then the sampled posterior distribution will closely approximate the target distribution $f(\boldsymbol{\theta}|d)$ \textcolor{blue}{(}\citealp{smith93,tierney94,gelman}\textcolor{blue}{; we point interested readers to those references for more formal definitions)}.
+If the proposal distribution generated by this mechanism \textcolor{blue}{produces a Markov chain that }is \textcolor{blue}{(i) }irreducible \textcolor{blue}{(any ``state'', or combination of parameter values, can be eventually reached from any other state)}, \textcolor{blue}{(ii) positive recurrent (there is an expected finite time for a state to be returned to)}, and \textcolor{blue}{(iii) }aperiodic \textcolor{blue}{(every state has a period of 1, a requirement for most initial distributions to converge on the posterior distribution)}, and the chain is long enough, then the sampled posterior distribution will closely approximate the target distribution $f(\theta|d)$ \textcolor{blue}{(}\citealp{smith93,tierney94,gelman}\textcolor{blue}{; we point interested readers to those references for more formal definitions)}.
 
-We will spend time considering MCMC in particular, as it is the commonly chosen technique for obtaining samples from $f(\boldsymbol{\theta}|d)$ under an implementation of model $\mathcal{M}$.
-A thorough validation effort thus entails verifying the correctness of (i) the model (i.e., $f(d|\boldsymbol{\theta})f(\boldsymbol{\theta})$), and (ii) the components involved in the MCMC transition mechanism.
-We note that the latter are not part of the model, however, and it is  possible to sample $f(\boldsymbol{\theta}|d)$ with other techniques such as importance sampling, Laplace approximations \citep{inla}, or even by converting the sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
+We will spend time considering MCMC in particular, as it is the commonly chosen technique for obtaining samples from $f(\theta|d)$ under an implementation of model $\mathcal{M}$.
+A thorough validation effort thus entails verifying the correctness of (i) the model (i.e., $f(d|\theta)f(\theta)$), and (ii) the components involved in the MCMC transition mechanism.
+We note that the latter are not part of the model, however, and it is  possible to sample $f(\theta|d)$ with other techniques such as importance sampling, Laplace approximations \citep{inla}, or even by converting the sampling problem into an optimization one \citep[e.g.,][]{zhang18}.
 
 Finally, we stress that we are interested in practices for verifying model correctness \textcolor{blue}{-- and by ``correctness'', we mean the correctness of a model implementation}.
 There are other tests and diagnostics employed to ensure that a particular MCMC analysis is converging as expected.
@@ -198,9 +198,9 @@ Both $\text{S}[\mathcal{M}]$ and $\text{I}[\mathcal{M}]$ must be inspected in or
 
 When a new probabilistic model $\mathcal{M}$ is introduced \textcolor{blue}{for the first time, a simulator for $\mathcal{M}$ ($\text{S}[\mathcal{M}]$) must be devised and itself validated.
 The inferential engine ($\text{I}[\mathcal{M}]$) -- }\textcolor{red}{\st{an its inferential engine ($\text{I}[\mathcal{M}]$) -- }}what users employ in empirical analyses -- \textcolor{blue}{cannot be validated without a valid simulator.}\textcolor{red}{\st{is implemented for the first time, validating $\text{I}[\mathcal{M}]$ requires that a simulator for $\mathcal{M}$, $\text{S}[\mathcal{M}]$, be devised and itself validated.}}
-A simulator conventionally requires a parameter value as input (i.e., a value for $\boldsymbol{\theta}$, $\boldsymbol{\theta}$, where $\boldsymbol{\theta}$ might represent the values of more than one parameter), or a prior distribution on those values, $f_{\boldsymbol{\theta}}(\cdot)$. 
+A simulator conventionally requires a parameter value as input (i.e., a value for $\theta$, $\theta$, where $\theta$ might represent the values of more than one parameter), or a prior distribution on those values, $f_{\theta}(\cdot)$. 
 Note that we use ``$\cdot$'' when referring specifically to the generative function, rather than the value it takes given input.
-The simulator then outputs a sample of random variable(s), which for hierarchical models will include not only an instantiation $d$ of data $\text{D}$, but also the parameters in $\boldsymbol{\theta}$.
+The simulator then outputs a sample of random variable(s), which for hierarchical models will include not only an instantiation $d$ of data $\text{D}$, but also the parameters in $\theta$.
 
 \begin{figure}%{l}{5.5cm}
   \centering
@@ -329,10 +329,10 @@ probabilistic data-generating process (see previous section).
     The flowchart area with a clear background is where (true) parameters and data are generated, and where the model simulator(s) is validated.
     The flowchart area shaded in pink mark the steps involved in validating the inference engine once the data has been generated.
     % S($\mathcal{M}$) and I($\mathcal{M}$) denote the simulator and the inference engine of a model $\mathcal{M}$, respectively.
-    $\boldsymbol{\theta}$ denotes a vector with $n$ elements, where each element is an i.i.d. parameter(s) sample from its (their) corresponding prior(s) $f_\Theta(\cdot)$.
+    $\theta$ denotes a vector with $n$ elements, where each element is an i.i.d. parameter(s) sample from its (their) corresponding prior(s) $f_\Theta(\cdot)$.
     Analogously, $\boldsymbol{d}$ denotes a vector with $n$ elements, where each element is an i.i.d. data sample from the corresponding likelihood(s) $f_{D|\Theta}(\cdot|\Theta\mathop{=}\theta)$.
     % Note that we simplify the notation in the main text, with $f_{D|\Theta}(\cdot|\Theta=\theta)$ written simply as $f_{D|\Theta}(\cdot)$.
-    $\boldsymbol{\theta}'$ holds $n \times L$ elements, with each being one of the $L$ posterior samples for each of the $n$ parameter samples in $\boldsymbol{\theta}$.
+    $\boldsymbol{\theta}'$ holds $n \times L$ elements, with each being one of the $L$ posterior samples for each of the $n$ parameter samples in $\theta$.
     All $L$ posterior samples obtained from the $i$-th data set $d_i$ comprise together what one would call the posterior distribution over $\theta_i$.
     Posterior samples are commonly obtained through MCMC.
     $\text{U}(l, u)$ denotes a uniform distribution with and including lower and upper bounds $l$ and $u$, respectively.
