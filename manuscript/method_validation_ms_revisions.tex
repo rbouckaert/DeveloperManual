@@ -957,6 +957,30 @@ While here we focus on so-called continuous parameters like $R$ and $\Lambda$, i
 % % happening -- is not a trivial task, and careful diagnostics are
 % % necessary on the part of method developers.
 
+\vspace{.25cm}
+
+\textcolor{blue}{\noindent \emph{Validation protocol guidelines}}
+
+\textcolor{blue}{Much like in Bayesian statistical analyses, where researcher (ourselves included) employ ``default'' or ``common'' priors all too often -- as opposed to carefully crafting models to match the uniqueness of their studied system -- there is also a danger of being over-prescriptive when recommending validation protocol guidelines. 
+We thus provide below what we deem to be just a rough starting point for those interested in validating or assessing the validation of Bayesian model implementations.\\
+\indent In the examples presented above, we used 100 different data sets (i.e., $n=100$; Fig. \ref{fig:flowchart}), each coming from a unique combination of parameter values drawn from their prior distributions.
+There is nothing magical about the number 100, however: it is arbitrary and authors (e.g., \citealp{gavryushkina14,gaboriau20,ogilvie22}) have used because it is pleasantly round as a denominator, allowing for immediate mental calculation of coverage values.
+In our experience, $n=100$ has proven to be a large enough number of simulations for detecting model implementation issues, but lower or greater $n$'s can be used (Table \ref{tab:coverage2}), with higher error margins and greater running times as the costs associated to each end of $n$, respectively.\\
+\indent Two other numbers to consider when carrying out RUV, in particular, is the number of samples to extract from the output of an MCMC procedure ($L$ in Fig. \ref{fig:flowchart}), as well as the number of bins when displaying ranks as histograms (middle panels in Fig. \ref{fig:ruv_conceptual}).
+First, we recommend the effective sample size (ESS; a quantity well known in Bayesian statistics) of the MCMC output as a ceiling for $L$ -- the logic here being that fetching `ESS' equidistant samples from the set of posterior samples will minimize sample autocorrelation.
+ESS's of at least 200 have become somewhat of a minimal requirement for Bayesian evolutionary analyses, but larger numbers are preferred.\\
+\indent Given a correctly implemented model and that a 95\% confidence interval is used, the heights of approximately 5\% of the histogram bars should fall outside the interval.
+This makes any integer that is greater than (as well as a product of) 20 a convenient number of histogram bins.
+More generally, bin widths should be adjusted to $L$ so that all bins have at least one, but ideally more rank values falling within its bounds.
+Empty (or nearly so) bins suggest bins are too narrow or $L$ is too low.\\
+\indent The last and most idiosyncratic feature of a validation experiment to be considered is the ideal size of the simulated data set.
+Every model is characterized by a data set size beyond which parameters can be estimated with confidence.
+If much larger, a data set can make statistical inference too slow, if much smaller, certain attractive features of model validation cannot be leveraged, and implementation bugs may remain undetected.\\
+In the case of Bayesian models, too few data points will cause parameter mean posterior estimates to fall along their prior means (see, for example, $\lambda$ in Fig. \ref{fig:yulecalval}), indicating that true parameter values cannot be learned.
+While the theory behind and interpretation of coverage validation and RUV remain unchanged -- i.e., (1-$\alpha$) parameter coverage and uniformity of ranks are still to be expected -- one loses the ability to measure inferential accuracy.
+More troubling, however, is the possibility that implementation bugs hide behind mean posterior estimates indistinguishable from the parameter's prior mean.
+We therefore recommend data sets be as big as necessary for at least one, but ideally more parameters (e.g., $r$ and root age in Figs. \ref{fig:yulecalval} and \ref{fig:treeheight}) to have their values estimated as different from their prior means.}
+
 \subsection*{Tree models}
 
 Tree models are stochastic processes that can capture the most fundamental tenet in evolutionary biology, namely common descent, at multiple time scales.
@@ -983,12 +1007,12 @@ When nodes can be serially sampled or direct ancestors of other nodes, for examp
 The number of terminals in a tree can also complicate the theoretical characterization of tree models; except for when the number of terminals is small \citep{beast2book}, algorithms have to be employed to generate expectations from theoretical principles \citep{kim19}.
 
 When theoretical predictions useful for validation cannot be made, an often-employed method involves the comparison of independent model implementations, with one or both being simulators or inference engines.
-Tree samples from a direct simulator can be compared to samples drawn with MCMC without data (e.g., \citealp{zhang23}), or exact likelihood values can be compared between different implementations \citep{andreoletti22}.
+Tree samples from a direct simulator can be compared to samples drawn with MCMC without data (e.g., \citealp{zhang24}), or exact likelihood values can be compared between different implementations \citep{andreoletti22}.
 On extreme cases, however, even that strategy appears unattainable.
 For example, if it is unclear how to even directly simulate under a tree model -- such as when node-age prior distributions are added to a birth-death process (models used in ``node-dating'', \citealp{ho09}; but see \citealp{heled12}) -- there seems to be no discernible path for validation in tree space.
 
 The procedures of coverage validation and RUV can also be used to examine parameters in tree space.
-So far authors have mainly focused on the coverage of quantities such as species tree and gene root ages, sum of branch lengths, and number of direct ancestors (e.g., \citealp{gavryushkina14,ogilvie22,zhang23}).
+So far authors have mainly focused on the coverage of quantities such as species tree and gene root ages, sum of branch lengths, and number of direct ancestors (e.g., \citealp{gavryushkina14,ogilvie22,zhang24}).
 Fig. \ref{fig:treeheight}, for example, shows the coverage of the root age for the three scenarios we explored in the previous sections.
 Similarly to what was observed for tree-unrelated parameters, the root age had the expected coverage in scenarios 1 and 3, and RUV again aligned with the diagnosis of model misspecification for scenario 3.
 
@@ -1029,7 +1053,7 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
 % % \item PG3: Balance statistics building on Albert Soewongsono's work; TODO: plot ``set'' $\beta$ statistic (y-axis, violin plots) for Yule model with different tree sizes; plot theoretical ``set'' $\beta$ statistic on the x-axis and $\beta$-MLE estimate on y-axis for 100 sets of 100 BiSSE trees (fixed parameters) -- plot 1:1 line and get $\sim$ 95\% CI bars overlapping that line;
 % \item PG4: More complicated models are troublesome.
 %   Exact likelihood values are computed for sub-cases of a new general model that have theoretical expectations (BDSS) or against an independent implementation \citep{andreoletti22}.
-%   Comparing sampling distributions between direct simulator (inverse CDF) and sampling from the prior (BDSS implementation in \citealp{zhang23});
+%   Comparing sampling distributions between direct simulator (inverse CDF) and sampling from the prior (BDSS implementation in \citealp{zhang24});
 % \end{itemize}
 
 % \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt, title=Box 2: Validating a phylogenetic model with respect to its phylogenetic tree parameter, fonttitle=\bfseries]
@@ -1114,7 +1138,7 @@ Independent implementations that \textcolor{red}{\st{also }}do not pass validati
 
 In addition to the model validation we detailed above, there is an infinite number of ways in which a new or published model can have its behavior inspected.
 Researchers may want to know, given a model, how sensitive parameter estimates are to data set size, prior choice, model complexity, violation of model assumptions, to name a few.
-Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang23,luo23}), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang23}).
+Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang24,luo23}), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang24}).
 We collectively refer to these examinations as ``model characterization'': any analysis of model behavior beyond assessing its correctness.
 Model characterization is rarely carried out to satisfy the curiosity of the theoretician (but see, e.g., \citealp{tuffley97,steel20}); it is instead normally motivated by a model's empirical applications.
 These investigations are thus critical for the longevity and popularity of a model, as domain experts will only adopt a model widely if they know when to trust the results and how to interpret them.
