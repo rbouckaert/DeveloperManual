@@ -452,8 +452,15 @@ The evidence for implementation correctness is enhanced by observing that the ra
 In the main text, we also mentioned the possibility of assessing the coverage of a phylogenetic tree's topology; specifically, by looking at the frequency of its clades as a function of their posterior support.
 An outcome of this procedure can be seen in supplementary figure \ref{supfig:clade_covg}, for a simple 50-sample Kingman coalescent model.
 We propose that the clade frequency diagnostic is further evaluated in two ways.
-First, one can check that the resulting empirical cumulative distribution function (ECDF) fits that of an appropriately scaled uniform distribution using a Kolmogorov-Smirnov test~\citep{Birnbaum1951}.
-Second, one can fit a regression model to the attained frequencies against the bin midpoints, and test the null hypothesis that the intercept is zero and the slope is one, rejecting it at the usual confidence levels.
+One can first check that the resulting empirical cumulative distribution function (ECDF) fits that of an appropriately scaled uniform distribution using a Kolmogorov-Smirnov test~\citep{Birnbaum1951}.
+Additionally, one can fit a regression model to the attained frequencies against the bin midpoints, and test the null hypothesis that the intercept is zero and the slope is one, rejecting it at the usual confidence levels.
+
+Importantly, there are two considerations we would like to bring to the reader's attention.
+First, depending on the starting tree's topology, its number of tips, and the length of the MCMC chain, true clades may never be sampled by chance more frequently than expected.
+This could be diagnosed by observing the left-most bar in supplementary figure \ref{supfig:clade_covg} being taller than expected; here, one alternative is to ignore this first bar when carrying out the statistical tests suggested above.
+Second, regardless of the simulated phylogenetic signal (with respect to the tree topology) -- irrespective of, e.g., too few, an ideal amount, or too many molecular substitutions in simulated alignments -- the ladder-like pattern in supplementary figure \ref{supfig:clade_covg} should still be observed.
+In order to see that, note that we suggest the count of clades with a given posterior clade support be normalized by the total number of clades with that support: if a very large number of true clades has support close to 0.0 or to 1.0, those counts will be divided by the total count of clades with corresponding support levels.
+We also remind the reader that when carrying out coverage validation, there is nothing intrisically wrong with validating a model with a data set void of any signal -- the prior mean would be recovered for each parameter, and model correctness could still be in principle verified.
 
 \newpage
 \section{Proof for coverage validation}

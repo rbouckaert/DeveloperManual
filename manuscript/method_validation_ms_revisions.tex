@@ -957,30 +957,6 @@ While here we focus on so-called continuous parameters like $R$ and $\Lambda$, i
 % % happening -- is not a trivial task, and careful diagnostics are
 % % necessary on the part of method developers.
 
-\vspace{.25cm}
-
-\textcolor{blue}{\noindent \emph{Validation protocol guidelines}}
-
-\textcolor{blue}{Much like in Bayesian statistical analyses, where researcher (ourselves included) employ ``default'' or ``common'' priors all too often -- as opposed to carefully crafting models to match the uniqueness of their studied system -- there is also a danger of being over-prescriptive when recommending validation protocol guidelines. 
-We thus provide below what we deem to be just a rough starting point for those interested in validating or assessing the validation of Bayesian model implementations.\\
-\indent In the examples presented above, we used 100 different data sets (i.e., $n=100$; Fig. \ref{fig:flowchart}), each coming from a unique combination of parameter values drawn from their prior distributions.
-There is nothing magical about the number 100, however: it is arbitrary and authors (e.g., \citealp{gavryushkina14,gaboriau20,ogilvie22}) have used because it is pleasantly round as a denominator, allowing for immediate mental calculation of coverage values.
-In our experience, $n=100$ has proven to be a large enough number of simulations for detecting model implementation issues, but lower or greater $n$'s can be used (Table \ref{tab:coverage2}), with higher error margins and greater running times as the costs associated to each end of $n$, respectively.\\
-\indent Two other numbers to consider when carrying out RUV, in particular, is the number of samples to extract from the output of an MCMC procedure ($L$ in Fig. \ref{fig:flowchart}), as well as the number of bins when displaying ranks as histograms (middle panels in Fig. \ref{fig:ruv_conceptual}).
-First, we recommend the effective sample size (ESS; a quantity well known in Bayesian statistics) of the MCMC output as a ceiling for $L$ -- the logic here being that fetching `ESS' equidistant samples from the set of posterior samples will minimize sample autocorrelation.
-ESS's of at least 200 have become somewhat of a minimal requirement for Bayesian evolutionary analyses, but larger numbers are preferred.\\
-\indent Given a correctly implemented model and that a 95\% confidence interval is used, the heights of approximately 5\% of the histogram bars should fall outside the interval.
-This makes any integer that is greater than (as well as a product of) 20 a convenient number of histogram bins.
-More generally, bin widths should be adjusted to $L$ so that all bins have at least one, but ideally more rank values falling within its bounds.
-Empty (or nearly so) bins suggest bins are too narrow or $L$ is too low.\\
-\indent The last and most idiosyncratic feature of a validation experiment to be considered is the ideal size of the simulated data set.
-Every model is characterized by a data set size beyond which parameters can be estimated with confidence.
-If much larger, a data set can make statistical inference too slow, if much smaller, certain attractive features of model validation cannot be leveraged, and implementation bugs may remain undetected.\\
-In the case of Bayesian models, too few data points will cause parameter mean posterior estimates to fall along their prior means (see, for example, $\lambda$ in Fig. \ref{fig:yulecalval}), indicating that true parameter values cannot be learned.
-While the theory behind and interpretation of coverage validation and RUV remain unchanged -- i.e., (1-$\alpha$) parameter coverage and uniformity of ranks are still to be expected -- one loses the ability to measure inferential accuracy.
-More troubling, however, is the possibility that implementation bugs hide behind mean posterior estimates indistinguishable from the parameter's prior mean.
-We therefore recommend data sets be as big as necessary for at least one, but ideally more parameters (e.g., $r$ and root age in Figs. \ref{fig:yulecalval} and \ref{fig:treeheight}) to have their values estimated as different from their prior means.}
-
 \subsection*{Tree models}
 
 Tree models are stochastic processes that can capture the most fundamental tenet in evolutionary biology, namely common descent, at multiple time scales.
@@ -1004,7 +980,7 @@ Typical theoretical targets include the first moments of distributions on tree c
 
 As tree models increase in complexity (e.g., \citealp{maddison07,goldberg12,fitzjohn10,scire22}), so does the tree space they define and as a consequence theoretical model validation as described above becomes difficult.
 When nodes can be serially sampled or direct ancestors of other nodes, for example, even enumerating all the possible trees under a model is a non-trivial exercise \citep{gavryushkina13}. 
-The number of terminals in a tree can also complicate the theoretical characterization of tree models; except for when the number of terminals is small \citep{beast2book}, algorithms have to be employed to generate expectations from theoretical principles \citep{kim19}.
+The number of t\textcolor{red}{\st{erminal}}\textcolor{blue}{ip}s in a tree can also complicate the theoretical characterization of tree models; except for when the number of t\textcolor{red}{\st{erminal}}\textcolor{blue}{tip}s is small \citep{beast2book}, algorithms have to be employed to generate expectations from theoretical principles \citep{kim19}.
 
 When theoretical predictions useful for validation cannot be made, an often-employed method involves the comparison of independent model implementations, with one or both being simulators or inference engines.
 Tree samples from a direct simulator can be compared to samples drawn with MCMC without data (e.g., \citealp{zhang24}), or exact likelihood values can be compared between different implementations \citep{andreoletti22}.
@@ -1015,19 +991,6 @@ The procedures of coverage validation and RUV can also be used to examine parame
 So far authors have mainly focused on the coverage of quantities such as species tree and gene root ages, sum of branch lengths, and number of direct ancestors (e.g., \citealp{gavryushkina14,ogilvie22,zhang24}).
 Fig. \ref{fig:treeheight}, for example, shows the coverage of the root age for the three scenarios we explored in the previous sections.
 Similarly to what was observed for tree-unrelated parameters, the root age had the expected coverage in scenarios 1 and 3, and RUV again aligned with the diagnosis of model misspecification for scenario 3.
-
-To the best of our knowledge, the RUV procedure has not been applied to validate phylogenetic models vis-a-vis tree space.
-This is likely because, due to the complexity of tree space, no canonical total-ordering structure (a requirement for ranking) has been proposed for trees.
-Similarly, there seems to be no method described for evaluating the coverage of a tree's topology.
-In what follows we address this gap by introducing two novel approaches: (i) a solution for ranking trees as a part of a  RUV analysis , and (ii) a way in which the topology of a tree can have its coverage assessed.
-
-For \textcolor{blue}{the} first method, we propose that each of the trees in a set of MCMC samples, as well as the corresponding ``true'' tree, be first compared to an external, ``reference'' tree (see Algorithm \ref{alg:sbc} in the supplementary material).
-For example, a tree sample can be compared to the reference tree with respect to the length of their longest branch, to their topology, to their asymmetry, etc.;
-what matters here is that this comparison quantitatively measures the distance between the reference and the other tree.
-Then, once one knows how distant each true tree and its posterior samples are from the reference tree, they can be ranked relative to one another based on their associated distance measure.
-RUV proceeds normally from this point (see Box 2 for an example using the Robinson-Foulds distance; section 3 in the supplementary material illustrates RUV and coverage validation with other distance metrics).
-
-% Note that unlike the presentation of the above sections, here we will differentiate between tree model simulator and inferential machinery when necessary as we go.
 
 \begin{figure}
   \centering
@@ -1040,12 +1003,56 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
     Panels in the middle row show the RUV histograms of $n=100$ ranks in each scenario, obtained after 10\% burnin and thinning of posterior samples down to 200 out of 10,000.
     Panels in the bottom row show the corresponding RUV ECDF plots in each scenario.
   }
+  \label{fig:treeheight}
+\end{figure}
+
+To the best of our knowledge, the RUV procedure has not been applied to validate phylogenetic models vis-a-vis tree space.
+This is likely because, due to the complexity of tree space, no canonical total-ordering structure (a requirement for ranking) has been proposed for trees.
+Similarly, there seems to be no method described for evaluating the coverage of a tree's topology.
+In what follows we address this gap by introducing two novel approaches: (i) a solution for ranking trees as a part of a  RUV analysis , and (ii) a way in which the topology of a tree can have its coverage assessed.
+
+For \textcolor{blue}{the} first method, we propose that each of the trees in a set of MCMC samples, as well as the corresponding ``true'' tree, be first compared to an external, ``reference'' tree (see Algorithm \ref{alg:sbc} in the supplementary material).
+For example, a tree sample can be compared to the reference tree with respect to the length of their longest branch, to their topology, to their asymmetry, etc.;
+what matters here is that this comparison quantitatively measures the distance between the reference and the other tree.
+Then, once one knows how distant each true tree and its posterior samples are from the reference tree, they can be ranked relative to one another based on their associated distance measure.
+RUV proceeds normally from this point.
+
+\textcolor{blue}{We illustrate RUV in tree space using a specific functional, or phylogenetic metric, the Robinson-Foulds distance} (RF; \citealp{foulds81})
+\textcolor{blue}{ between two trees, which counts the number of clades implied by one tree but not the other.}
+\textcolor{blue}{For our purposes, computing the RF distance requires having a reference phylogeny $\phi_0$ to which we can compare our focal generating phylogeny $\phi$ and its posterior MCMC samples.
+The RUV protocol remains the same, with an additional step in which we generate $\phi_0$ (see Algorithm} \ref{alg:sbc} \textcolor{blue}{in the supplementary material);
+results for five-taxon Kingman coalescent trees (under a known effective population size of 1.0) can be seen in figure} \ref{fig:rf}.
+\textcolor{blue}{Figure \ref{fig:rf}a shows the coverage of 95\%-HPD intervals of the RF distance metric, while figure \ref{fig:rf}b-c give its rank distribution and empirical CDF, respectively.
+The coverage of the RF metric is very close to 95 (see Table \ref{tab:coverage2}, with $n=100$), and the rank distribution is approximately uniform on (1, $L+1$); together, these panels indicate this model is correctly implemented.}
+
+\textcolor{blue}{Here, there are a few points worth noting. First,}\textcolor{red}{\st{Note that}} \textcolor{blue}{ for large numbers of species, $\phi_0$ is unlikely to share internal nodes with $\phi$'s posterior samples }\citep{steel1988}\textcolor{blue}{, in which case the RF distance metric may not be so useful.
+In the supplement we consider other phylogenetic tree metrics that could be used as an alternative or in addition to the RF distance (Supplementary Fig. 4).
+Each of these metrics capture different features of parameter space, are computed at varying computational costs (e.g., the BHV$_0$ metric is more costly than the RF distance; Supplementary Table 4) and may be more or less useful in revealing problems with a tree model implementation.
+We leave a more detailed comparison of such tree statistics for a future investigation.}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.92\linewidth]{../figures/coverage_ruv_coal_RF.pdf}
+  \caption{
+    Coverage validation and rank-uniformity validation (RUV) of a Kingman's coalescent model with respect to the Robinson-Foulds distance (RF; see text in box) between the coalescent tree ($\Phi$) and a reference (random) tree ($\phi_0$).
+    The effective population size parameter is assumed known and fixed to 1.0 during inference.
+    (a) The true RF distances (i.e., between 100 simulated coalescent trees, $\boldsymbol{\phi} = \{\phi_i: 1 \leq i \leq 100\}$, and the same reference tree, $\phi_0$) plotted against the corresponding mean posterior RF distances (calculated from posterior samples of each $\phi_i$ and $\phi_0$).
+    The dashed line shows $x = y$.
+    Dots and vertical lines represent true RF-distance values and their estimated 95\%-HPDs, respectively.
+    Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
+    (b) RUV histograms of 100 ranks obtained after 10\% burnin and thinning of posterior samples down to $1000$ out of $10, 000$.
+    (c) RUV empirical CDF plots.}
+  \label{fig:rf}
+\end{figure}
+
+% (see Box 2 for an example using the Robinson-Foulds distance; section 3 in the supplementary material illustrates RUV and coverage validation with other distance metrics).
+
+% Note that unlike the presentation of the above sections, here we will differentiate between tree model simulator and inferential machinery when necessary as we go.
+
   % Rank-uniformity validation (RUV) results for the Brownian motion rate, $r$, for each of the scenarios described in the main text.
   % \textcolor{red}{\st{In A we show the rank histograms from 100 replicates}}\textcolor{blue}{(a) Top row: histogram of 100 ranks (given $n=100$ replicates)}, for each scenario, obtained after 10\% burnin and thinning \textcolor{blue}{of posterior samples,} down to\textcolor{red}{\st{ get }} 200 \textcolor{red}{\st{draws from the posterior}} \textcolor{blue}{out of \textcolor{orange}{[Fill out]}}.
   % \textcolor{red}{\st{Panel}} (b) \textcolor{blue}{Bottom row: }\textcolor{red}{\st{shows the corresponding }}ECDF plot, \textcolor{blue}{for each scenario.}\textcolor{red}{\st{which help magnify the problems when they are present (Scenarios 2 and 3).}}
   % \textcolor{red}{\st{For}}\textcolor{blue}{In} Scenario 1, no anomalies are detected\textcolor{red}{\st{, while for}}\textcolor{blue}{. In s}\textcolor{red}{\st{S}}scenarios 2 and 3, over- and underestimation are present, respectively.
-  \label{fig:treeheight}
-\end{figure}
 
 % \begin{itemize}
 % \item PG1/2: Looking at coverage of tree-space parameters, e.g., root height (continuous space) and number of sampled ancestors (discrete space) (see Fig. 3 in \citealp{gavryushkina14}).
@@ -1070,20 +1077,6 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
 %   The RUV protocol remains the same, with an additional step in which we generate $\phi_0$ (see Algorithm \ref{alg:sbc} in the supplementary material).
 %   Fig. 9 shows validation results for the RF metric for five-taxon trees simulated under a simple Kingman's coalescent model assuming a known effective population size of 1.0.
 
-%   \begin{center}
-%     \includegraphics[width=0.92\linewidth]{../figures/coverage_ruv_coal_RF.pdf}
-%     \label{fig:rf}
-%     \captionof{figure}{
-%       Coverage validation and rank-uniformity validation (RUV) of a Kingman's coalescent model with respect to the Robinson-Foulds distance (RF; see text in box) between the coalescent tree ($\Phi$) and a reference (random) tree ($\phi_0$).
-%       The effective population size parameter is assumed known and fixed to 1.0 during inference.
-%       (a) The true RF distances (i.e., between 100 simulated coalescent trees, $\boldsymbol{\phi} = \{\phi_i: 1 \leq i \leq 100\}$, and the same reference tree, $\phi_0$) plotted against the corresponding mean posterior RF distances (calculated from posterior samples of each $\phi_i$ and $\phi_0$).
-%       The dashed line shows $x = y$.
-%       Dots and vertical lines represent true RF-distance values and their estimated 95\%-HPDs, respectively.
-%       Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
-%       (b) RUV histograms of 100 ranks obtained after 10\% burnin and thinning of posterior samples down to $1000$ out of $10, 000$.
-%       (c) RUV empirical CDF plots.
-%     }
-%   \end{center}
 
 %   Fig. 9a shows the coverage of 95\%-HPD intervals of the RF distance metric, while Fig. 9b-c give its rank distribution and empirical CDF, respectively.
 %   The coverage of the RF metric is very close to 95 (see Table 3, with $n=100$), and the rank distribution is approximately uniform on (1, $L+1$); together, these panels indicate this model is correctly implemented.
@@ -1093,9 +1086,9 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
 
 The second validation strategy we introduce allows one to evaluate the coverage of a phylogenetic tree's topology by looking at statistics of its clades.
 The procedure verifies that, across all $n$ independently simulated trees, true clades (i.e., clades present in the simulated trees) are sampled in proportion to their fraction among all clades sampled as frequently.
-Put differently, one expects that true clades comprise 10\% of all clades with posterior support of 0.1, 20\% of all clades with posterior support of 0.2, and so on (Supplementary Fig. 6).
-In the supplement we further suggest statistical tests for verifying the adherence of a tree model implementation to the aforementioned expectations.
+Put differently, one expects that true clades comprise 10\% of all clades with posterior support of 0.1, 20\% of all clades with posterior support of 0.2, and so on (Supplementary Fig. 7).
 Importantly, this validation method requires that the tree model only generates trees of the same size, which limits its wide application to all existing tree models.
+In the supplement we \textcolor{red}{\st{further}} suggest statistical tests for verifying the adherence of a tree model implementation to the aforementioned expectations\textcolor{red}{\st{.}}\textcolor{blue}{; we also further discuss the interpretation of this validation method's output.}
 
 \subsection*{Software}
 
@@ -1111,6 +1104,30 @@ In the previous sections, we described and executed two procedures for validatin
 If a model meets the three aforementioned requirements, it can shown to be correct\textcolor{red}{\st{validated}} by the procotols illustrated in figure} \ref{fig:flowchart}, regardless of the nature of its parameter space and its component sampling distributions.
 
 \textcolor{red}{\st{This is b}}\textcolor{blue}{B}ecause \textcolor{red}{\st{such}}\textcolor{blue}{the} protocols \textcolor{blue}{described above} provide clear, objective rules for assessing model correctness\textcolor{red}{\st{, based on the coverage and rank distribution of parameters values; both can be computed for any and all Bayesian models. For the reasons above}}, carrying out an analysis of coverage and/or of the distribution of parameter-value ranks (with respect to their posterior samples) should on one hand be a requirement, and on another should suffice for introducing a new Bayesian model implementation.
+
+\vspace{.25cm}
+
+\textcolor{blue}{\noindent \emph{Practical guidelines}}
+
+\textcolor{blue}{Much like in Bayesian statistical analyses, where researcher (ourselves included) employ ``default'' or ``common'' priors all too often -- as opposed to carefully crafting models to match the uniqueness of their studied system -- there is also a danger of being over-prescriptive when recommending validation protocol guidelines. 
+We thus provide below what we deem to be just a rough starting point for those interested in validating or assessing the validation of Bayesian model implementations.\\
+\indent In the examples presented above, we used 100 different data sets (i.e., $n=100$; Fig. \ref{fig:flowchart}), each coming from a unique combination of parameter values drawn from their prior distributions.
+There is nothing magical about the number 100, however: it is arbitrary and authors (e.g., \citealp{gavryushkina14,gaboriau20,ogilvie22}) have used because it is pleasantly round as a denominator, allowing for immediate mental calculation of coverage values.
+In our experience, $n=100$ has proven to be a large enough number of simulations for detecting model implementation issues, but lower or greater $n$'s can be used (Table \ref{tab:coverage2}), with higher error margins and greater running times as the costs associated to each end of $n$, respectively.\\
+\indent Two other numbers to consider when carrying out RUV, in particular, is the number of samples to extract from the output of an MCMC procedure ($L$ in Fig. \ref{fig:flowchart}), as well as the number of bins when displaying ranks as histograms (middle panels in Fig. \ref{fig:ruv_conceptual}).
+First, we recommend the effective sample size (ESS; a quantity well known in Bayesian statistics) of the MCMC output as a ceiling for $L$ -- the logic here being that fetching `ESS' equidistant samples from the set of posterior samples will minimize sample autocorrelation.
+ESS's of at least 200 have become somewhat of a minimal requirement for Bayesian evolutionary analyses, but larger numbers are preferred.\\
+\indent Given a correctly implemented model and that a 95\% confidence interval is used, the heights of approximately 5\% of the histogram bars should fall outside the interval.
+This makes any integer that is greater than (as well as a product of) 20 a convenient number of histogram bins.
+More generally, bin widths should be adjusted to $L$ so that all bins have at least one, but ideally more rank values falling within its bounds.
+Empty (or nearly so) bins suggest bins are too narrow or $L$ is too low.\\
+\indent The last and most idiosyncratic feature of a validation experiment to be considered is the ideal size of the simulated data set.
+Every model is characterized by a data set size beyond which parameters can be estimated with confidence.
+If much larger, a data set can make statistical inference too slow, if much smaller, certain attractive features of model validation cannot be leveraged, and implementation bugs may remain undetected.\\
+In the case of Bayesian models, too few data points will cause parameter mean posterior estimates to fall along their prior means (see, for example, $\lambda$ in Fig. \ref{fig:yulecalval}), indicating that true parameter values cannot be learned.
+While the theory behind and interpretation of coverage validation and RUV remain unchanged -- i.e., (1-$\alpha$) parameter coverage and uniformity of ranks are still to be expected -- one loses the ability to measure inferential accuracy.
+More troubling, however, is the possibility that implementation bugs hide behind mean posterior estimates indistinguishable from the parameter's prior mean.
+We therefore recommend data sets be as big as necessary for at least one, but ideally more parameters (e.g., $r$ and root age in Figs. \ref{fig:yulecalval} and \ref{fig:treeheight}) to have their values estimated as different from their prior means.}
 
 \vspace{.25cm}
 
