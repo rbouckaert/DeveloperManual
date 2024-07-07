@@ -1125,7 +1125,7 @@ Empty (or nearly so) bins suggest bins are too narrow or $L$ is too low.\\
 \indent The last and most idiosyncratic feature of a validation experiment to be considered is the ideal size of the simulated data set.
 Every model is characterized by a data set size beyond which parameters can be estimated with confidence.
 If much larger, a data set can make statistical inference too slow, if much smaller, certain attractive features of model validation cannot be leveraged, and implementation bugs may remain undetected.\\
-In the case of Bayesian models, too few data points will cause parameter mean posterior estimates to fall along their prior means (see, for example, $\lambda$ in Fig. \ref{fig:yulecalval}), indicating that true parameter values cannot be learned.
+\indent In the case of Bayesian models, too few data points will cause parameter mean posterior estimates to fall along their prior means (see, for example, $\lambda$ in Fig. \ref{fig:yulecalval}), indicating that true parameter values cannot be learned.
 While the theory behind and interpretation of coverage validation and RUV remain unchanged -- i.e., (1-$\alpha$) parameter coverage and uniformity of ranks are still to be expected -- one loses the ability to measure inferential accuracy.
 More troubling, however, is the possibility that implementation bugs hide behind mean posterior estimates indistinguishable from the parameter's prior mean.
 We therefore recommend data sets be as big as necessary for at least one, but ideally more parameters (e.g., $r$ and root age in Figs. \ref{fig:yulecalval} and \ref{fig:treeheight}) to have their values estimated as different from their prior means.}
