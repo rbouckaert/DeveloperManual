@@ -1007,9 +1007,12 @@ Similarly to what was observed for tree-unrelated parameters, the root age had t
   \label{fig:treeheight}
 \end{figure}
 
-To the best of our knowledge, the RUV procedure has not been applied to validate phylogenetic models vis-a-vis tree space.
-This is likely because, due to the complexity of tree space, no canonical total-ordering structure (a requirement for ranking) has been proposed for trees.
-Similarly, there seems to be no method described for evaluating the coverage of a tree's topology.
+To the best of our knowledge, the RUV procedure has not been applied to validate phylogenetic models \textit{vis-a-vis} tree space.
+\textcolor{blue}{
+This is likely because, due to the complexity of tree space, it is hard to canonically rank labeled trees such as the ones we focus on here.
+Total ordering of unlabeled topologies (shapes) is possible~\cite{Colijn2018,Maranca2024} and can be employed when running RUV on this space.
+Here, we propose ways of mapping labeled trees to the real line and compute ranks.
+Similarly, there seems to be no method described for evaluating the coverage of a labeled tree's topology.}
 In what follows we address this gap by introducing two novel approaches: (i) a solution for ranking trees as a part of a  RUV analysis , and (ii) a way in which the topology of a tree can have its coverage assessed.
 
 For \textcolor{blue}{the} first method, we propose that each of the trees in a set of MCMC samples, as well as the corresponding ``true'' tree, be first compared to an external, ``reference'' tree (see Algorithm \ref{alg:sbc} in the supplementary material).
