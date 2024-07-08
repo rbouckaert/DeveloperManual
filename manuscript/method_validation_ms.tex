@@ -1089,12 +1089,12 @@ When nodes can be serially sampled or direct ancestors of other nodes, for examp
 The number of terminals in a tree can also complicate the theoretical characterization of tree models; except for when the number of terminals is small \citep{beast2book}, algorithms have to be employed to generate expectations from theoretical principles \citep{kim19}.
 
 When theoretical predictions useful for validation cannot be made, an often-employed method involves the comparison of independent model implementations, with one or both being simulators or inference engines.
-Tree samples from a direct simulator can be compared to samples drawn with MCMC without data (e.g., \citealp{zhang23}), or exact likelihood values can be compared between different implementations \citep{andreoletti22}.
+Tree samples from a direct simulator can be compared to samples drawn with MCMC without data (e.g., \citealp{zhang24}), or exact likelihood values can be compared between different implementations \citep{andreoletti22}.
 On extreme cases, however, even that strategy appears unattainable.
 For example, if it is unclear how to even directly simulate under a tree model -- such as when node-age prior distributions are added to a birth-death process (models used in ``node-dating'', \citealp{ho09}; but see \citealp{heled12}) -- there seems to be no discernible path for validation in tree space.
 
 The procedures of coverage validation and RUV can also be used to examine parameters in tree space.
-So far authors have mainly focused on the coverage of quantities such as species tree and gene root ages, sum of branch lengths, and number of direct ancestors (e.g., \citealp{gavryushkina14,ogilvie22,zhang23}).
+So far authors have mainly focused on the coverage of quantities such as species tree and gene root ages, sum of branch lengths, and number of direct ancestors (e.g., \citealp{gavryushkina14,ogilvie22,zhang24}).
 Fig. \ref{fig:treeheight}, for example, shows the coverage of the root age for the three scenarios we explored in the previous sections.
 Similarly to what was observed for tree-unrelated parameters, the root age had the expected coverage in scenarios 1 and 3, and RUV again aligned with the diagnosis of model misspecification for scenario 3.
 
@@ -1135,7 +1135,7 @@ RUV proceeds normally from this point (see Box 2 for an example using the Robins
 % % \item PG3: Balance statistics building on Albert Soewongsono's work; TODO: plot ``set'' $\beta$ statistic (y-axis, violin plots) for Yule model with different tree sizes; plot theoretical ``set'' $\beta$ statistic on the x-axis and $\beta$-MLE estimate on y-axis for 100 sets of 100 BiSSE trees (fixed parameters) -- plot 1:1 line and get $\sim$ 95\% CI bars overlapping that line;
 % \item PG4: More complicated models are troublesome.
 %   Exact likelihood values are computed for sub-cases of a new general model that have theoretical expectations (BDSS) or against an independent implementation \citep{andreoletti22}.
-%   Comparing sampling distributions between direct simulator (inverse CDF) and sampling from the prior (BDSS implementation in \citealp{zhang23});
+%   Comparing sampling distributions between direct simulator (inverse CDF) and sampling from the prior (BDSS implementation in \citealp{zhang24});
 % \end{itemize}
 
 \begin{tcolorbox}[breakable, width=\textwidth, colback=gray!10, boxrule=0pt, title=Box 2: Validating a phylogenetic model with respect to its phylogenetic tree parameter, fonttitle=\bfseries]
@@ -1258,7 +1258,7 @@ Historically, model design has often gone in the direction of incrementally cond
 
 In addition to the model validation we detailed above, there is an infinite number of ways in which a new or published model can have its behavior inspected.
 Researchers may want to know, given a model, how sensitive parameter estimates are to data set size, prior choice, model complexity, violation of model assumptions, to name a few.
-Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang23,luo23}), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang23}).
+Studies have examined how these factors affect estimation accuracy and precision (e.g., \citealp{zhang24,luo23}), as well as the mixing and convergence of MCMC chains (e.g., \citealp{nylander04,zhang24}).
 We collectively refer to these examinations as ``model characterization'': any analysis of model behavior beyond assessing its correctness.
 Model characterization is rarely carried out to satisfy the curiosity of the theoretician (but see, e.g., \citealp{tuffley97,steel20}); it is instead normally motivated by a model's empirical applications.
 These investigations are thus critical for the longevity and popularity of a model, as domain experts will only adopt a model widely if they know when to trust the results and how to interpret them.

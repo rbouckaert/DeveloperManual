@@ -1,0 +1,59 @@
+<beast version="2.0" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference
+                              :beast.base.evolution.alignment
+                              :beast.base.evolution.tree
+                              :beast.base.evolution.speciation
+                              :beast.base.inference.distribution
+                              :beast.base.inference.util
+                              :beast.base.inference.parameter">
+
+    <run spec="DirectSimulator" nSamples="101">
+
+        <distribution spec="CompoundDistribution" id="fullModel">
+            <distribution spec="YuleModel" id="yuleModel">
+                <tree spec="Tree" id="Tree">
+                    <taxonset spec="TaxonSet">
+                    	<plate var="n" range="t0,t1,t2,t3,t4,t5,t6,t7,t8,t9">
+	                        <taxon spec="Taxon" id="$(n)"/>
+	                    </plate>
+                    </taxonset>
+                </tree>
+                <birthDiffRate spec="RealParameter" id="birthRate" value="1.0"/>
+            </distribution>
+
+            <distribution spec="beast.base.inference.distribution.Prior" id="birthDiffRatePrior">
+                <x idref="birthRate"/>
+                <distr spec="Normal" mean="4" sigma="0.1"/>
+            </distribution>
+
+            <distribution spec="beast.base.inference.distribution.Prior" id="kappaPrior">
+                <x spec="RealParameter" id="kappa" value="1.0"/>
+                <distr spec="LogNormalDistributionModel" M="1.0" S="1.25"/>
+            </distribution>
+
+            <distribution spec="beast.base.inference.distribution.Prior" id="GammaShapePrior.s:dna">
+                <x spec="RealParameter" id="gammaShape" lower="0.1" value="1.0"/>
+            	<distr spec="Exponential" mean="1.0"/>
+    	    </distribution>
+
+            <distribution id="FrequenciesPrior.s:dna" spec="beast.base.inference.distribution.Prior" >
+               <x spec="RealParameter" id="freqParameter" value="0.25 0.25 0.25 0.25"/>
+               <distr spec="Dirichlet" alpha="4.0 4.0 4.0 4.0"/>
+            </distribution>
+            
+            
+        </distribution>
+
+        <logger logEvery="1" fileName="truth.log">
+            <log id="TreeHeight" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree"/>
+            <log idref="birthRate"/>
+            <log idref="kappa"/>
+            <log idref="gammaShape"/>
+            <log idref="freqParameter"/>
+        </logger>
+
+        <logger logEvery="1" fileName="truth.trees">
+            <log idref="Tree"/>
+        </logger>
+    </run>
+</beast>
+
