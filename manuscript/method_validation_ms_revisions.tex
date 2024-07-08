@@ -138,7 +138,7 @@ While it could be said that many decade-old questions and hypotheses in evolutio
 data analysis practices have changed drastically in recent years, to the point they would likely seem exotic and obscure to an evolutionary biologist active forty years ago. 
 In particular, evolutionary biology has become highly statistical, with the development and utilization of probabilistic models now being commonplace.
 
-Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,f73,hky,hudson90}.
+Models are employed in the sciences for many reasons, and fall within a biological abstraction continuum \citep{servedio14}, going from fully verbal, highly abstract models (e.g., \citealt{vanvalen73}), through proof-of-concept models that formalize verbal models (e.g., \citealt{maynard78,reinhold99}), to models that interact directly with data through explicit mathematical functions \citep{yule24,fel73,hky,hudson90}.
 Within the latter category, probabilistic models have seen a sharp surge in popularity within evolutionary biology, in conjunction with computational tools implementing them.
 
 Despite the increasing pervasiveness of probabilistic models in the biological sciences, tools implementing such models show large variation not only with respect to code quality (from a software engineering perspective), but also to the provided evidence for correctness \citep{darriba18}.
@@ -262,7 +262,7 @@ Under a Yule process with a species birth rate of $\lambda$, the expected tree h
 
 \noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree root age (from each sampled data set).
 Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
-\textcolor{blue}{Interested readers will find another example of this validation procedure in the supplement, where}\textcolor{red}{\st{we illustrate this procedure for}} \textcolor{blue}{the density function characterizing the model (a phylogenetic Brownian motion model, ``PhyloBM'' \citealp{f73}) is that of a parametric distribution, namely the multivariate normal.}
+\textcolor{blue}{Interested readers will find another example of this validation procedure in the supplement, where}\textcolor{red}{\st{we illustrate this procedure for}} \textcolor{blue}{the density function characterizing the model (a phylogenetic Brownian motion model, ``PhyloBM'' \citealp{fel73}) is that of a parametric distribution, namely the multivariate normal.}
 Protocols for validating $\text{I}[\mathcal{M}]$ (see below) will also normally validate $\text{S}[\mathcal{M}]$ at the same time.
 
 \begin{figure}
