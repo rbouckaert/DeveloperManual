@@ -220,7 +220,7 @@ The simulator then outputs a sample of random variable(s), which for hierarchica
 %(\cdot|\Mu_\Lambda=-3.25,\Sigma_\Lambda=0.2)$ 
  
 In the case of hierarchical models, it is sometimes useful to consider $\text{S}[\mathcal{M}]$ as a collection of component simulators, each characterized by a different sampling distribution.
-For example, $\text{S}[\mathcal{M}]$ for model we will work with below (Fig. \ref{fig:pgm}; Table \ref{tab:dists}) can be seen as an ensemble comprised by:
+For example, \textcolor{blue}{the model $\mathcal{M}$ we will work with below (Fig. \ref{fig:pgm}; Table \ref{tab:dists}) consists of a hierarchical model; parametric distributions are used as hyperpriors (item 1, below), a Yule process is used as the phylogenetic tree prior (item 2), and phylogenetic Brownian motion is used as the data model (item 3):}\textcolor{red}{\st{$\text{S}[\mathcal{M}]$ for model we will work with below can be seen as an ensemble comprised by:}}
 
 \begin{enumerate}
   \item $\text{S}[f_\Theta(\cdot)]$ (where $\Theta = \{T,\Lambda, R, \boldsymbol{Y_0}\}$), which jointly simulates $\theta=\{\tau,\lambda,r,\boldsymbol{y_0}\}$,
@@ -229,6 +229,18 @@ For example, $\text{S}[\mathcal{M}]$ for model we will work with below (Fig. \re
 \end{enumerate}
 
 Being able to isolate the building blocks of a hierarchical model simulator helps divide and conquer the validation task, especially when some but not all of the sampling distributions are well-known parametric distributions, or when they result from well characterized stochastic processes (see below).
+
+One way to validate a probabilistic model simulator is by using it to produce (sample) a large number of data sets given a set of parameters.
+\textcolor{red}{\st{These parameters can be seen as characterizing an ensemble of the entities being modeled.}}
+For each data set, one can then construct $\alpha \times 100 \%$-confidence intervals (where $\alpha \in (0,1)$ gives the confidence level) for certain summary statistics (e.g., mean, variance, covariance).
+If the simulator is behaving as expected, one should be able to verify that the (ensemble's or ``true'') summary statistic is contained approximately $\alpha$\% of the time within their $\alpha \times 100\%$-confidence intervals.
+An example is the Yule model (also known as the pure-birth model; \citealt{yule24}), a continuous-time Markov process that has been classically employed in phylogenetics to model the number of species in a clade \citep{yule24,aldous01}.
+Under a Yule process with a species birth rate of $\lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
+
+\begin{equation}
+  \text{E}[t_{\text{root}}] = \sum_{i=2}^{n}\frac{1}{i\lambda}.
+  \label{eq:yule}
+\end{equation}
 
 \begin{center}
   \begin{table}[h]
@@ -247,19 +259,6 @@ Being able to isolate the building blocks of a hierarchical model simulator help
   \end{tabular}
   \end{table}
 \end{center}
-
-One way to validate a probabilistic model simulator is by using it to produce (sample) a large number of data sets given a set of parameters.
-These parameters can be seen as characterizing an ensemble of the entities being modeled.
-For each data set, one can then construct $\alpha \times 100 \%$-confidence intervals (where $\alpha \in (0,1)$ gives the confidence level) for certain summary statistics (e.g., mean, variance, covariance).
-If the simulator is behaving as expected, one should be able to verify that the (ensemble's or ``true'') summary statistic is contained approximately $\alpha$\% of the time within their $\alpha \times 100\%$-confidence intervals.
-An example is the Yule model (also known as the pure-birth model; \citealt{yule24}), a continuous-time Markov process that has been classically employed in phylogenetics to model the number of species in a clade \citep{yule24,aldous01}.
-Under a Yule process with a species birth rate of $\lambda$, the expected tree height, $\text{E}[t_{\text{root}}]$, for a tree with $n$ tips is:
-\vspace{.5cm}
-
-\begin{equation}
-  \text{E}[t_{\text{root}}] = \sum_{i=2}^{n}\frac{1}{i\lambda}.
-  \label{eq:yule}
-\end{equation}
 
 \noindent One can then verify, for example, if $\text{E}[t_{\text{root}}]$ is $95\%$ of the time within $\pm 1.96$ standard errors of the average Yule-tree root age (from each sampled data set).
 Confirming that this is the case indicates $\text{S}[f_{\Phi|\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$ is correctly implemented (Fig. \ref{fig:yulemean}).
@@ -1010,9 +1009,9 @@ Similarly to what was observed for tree-unrelated parameters, the root age had t
 To the best of our knowledge, the RUV procedure has not been applied to validate phylogenetic models \textit{vis-a-vis} tree space.
 \textcolor{blue}{
 This is likely because, due to the complexity of tree space, it is hard to canonically rank labeled trees such as the ones we focus on here.
-Total ordering of unlabeled topologies (shapes) is possible~\cite{Colijn2018,Maranca2024} and can be employed when running RUV on this space.
+Total ordering of unlabeled topologies (shapes) is possible \citep{Colijn2018,Maranca2024} and can be employed when running RUV on this space.
 Here, we propose ways of mapping labeled trees to the real line and compute ranks.
-Similarly, there seems to be no method described for evaluating the coverage of a labeled tree's topology.}
+For the reasons above, experiments in coverage validation of tree topologies are also exceedingly rare, at least to the degree that we are unaware of any published attempts at it.}
 In what follows we address this gap by introducing two novel approaches: (i) a solution for ranking trees as a part of a  RUV analysis , and (ii) a way in which the topology of a tree can have its coverage assessed.
 
 For \textcolor{blue}{the} first method, we propose that each of the trees in a set of MCMC samples, as well as the corresponding ``true'' tree, be first compared to an external, ``reference'' tree (see Algorithm \ref{alg:sbc} in the supplementary material).

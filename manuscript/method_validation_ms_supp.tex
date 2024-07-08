@@ -458,9 +458,12 @@ Additionally, one can fit a regression model to the attained frequencies against
 Importantly, there are two considerations we would like to bring to the reader's attention.
 First, depending on the starting tree's topology, its number of tips, and the length of the MCMC chain, true clades may never be sampled by chance more frequently than expected.
 This could be diagnosed by observing the left-most bar in supplementary figure \ref{supfig:clade_covg} being taller than expected; here, one alternative is to ignore this first bar when carrying out the statistical tests suggested above.
+
 Second, regardless of the simulated phylogenetic signal (with respect to the tree topology) -- irrespective of, e.g., too few, an ideal amount, or too many molecular substitutions in simulated alignments -- the ladder-like pattern in supplementary figure \ref{supfig:clade_covg} should still be observed.
-In order to see that, note that we suggest the count of clades with a given posterior clade support be normalized by the total number of clades with that support: if a very large number of true clades has support close to 0.0 or to 1.0, those counts will be divided by the total count of clades with corresponding support levels.
-We also remind the reader that when carrying out coverage validation, there is nothing intrinsically wrong with validating a model with a data set void of any signal -- the prior mean would be recovered for each parameter, and model correctness could still be in principle verified.
+This is because we suggest the count of clades with a given posterior clade support be normalized by the total number of clades with that support: if a very large number of true clades has support close to 0.0 or to 1.0, those counts will be divided by the total count of clades with corresponding support levels.
+Trees must have enough tips, however, or a large enough number of trees must be simulated so that all bins, including intermediate support ones, have large enough counts of sampled clades.
+Lastly, we emphasize that there is nothing intrinsically wrong with validating a model with a data set void of any signal.
+In coverage validation, the prior mean would be recovered for each parameter, and model correctness could still be in principle verified.
 
 \newpage
 \section{Proof for coverage validation}
