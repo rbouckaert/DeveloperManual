@@ -9,6 +9,7 @@
 
 
     <!-- The simulated sequence alignment. -->
+    <!-- The simulated sequence alignment. -->
     <data spec='beastfx.app.seqgen.SimulatedAlignment' id="dna"
           sequencelength="$(sl=100)">
 
@@ -17,17 +18,28 @@
             newick="$(tree)"
             IsLabelledNewick="true" adjustTipHeights="false" taxa="@input_alignment"/>
 
+      <!-- alignment data which specifies datatype and taxa-->
       <data idref="input_alignment"/>
 
-      <siteModel id="trueSiteModel.s:dna" spec="SiteModel" gammaCategoryCount="4">
-                <parameter id="truemutationRate.s:dna" spec="parameter.RealParameter" estimate="false" name="mutationRate">1.0</parameter>
-                <parameter id="truegammaShape.s:dna" spec="parameter.RealParameter" estimate="false" name="shape">$(gammaShape)</parameter>
-                <parameter id="trueproportionInvariant.s:dna" spec="parameter.RealParameter" estimate="false" lower="0.0" name="proportionInvariant" upper="1.0">0.0</parameter>
-                <substModel id="trueHKY.s:big2_barcs" spec="HKY" kappa="$(kappa)">
-                    <frequencies id="trueFreqs.s:dna" spec="Frequencies" frequencies="$(freqParameter.1) $(freqParameter.2) $(freqParameter.3) $(freqParameter.4)"/>
-				</substModel>
-      </siteModel>      
-	  <branchRateModel id="trueStrictClock.c:cytb" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="1.0"/>
+      <!-- site model used to simulate sequence data -->
+      <siteModel id="trueSiteModel.s:dna" spec="SiteModel" gammaCategoryCount="4" 
+      	proportionInvariant="0.0" mutationRate="1.0">
+      	
+		<!-- the gamma shape parameter value will be replaced by the direct simulator value -->
+        <parameter id="truegammaShape.s:dna" spec="parameter.RealParameter"  name="shape">$(gammaShape)</parameter>
+        
+        <!-- the kappa and frequency values will be replaced by the direct simulator values -->
+        <substModel id="trueHKY.s:big2_barcs" spec="HKY" kappa="$(kappa)">
+            <frequencies id="trueFreqs.s:dna" spec="Frequencies" frequencies="$(freqParameter.1) 
+            $(freqParameter.2) 
+            $(freqParameter.3) 
+            $(freqParameter.4)"/>
+        </substModel>
+      </siteModel> 
+      
+      <!-- we use a strict clock with rate fixed to 1 -->
+	  <branchRateModel id="trueStrictClock.c:cytb" spec="beast.base.evolution.branchratemodel.StrictClockModel" 
+	  	clock.rate="1.0"/>
      </data>
  
 

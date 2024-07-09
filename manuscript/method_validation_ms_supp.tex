@@ -636,6 +636,7 @@ beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beas
 beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:
 beast.base.evolution.likelihood" required="" version="2.7">
 
+<!-- alignment which specifies datatype and taxa -->
 <data id="input_alignment" spec="Alignment" name="alignment"  dataType="nucleotide">
     <plate var="n" range="t0,t1,t2,t3,t4,t5,t6,t7,t8,t9">
         <sequence id="seq_$(n)" taxon="$(n)" totalcount="4" value="?"/>
@@ -652,18 +653,25 @@ beast.base.evolution.likelihood" required="" version="2.7">
             newick="$(tree)"
             IsLabelledNewick="true" adjustTipHeights="false" taxa="@input_alignment"/>
 
+      <!-- alignment data which specifies datatype and taxa-->
       <data idref="input_alignment"/>
 
-      <siteModel id="trueSiteModel.s:dna" spec="SiteModel" gammaCategoryCount="4" proportionInvariant="0.0">
-        <parameter id="truemutationRate.s:dna" spec="parameter.RealParameter" name="mutationRate">1.0</parameter>
+      <!-- site model used to simulate sequence data -->
+      <siteModel id="trueSiteModel.s:dna" spec="SiteModel" gammaCategoryCount="4" 
+      	proportionInvariant="0.0" mutationRate="1.0">
+	<!-- the gamma shape parameter value will be replaced by the direct simulator value -->
         <parameter id="truegammaShape.s:dna" spec="parameter.RealParameter"  name="shape">$(gammaShape)</parameter>
+        
+        <!-- the kappa and frequency values will be replaced by the direct simulator values -->
         <substModel id="trueHKY.s:big2_barcs" spec="HKY" kappa="$(kappa)">
             <frequencies id="trueFreqs.s:dna" spec="Frequencies" frequencies="$(freqParameter.1) 
             $(freqParameter.2) 
             $(freqParameter.3) 
             $(freqParameter.4)"/>
         </substModel>
-      </siteModel>      
+      </siteModel> 
+      
+      <!-- we use a strict clock with rate fixed to 1 -->
 	  <branchRateModel id="trueStrictClock.c:cytb" spec="beast.base.evolution.branchratemodel.StrictClockModel" 
 	  	clock.rate="1.0"/>
      </data>
@@ -677,7 +685,8 @@ beast.base.evolution.likelihood" required="" version="2.7">
 \end{lstlisting}
 }
 
-We will use the `CoverageTestXMLGenerator2` utility that comes with the Experimenter package to generate 100 BEAST XML files from the template and the simulated values in `truth.log` and `truth.trees` in a terminal as follows:
+We will use the `CoverageTestXMLGenerator2` utility that comes with the Experimenter package to generate 100 BEAST XML files from the template and the simulated values in `truth.log` and `truth.trees`. It replaces all text within dollared braces (e.g. "\$(kappa)") with values from the `truth.log` file and replaces "\$(tree)" with newick trees from the `truth.trees` file. 
+It can be run in a terminal as follows:
 
 {\scriptsize
 \begin{lstlisting}
