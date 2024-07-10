@@ -557,13 +557,13 @@ We may re-write the limit as:
 \newpage
 
 % \lstset{language=XML}
-\section{Coverage validation using the Experimenter package for BEAST2: a worked example}
+\section{Coverage validation using the Experimenter package for BEAST 2: a worked example}
 
-\indent In this document we present a worked example of a coverage validation study using BEAST 2's Experimenter package.
+\indent In this section we present a worked example of validation study using BEAST 2's Experimenter package.
 We will start from working installations of BEAST 2 and the Experimenter package, which can be found on \url{https://github.com/christiaanjs/beast-validation/}.
 Readers following along will also profit from having installed the \texttt{Tracer} \citep{tracer} and \texttt{LogCombiner} applications.
 
-The hierarchical model whose implementation we will validate in this document is less pedagogical than the one covered in the main manuscript, but more closely resembles a typical model employed by empirical phylogeneticists.
+The hierarchical model whose implementation we will validate in this section is slightly more complex (and thus less pedagogical) than the one covered in the main manuscript, but more closely resembles a typical model employed by empirical phylogeneticists.
 Much of the model specification will be familiar to this journal's readership.
 For the sake of brevity, we leave the details on hyperprior specifications (parametric distributions) to the XML code snippets (those were commented so that they are human readable).
 
@@ -640,8 +640,8 @@ Among-site substitution-rate variation is modeled with a discrete Gamma model \c
 }
 
 As the XML file above specifies, we have BEAST 2 write all the sampled scalar and tree (``true'') values into log files \texttt{truth.xml} and \texttt{truth.trees}, respectively.
-Inspecting the `truth.log` with the Tracer app reveals that the simulator works as expected (the means and variances of parameters match those specified in the XML file).
-Note that we generated 101 samples ($n=100$ if we follow the main manuscript's notation; with an extra simulation for executing RUV in tree space), but nothing prevents more data sets to be generated.
+Inspecting the \texttt{truth.log} with the Tracer app reveals that the simulator works as expected (the means and variances of parameters match those specified in the XML file).
+Note that we generated 101 samples ($n=100$ if we follow the main manuscript's notation; with an extra simulation for executing RUV in tree space), but nothing prevents user from generating more data sets.
 
 At this point, the Experimenter package has the ``true'' simulated values it needs to populate an XML template 100 times.
 The outcome will be 100 independent BEAST 2 runnable XML files for statistical inference.
@@ -685,7 +685,7 @@ The XML template looks like this:
  </data>
  
  <!--
- 	rest of the XML comes from a BEAUti generated XML that is too long to
+ 	The rest of the XML comes from a BEAUti generated XML that is too long to
  	include here. The full file can be found here:
 	https://github.com/rbouckaert/DeveloperManual/blob/master/examples/yule/input.xml
  -->
@@ -731,7 +731,7 @@ loganalyser -oneline *log > summary
 
 \subsection{Calculating and visualizing coverage}
 
-At this point, we can run the \texttt{CoverageCalculator} tool (part of the Experimenter package) from the Terminal to create coverage summary statistics:
+After statistical inference, we can run the \texttt{CoverageCalculator} tool (part of the Experimenter package) from the Terminal to produce coverage summary statistics:
 
 \vspace{.25cm}
 
@@ -783,7 +783,7 @@ This command executes the procedure described at the end of section 6, producing
 
 \subsection{RUV validation}
 
-To do a RUV analysis, we must first combine the log files produced during inference into a single file:
+To do an RUV analysis, we must first combine the log files produced during inference into a single file:
 
 \vspace{.25cm}
 
@@ -803,12 +803,12 @@ applauncher SBCAnalyser -log ../../truth.log -logA combined.log -out /tmp -bins 
 \end{lstlisting}
 }
 
-The Terminal output is shown in supplementary figure \ref{supfig:terminal2}; it displays the histograms as well as ECDF plots (not all of them shown due to size of screen display).
+The Terminal output is shown in supplementary figure \ref{supfig:terminal2}; it displays the bin counts as well as ECDF plots (not all of them shown due to size of screen display).
 We can also graphically summarize the RUV procedure (Supplementary Fig. \ref{supfig:experimenterruv}).
 
 \begin{figure}
-  % \includegraphics[width=\textwidth]{../figures/sbscalculator0.png}
-  \caption{Frequency parameter 2 has one bin that is outside the expected range (indicated by the empty bin).}
+  \includegraphics[width=\textwidth]{../figures/sbscalculator0.png}
+  \caption{Frequency parameter 2 has one bin that is outside the expected range (indicated by the missed bin column).}
   \label{supfig:terminal2}
 \end{figure}
 
