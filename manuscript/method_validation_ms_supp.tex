@@ -22,6 +22,8 @@
 \usepackage{amsmath} % Text in equations
 \usepackage{titlesec} % Allows customization of titles
 \usepackage{titling} % Customizing the title section
+\usepackage{listings} % listings environment
+\usepackage[framemethod=TikZ]{mdframed} % nice listing frame
 \usepackage[hidelinks]{hyperref} % For hyperlinks in the PDF
 
 \usepackage{algorithm2e}
@@ -48,12 +50,27 @@
 \fancyhead[C]{Mendes et al. $\bullet$ December 2023 $\bullet$ bio{\color{red}R}$\chi$ve} % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
-
-
 \usepackage{natbib}
 \bibliographystyle{apalike}
 
 \usepackage{libertine}
+
+\lstdefinelanguage{XML}
+{
+  basicstyle=\ttfamily,
+  morestring=[s]{"}{"},
+  morecomment=[s]{?}{?},
+  morecomment=[s]{!--}{--},
+  commentstyle=\color{blue5},
+  moredelim=[s][\color{black}]{>}{<},
+  moredelim=[s][\color{pink2}]{\ }{=},
+  stringstyle=\color{black},
+  identifierstyle=\color{orange1}
+}
+\definecolor{light-gray}{gray}{0.95}
+\definecolor{pink2}{RGB}{236,74,138}
+\definecolor{orange1}{RGB}{255,102,0}
+\definecolor{blue5}{RGB}{46,62,79}
 
 \setlength\columnsep{20pt}
 
@@ -94,7 +111,7 @@
 \linenumbers
 
 
-\usepackage{listings}
+% \usepackage{listings}
 \begin{document}
 
 \maketitle
@@ -537,72 +554,74 @@ We may re-write the limit as:
    \label{supfig:clade_covg}
 \end{figure}
  
-
-
-
-
-
-
-
 \newpage
 
-\lstset{language=XML}
-\section{Well calibrated simulation study using the Experimenter package for BEAST2: a worked example}
+% \lstset{language=XML}
+\section{Coverage validation using the Experimenter package for BEAST2: a worked example}
 
-BEAST 2 and the Experimenter package must be installed for this example.
-The Experimenter package is available from \url{https://github.com/christiaanjs/beast-validation/}.
+\indent In this document we present a worked example of a coverage validation study using BEAST 2's Experimenter package.
+We will start from working installations of BEAST 2 and the Experimenter package, which can be found on \url{https://github.com/christiaanjs/beast-validation/}.
+Readers following along will also profit from having installed the \texttt{Tracer} \citep{tracer} and \texttt{LogCombiner} applications.
 
-We will first simulate a set of trees drawn from the Yule prior with birth rate narrowly distributed as Normal(1,0.1) in order to ensure the tree height remains high enough to allow some mutations when simulating sequences and low enough not to cause saturation.
-Furthermore, for simulating sequences, we will use a HKY model with estimated frequencies and gamma rate heterogeneity. 
-So, we need to sample the kappa and frequency parameters for the HKY model and the gamma shape parameter for gamma rate heterogeneity.
-We can use the direct-simulator in BEAST2 to directly simulate all of the above using the following XML specification.
+The hierarchical model whose implementation we will validate in this document is less pedagogical than the one covered in the main manuscript, but more closely resembles a typical model employed by empirical phylogeneticists.
+Much of the model specification will be familiar to this journal's readership.
+For the sake of brevity, we leave the details on hyperprior specifications (parametric distributions) to the XML code snippets (those were commented so that they are human readable).
 
-{\scriptsize\begin{lstlisting}
-<beast version="2.0" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference
-:beast.base.evolution.alignment:beast.base.evolution.tree :beast.base.evolution.speciation
-:beast.base.inference.distribution:beast.base.inference.util :beast.base.inference.parameter">
+\subsection{Simulation}
+
+\indent We will use BEAST 2's direct simulators to generate a set of phylogenetic trees under a Yule prior with normally distributed birth rates, $\lambda \sim \text{N}(1.0, 0.1)$.
+Such a narrow normal prior constrains tree heights such that substitution rates are neither too low (i.e., we observe some phylogenetic signal) nor too high (i.e., we do not saturate our molecular alignments).
+We shall assume a strict clock model with global substitution rate of 1.0.
+
+Molecular alignments are simulated under an HKY model \citep{hky} with the transition to transversion rate, $\kappa$, being drawn from a log-normal distribution, and nucletotide frequencies, $\pi$, sampled from a Dirichlet prior.
+Among-site substitution-rate variation is modeled with a discrete Gamma model \citep{yang94}, where the shape parameter is drawn from an exponential distribution.
+
+\vspace{.25cm}
+
+{\scriptsize
+\begin{lstlisting}[language=XML, breaklines=true, backgroundcolor=\color{light-gray}]
+<beast version="2.0" namespace="beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.alignment:beast.base.evolution.tree :beast.base.evolution.speciation:beast.base.inference.distribution:beast.base.inference.util :beast.base.inference.parameter">
 
     <run spec="DirectSimulator" nSamples="101">
-
         <distribution spec="CompoundDistribution" id="fullModel">
-        	<!-- sampling the tree -->
+            <!-- Sampling the tree -->
             <distribution spec="YuleModel" id="yuleModel">
                 <tree spec="Tree" id="Tree">
                     <taxonset spec="TaxonSet">
-                    	<plate var="n" range="t0,t1,t2,t3,t4,t5,t6,t7,t8,t9">
-	                        <taxon spec="Taxon" id="$(n)"/>
-	                    </plate>
+                        <plate var="n" range="t0,t1,t2,t3,t4,t5,t6,t7,t8,t9">
+	                    <taxon spec="Taxon" id="$(n)"/>
+	                </plate>
                     </taxonset>
                 </tree>
                 <birthDiffRate spec="RealParameter" id="birthRate" value="1.0"/>
             </distribution>
 
-        	<!-- sampling the birth rate -->
+            <!-- Sampling the birth rate -->
             <distribution spec="beast.base.inference.distribution.Prior" id="birthDiffRatePrior">
                 <x idref="birthRate"/>
                 <distr spec="Normal" mean="4" sigma="0.1"/>
             </distribution>
 
-        	<!-- sampling the kappa for the HKY model -->
+            <!-- Sampling kappa for the HKY model -->
             <distribution spec="beast.base.inference.distribution.Prior" id="kappaPrior">
                 <x spec="RealParameter" id="kappa" value="1.0"/>
                 <distr spec="LogNormalDistributionModel" M="1.0" S="1.25"/>
             </distribution>
 
-        	<!-- sampling the frequencies for the HKY model -->
+            <!-- Sampling the nucleotide frequencies for the HKY model -->
             <distribution id="FrequenciesPrior.s:dna" spec="beast.base.inference.distribution.Prior" >
                <x spec="RealParameter" id="freqParameter" value="0.25 0.25 0.25 0.25"/>
                <distr spec="Dirichlet" alpha="4.0 4.0 4.0 4.0"/>
             </distribution>
 
-        	<!-- sampling the shape parameter for gamma rate heterogeneity -->
+            <!-- Sampling the shape parameter of the discrete gamma model for rate heterogeneity -->
             <distribution spec="beast.base.inference.distribution.Prior" id="GammaShapePrior.s:dna">
                 <x spec="RealParameter" id="gammaShape" lower="0.1" value="1.0"/>
             	<distr spec="Exponential" mean="1.0"/>
     	    </distribution>
         </distribution>
 
-		<!-- create a trace log file with sample values -->
+	<!-- Logging all sampled scalar values into file truth.log-->
         <logger logEvery="1" fileName="truth.log">
             <log id="TreeHeight" spec="beast.base.evolution.tree.TreeStatLogger" tree="@Tree"/>
             <log idref="birthRate"/>
@@ -611,7 +630,7 @@ We can use the direct-simulator in BEAST2 to directly simulate all of the above 
             <log idref="freqParameter"/>
         </logger>
 
-		<!-- create a tree log file with sample values -->
+	<!-- Logging all sampled tree values into truth.trees-->
         <logger logEvery="1" fileName="truth.trees">
             <log idref="Tree"/>
         </logger>
@@ -620,173 +639,187 @@ We can use the direct-simulator in BEAST2 to directly simulate all of the above 
 \end{lstlisting}
 }
 
-If the file is saved in `truth.xml` we can run it in BEAST2 using `beast truth.xml` and it produces two log files `truth.log` and `truth.trees`.
-By inspecting the `truth.log` file in trace, we can verify the simulator works as expected, e.g. by looking at the mean and variance of the paramters.
-Here, we just generated 101 samples, but for more accuracy many more samples can be generated.
+As the XML file above specifies, we have BEAST 2 write all the sampled scalar and tree (``true'') values into log files \texttt{truth.xml} and \texttt{truth.trees}, respectively.
+Inspecting the `truth.log` with the Tracer app reveals that the simulator works as expected (the means and variances of parameters match those specified in the XML file).
+Note that we generated 101 samples ($n=100$ if we follow the main manuscript's notation; with an extra simulation for executing RUV in tree space), but nothing prevents more data sets to be generated.
 
-To create XML files for a well calibrated simulation study, we continue with a BEAST2 XML template, where we start with generating the alignment using the true values generated by the direct simulator.
+At this point, the Experimenter package has the ``true'' simulated values it needs to populate an XML template 100 times.
+The outcome will be 100 independent BEAST 2 runnable XML files for statistical inference.
+The XML template looks like this:
+
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' 
-namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:
-beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:
-beast.base.evolution.alignment:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:
-beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:
-beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:
-beast.base.evolution.likelihood" required="" version="2.7">
+\begin{lstlisting}[language=XML, breaklines=true, backgroundcolor=\color{light-gray}]
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><beast beautitemplate='Standard' beautistatus='' namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.base.evolution.alignment:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="" version="2.7">
 
-<!-- alignment which specifies datatype and taxa -->
+<!-- Alignment specifying the data type and taxa -->
 <data id="input_alignment" spec="Alignment" name="alignment"  dataType="nucleotide">
     <plate var="n" range="t0,t1,t2,t3,t4,t5,t6,t7,t8,t9">
         <sequence id="seq_$(n)" taxon="$(n)" totalcount="4" value="?"/>
     </plate>
 </data>
 
+<!-- The simulated sequence alignment -->
+<data spec='beastfx.app.seqgen.SimulatedAlignment' id="dna" sequencelength="$(sl=100)">
+    <!-- The true tree down which sequences are simulated. -->
+    <tree id="trueTree" spec='beast.base.evolution.tree.TreeParser' newick="$(tree)" IsLabelledNewick="true" adjustTipHeights="false" taxa="@input_alignment"/>
 
-    <!-- The simulated sequence alignment. -->
-    <data spec='beastfx.app.seqgen.SimulatedAlignment' id="dna"
-          sequencelength="$(sl=100)">
+    <!-- Alignment block specified above -->
+    <data idref="input_alignment"/>
 
-      <!-- The true tree down which sequences are simulated. -->
-      <tree id="trueTree" spec='beast.base.evolution.tree.TreeParser'
-            newick="$(tree)"
-            IsLabelledNewick="true" adjustTipHeights="false" taxa="@input_alignment"/>
+    <!-- Site model used to simulate sequence data -->
+    <siteModel id="trueSiteModel.s:dna" spec="SiteModel" gammaCategoryCount="4" proportionInvariant="0.0" mutationRate="1.0">
 
-      <!-- alignment data which specifies datatype and taxa-->
-      <data idref="input_alignment"/>
-
-      <!-- site model used to simulate sequence data -->
-      <siteModel id="trueSiteModel.s:dna" spec="SiteModel" gammaCategoryCount="4" 
-      	proportionInvariant="0.0" mutationRate="1.0">
-	<!-- the gamma shape parameter value will be replaced by the direct simulator value -->
+        <!-- Discrete Gamma shape parameter value will be replaced by the true value -->
         <parameter id="truegammaShape.s:dna" spec="parameter.RealParameter"  name="shape">$(gammaShape)</parameter>
         
-        <!-- the kappa and frequency values will be replaced by the direct simulator values -->
+        <!-- Kappa and nucleotide frequency values will be replaced by the true values -->
         <substModel id="trueHKY.s:big2_barcs" spec="HKY" kappa="$(kappa)">
-            <frequencies id="trueFreqs.s:dna" spec="Frequencies" frequencies="$(freqParameter.1) 
-            $(freqParameter.2) 
-            $(freqParameter.3) 
-            $(freqParameter.4)"/>
+            <frequencies id="trueFreqs.s:dna" spec="Frequencies" frequencies="$(freqParameter.1) $(freqParameter.2)  $(freqParameter.3) $(freqParameter.4)"/>
         </substModel>
-      </siteModel> 
+    </siteModel> 
       
-      <!-- we use a strict clock with rate fixed to 1 -->
-	  <branchRateModel id="trueStrictClock.c:cytb" spec="beast.base.evolution.branchratemodel.StrictClockModel" 
-	  	clock.rate="1.0"/>
-     </data>
+    <!-- We use a strict clock with rate fixed to 1.0 -->
+    <branchRateModel id="trueStrictClock.c:cytb" spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="1.0"/>
+ </data>
  
  <!--
  	rest of the XML comes from a BEAUti generated XML that is too long to
  	include here. The full file can be found here:
 	https://github.com/rbouckaert/DeveloperManual/blob/master/examples/yule/input.xml
  -->
-
 \end{lstlisting}
 }
 
-We will use the `CoverageTestXMLGenerator2` utility that comes with the Experimenter package to generate 100 BEAST XML files from the template and the simulated values in `truth.log` and `truth.trees`. It replaces all text within dollared braces (e.g. "\$(kappa)") with values from the `truth.log` file and replaces "\$(tree)" with newick trees from the `truth.trees` file. 
-It can be run in a terminal as follows:
+Here, we can use the \texttt{CoverageTestXMLGenerator2} utility that comes with the Experimenter package to generate the 100 BEAST XML files.
+It can be run from the shell or Terminal application as follows:
+
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
+\begin{lstlisting}[language=bash]
 applauncher CoverageTestXMLGenerator2 -workingDir . -out xml -log truth.log -tree truth.trees -xml input.xml 
 \end{lstlisting}
 }
 
-Here `applauncher` is an application that is part of BEAST2. Make sure it is in the path of the terminal being used.
-This generates a directory called `xml` with files called `analysis-out0.xml` to `analysis99.xml`.
-It is useful to make a subdirectory, say `run1` inside the xml directory in case the experiment fails and variants need to be run, e.g. with longer MCMC chains.
-Inside the `run1` directory, we can run the 100 XML files, e.g. using
+\noindent (Note that application \texttt{applauncher} above is part of BEAST 2, and that it must be in the \texttt{PATH} environmental variable of the Terminal to be run as specified.)
+This command generates a directory called \texttt{xml/} with files called \texttt{analysis-out0.xml} to \texttt{analysis99.xml}.
+It can be useful to make a subdirectory \texttt{run1/} inside the \texttt{xml} directory for the occasion of failed or alternative experiments (e.g., longer MCMC chains).
+
+\subsection{Statistical inference}
+
+Inside the \texttt{run1/} directory, we can run the 100 XML files from the Terminal:
+
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
+\begin{lstlisting}[language=bash]
 for i in  {0..99}; do beast -seed 127$i -overwrite ../analysis-out$i.xml > out$i 2>&1 ; done 
 \end{lstlisting}
 }
 
-Once the BEAST runs have finished, we can use logcombiner (part of BEAST2) to summarise the parameter estimates in a single log file:
+Once the BEAST 2 runs have finished, we then use the \texttt{LogCombiner} application to summarize the parameter estimates in a single file:
+
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
+\begin{lstlisting}[language=bash]
 loganalyser -oneline *log > summary
 \end{lstlisting}
 }
 
-Then, run the `CoverageCalculator` tool that is part of the Experimenter package to create summary coverage statistics:
+\subsection{Calculating and visualizing coverage}
+
+At this point, we can run the \texttt{CoverageCalculator} tool (part of the Experimenter package) from the Terminal to create coverage summary statistics:
+
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
-applauncher beastvalidation.experimenter.CoverageCalculator -log ../../truth.log -logA summary -out /tmp \
--showRho true -showESS false -showMean false 
+\begin{lstlisting}[language=bash, breaklines=true]
+applauncher beastvalidation.experimenter.CoverageCalculator -log ../../truth.log -logA summary -out /tmp -showRho true -showESS false -showMean false 
 \end{lstlisting}
 }
 
-   %\caption
-   {Terminal output of coverage calculator in the Experimenter package for BEAST 2 looks like this:
-   
-   \includegraphics[width=\textwidth]{../figures/coveragecalculator0.png}
-   An asterisk is added next to the coverage column if it has a value outside the expected range.
-   Here kappa is marked, and judging from the low effective sample size (see Min ESS column) this can be fixed by running the MCMC chains longer.}
-Here is a screen shot of output of coverage calculator in the Experimenter package for BEAST 2:
+% \caption
+The Terminal output of coverage calculator in the Experimenter package for BEAST 2 is shown in supplementary figure \ref{supfig:terminal}.
+An asterisk is added next to the coverage column if it has a value outside the expected range.
+Here $\kappa$ is marked, and judging from the low effective sample size (see \texttt{Min ESS} column) this can be fixed by running the MCMC chains longer.
+The Experimenter package should further output graphs for scalar parameters as shown in supplementary figure \ref{supfig:experimenter}.
 
+\begin{figure}
+  \includegraphics[width=\textwidth]{../figures/coveragecalculator0.png}
+  \caption{Terminal output of the \texttt{CoverageCalculator} application/}
+  \label{supfig:terminal}
+\end{figure}
+
+\begin{figure}
    \includegraphics[width=\textwidth]{../figures/coveragecalculator.png}
-   %\caption
-   {
-   Graphs show the x=y line in black and linear regression lines through the medians in grey.
-   The regression lines and $R^2$ values indicate how much of the estimates come from the prior and how much from the data:
-   low $R^2$ (like for birth rate) suggest the prior has more influence while high $R^2$ (like for the frequencies) suggest the data has more influence on estimates.
+   \caption{
+     Graphs show the $x=y$ line in black and linear regression lines through the medians in gray.
+     The regression lines and $R^2$ values indicate the influence of the prior vs. that of the likelihood over the parameter estimates.
+     A low $R^2$ (e.g., birth rate) suggests the prior has more influence while a high $R^2$ (e.g., nucleotide frequencies) suggests the data has more influence on estimates.
    }
+   \label{supfig:experimenter}
+\end{figure}
 
+Finally, we look at clade coverages, which can be calculated using the \texttt{CladeCoverageCalculator} application in the Experimenter package:
 
-Clade coverage can be calculated using the CladeCoverageCalculator in the Experimenter package:
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
+\begin{lstlisting}[language=bash]
 applauncher CladeCoverageCalculator -tru ../../truth.trees -pref analysis-out -png coverage.png -bins 10
 \end{lstlisting}
 }
 
-It produces some statistics of clade probabilities in tree posteriors match the true clade's presence, and visualises it in a graph:
+This command executes the procedure described at the end of section 6, producing the graph illustrated by supplementary figure \ref{supfig:clade_covg}.
 
-\begin{center}
-   \includegraphics[width=0.5\textwidth]{../figures/experimentercoverage.png}
-\end{center}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\textwidth]{../figures/experimentercoverage.png}
+  \caption{Clade coverages for the worked example using BEAST 2's Experimenter package.}
+\end{figure}
 
-To do a RUV analysis, first combine the trace log files into a single combined log file:
+\subsection{RUV validation}
+
+To do a RUV analysis, we must first combine the log files produced during inference into a single file:
+
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
+\begin{lstlisting}[language=bash]
 logcombiner -b 10 -log analysis-out?.log analysis-out??.log -o combined.log
 \end{lstlisting}
 }
 
+Next, we create summary statistics using the \texttt{SBCAnalyser} tool that is part of the Experimenter package:
 
-Then, create summary statistics using the SBCAnalyser that is part of the Experimenter package:
+\vspace{.25cm}
 
 {\scriptsize
-\begin{lstlisting}
+\begin{lstlisting}[language=bash]
 applauncher SBCAnalyser -log ../../truth.log -logA combined.log -out /tmp -bins 10
 \end{lstlisting}
 }
 
+The Terminal output is shown in supplementary figure \ref{supfig:terminal2}; it displays the histograms as well as ECDF plots (not all of them shown due to size of screen display).
+We can also graphically summarize the RUV procedure (Supplementary Fig. \ref{supfig:experimenterruv}).
 
-Terminal output of RUV calculator in the Experimenter package for BEAST 2 looks like this:
+\begin{figure}
+  % \includegraphics[width=\textwidth]{../figures/sbscalculator0.png}
+  \caption{Frequency parameter 2 has one bin that is outside the expected range (indicated by the empty bin).}
+  \label{supfig:terminal2}
+\end{figure}
 
-   \includegraphics[width=\textwidth]{../figures/sbscalculator0.png}
-   {
-   Frequency parameter 2 has one bin that is outside the expected range (indicated by the missed column).
-   }
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{../figures/sbscalculator.png}
+  \caption{Rank histograms and ECDF plots for the worked example using BEAST 2's Experimenter package.}
+  \label{supfig:experimenterruv}
+\end{figure}
 
-A screen shot of output of RUV calculator in the Experimenter package for BEAST 2 looks like this:
-
-   \includegraphics[width=\textwidth]{../figures/sbscalculator.png}
-
-   {
-   The terminal output is displayed as bar graphs as well as ECDF plots (not all of them shown due to size of screen display).}
- 
-
-For more details on any of the tools used, see \url{https://github.com/rbouckaert/DeveloperManual/}.
+More details on the tools used above can be found on \url{https://github.com/rbouckaert/DeveloperManual/}.
 
 \clearpage
 

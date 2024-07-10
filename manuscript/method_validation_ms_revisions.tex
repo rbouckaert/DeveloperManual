@@ -224,7 +224,7 @@ For example, \textcolor{blue}{the model $\mathcal{M}$ we will work with below (F
 
 \begin{enumerate}
   \item $\text{S}[f_\Theta(\cdot)]$ (where $\Theta = \{T,\Lambda, R, \boldsymbol{Y_0}\}$), which jointly simulates $\theta=\{\tau,\lambda,r,\boldsymbol{y_0}\}$,
-  \item $\text{S}[f_{\Phi|T,\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$, which simulates a Yule tree $\phi$ given an origin age value $\tau$ and a $\lambda$ (the birth-rate) simulated in (1),
+  \item $\text{S}[f_{\Phi|T,\Lambda}(\cdot|T=\tau,\Lambda=\lambda)]$, which simulates a Yule tree $\phi$ given an origin age value $\tau$ and a $\lambda$ (the birth rate) simulated in (1),
   \item $\text{S}[f_{Y|\Phi,R,\boldsymbol{Y_0}}(\cdot|\Phi=\phi,R=r,\boldsymbol{Y_0}=\boldsymbol{y_0})]$, which simulates an array with $n$ continuous-trait values (one value per species), $\boldsymbol{y}$, given a phylogeny $\phi$ with $n$ species, an evolutionary rate $r$ and ancestral character values $\boldsymbol{y_0}$ (simulated in (1) and (2), respectively).
 \end{enumerate}
 
@@ -1097,8 +1097,8 @@ In the supplement we \textcolor{red}{\st{further}} suggest statistical tests for
 
 We implemented a suite of methods for automating many of the steps involved in coverage validation and RUV.
 These methods were developed in Java and integrated into the BEAST 2 platform \citep{beast25}.
-A worked example that demonstrates the tools available in BEAST 2 and the Experimenter package can be found in Supplement Section 7.
-Code and a tutorial are available on \href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
+\textcolor{blue}{The supplement includes a worked example in which we use the tools available in BEAST 2 and the Experimenter package}
+Code and a longer tutorial are also available on \href{https://github.com/rbouckaert/DeveloperManual}{https://github.com/rbouckaert/DeveloperManual}.
 
 \section*{Bayesian model validation guidelines for developers and reviewers}
 
