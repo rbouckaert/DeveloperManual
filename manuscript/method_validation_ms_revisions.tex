@@ -493,12 +493,12 @@ Credibility level $\%$ ($100 \times \alpha$) & $n$ (replicates) & Lower quantile
     Panels show the true (i.e., simulated) parameter values plotted against their mean posteriors (the dashed line shows $x = y$).
     Dots and lines (100 per panel) represent true values and their 95\%-HPDs, respectively.
     Simulations for which 95\%-HPDs contained the true value are highlighted in blue, otherwise are presented in red.
-    (a) In ``Scenario 1'', the \textcolor{blue}{model used in inference} was \textcolor{red}{\st{correctly}}\textcolor{blue}{the least miss}specified \textcolor{blue}{(low levels of misspecification were introduced by rejection sampling, when one in ten trees were rejected).}\textcolor{red}{\st{, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).} 
+    (a) In ``Scenario 1'', the \textcolor{blue}{model used in inference} was \textcolor{red}{\st{correctly}}\textcolor{blue}{the least miss}specified \textcolor{blue}{(low levels of misspecification were introduced by rejection sampling, when one in ten trees were rejected).}\textcolor{red}{\st{, and we simulated trees with 3 to 300 taxa using rejection sampling (approximately one in ten trees were rejected).}}
     (b) In ``Scenario 2'', the \textcolor{blue}{model used in inference was misspecified beyond the effect of rejection sampling (which was the only source of misspecification in ``Scenario 1'' and ``Scenario 3''); here, }\textcolor{red}{\st{model was incorrectly specified in inference (see main text), and}} we used the same data sets simulated in ``Scenario 1''.
     (c) In ``Scenario 3'' the model was \textcolor{blue}{miss}specified \textcolor{blue}{as a result of rejection sampling}\textcolor{red}{\st{just}} as in ``Scenario 1'', with the difference that \textcolor{blue}{a greater proportion of trees were} reject\textcolor{red}{\st{ion}}\textcolor{blue}{ed}\textcolor{red}{\st{ sampling was substantially greater}} (\textcolor{red}{\st{we rejected a large number of trees, }}approximately 90\% \textcolor{blue}{of trees were rejected, with only those}\textcolor{red}{\st{, keeping those }}having between 100 to 200 tips \textcolor{blue}{being kept}).
-  }}
+  }
   \label{fig:yulecalval}
-\end{figure}
+\end{figure} 
 
 At this point, we will take a moment to remark that the usefulness of model coverage analysis in Bayesian inference is only manifest when $\theta_i$ is sampled from $f_\Theta(\cdot)$.
 Method developers may be tempted, for example, to calculate coverage for specific parameter values -- perhaps chosen across a grid over parameter space -- using a different prior during inference.
