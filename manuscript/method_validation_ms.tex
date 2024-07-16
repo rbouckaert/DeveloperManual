@@ -1024,8 +1024,9 @@ Figure \ref{fig:rf}a shows the coverage of 95\%-HPD intervals of the RF distance
 The coverage of the RF metric is very close to 95 (see Table \ref{tab:coverage2}, with $n=100$), and the rank distribution is approximately uniform on (1, $L+1$); together, these panels indicate this model is correctly implemented.
 
 Here, there are a few points worth noting. First, for large numbers of species, random tree $\phi_0$ is unlikely to share internal nodes with $\phi$'s posterior samples \citep{steel1988}.
-One way of looking at this involves noting that, if $\phi$ and $\phi_0$ have very many ($s$) tips, they will share a number of clades that is approximately Poisson distributed with rate $c_{\phi}$, the number of cherries in $\phi$ \citep{bryant09}.
-Given that the expected number of cherries in a random Yule tree asymptotes to $\frac{s}{3}$ \citep{mckenzie00}, one can see that in the case of Yule trees, $\phi$ and $\phi_0$ have approximately a 85$\%$ chance of not sharing any clades.
+One way of looking at this involves noting that, if $\phi$ and $\phi_0$ have very many ($s$) tips, they will share a number of clades that is approximately Poisson distributed with rate $\frac{c_{\phi}}{2s}$ ($c_{\phi}$ is the number of cherries in $\phi$; \citealp{bryant09}).
+Given that the expected number of cherries in a random Yule tree asymptotes to $\frac{s}{3}$ for large $k$'s \citep{mckenzie00}, two random Yule trees will asymptote at a shared number of clades that is Poisson distributed with rate $\frac{1}{6}$.
+One can then see that in the case of Yule trees, $\phi$ and $\phi_0$ have approximately a 85$\%$ chance of not sharing any clades.
 For the reasons above, the RF distance metric may not be so useful.
 
 In the supplement we consider other phylogenetic tree metrics that could be used as an alternative or in addition to the RF distance (Supplementary Fig. 4).
