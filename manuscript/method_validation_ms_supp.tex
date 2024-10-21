@@ -291,7 +291,7 @@ This is an important insight about validation protocols: their sensitivity is co
   We show the rank histograms in three misspecification scenarios ($t$
   is 0.0, 1.0 or 1.5) and three data regimes ($K$ is 5, 10 or 50).
   Results are based on $n=1000$ replicates of $L= 200$ i.i.d. draws each.
-  Horizontal black lines shows the expected count for each rank (the same for all ranks due to uniformity), and the light-blue bands represent the 95\%-confidence interval for the counts.
+  Horizontal black lines show the expected count for each rank (the same for all ranks due to uniformity), and the light-blue bands represent the 95\%-confidence interval for the counts.
     }
   \label{supfig:ruv_normal_toy}
 \end{figure}
@@ -642,7 +642,7 @@ Among-site substitution-rate variation is modeled with a discrete Gamma model \c
 
 As the XML file above specifies, we have BEAST 2 write all the sampled scalar and tree (``true'') values into log files \texttt{truth.xml} and \texttt{truth.trees}, respectively.
 Inspecting the \texttt{truth.log} with the Tracer app reveals that the simulator works as expected (the means and variances of parameters match those specified in the XML file).
-Note that we generated 101 samples ($n=100$ if we follow the main manuscript's notation; with an extra simulation for executing RUV in tree space), but nothing prevents user from generating more data sets.
+Note that we generated 101 samples ($n=100$ if we follow the main manuscript's notation; with an extra simulation for executing RUV in tree space), but nothing prevents users from generating more data sets.
 
 At this point, the Experimenter package has the ``true'' simulated values it needs to populate an XML template 100 times.
 The outcome will be 100 independent BEAST 2 runnable XML files for statistical inference.
