@@ -960,4 +960,9 @@ Experimenter (again, using `ant addon` in the Experimenter folder) packages.
 
 ## References
 
+
+If you find this document useful, please cite
+
+Mendes FK, Bouckaert R, Carvalho LM, Drummond AJ. How to validate a Bayesian evolutionary model. Systematic Biology. 2024 Nov 7:syae064. [DOI:10.1093/sysbio/syae064](https://doi.org/10.1093/sysbio/syae064)
+
 </body>
